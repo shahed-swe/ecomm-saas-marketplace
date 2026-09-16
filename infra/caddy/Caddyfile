@@ -1,0 +1,36 @@
+# Architecture §4: subdomains + custom domains, on-demand TLS gated by the API.
+{
+	email ops@{$PLATFORM_ROOT_DOMAIN}
+	on_demand_tls {
+		ask http://api:8000/internal/tls/ask
+	}
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+(app) {
+	encode zstd gzip
+	header -Server
+	@api path /api/v1/* /webhooks/* /healthz /readyz
+	handle @api {
+		reverse_proxy api:8000
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+}
+
+*.{$PLATFORM_ROOT_DOMAIN}, {$PLATFORM_ROOT_DOMAIN} {
+	tls {
+		dns {$DNS_PROVIDER} {$DNS_API_TOKEN}
+	}
+	import app
+}
+
+https:// {
+	tls {
+		on_demand
+	}
+	import app
+}

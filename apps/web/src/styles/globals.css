@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fallback tokens (platform default preset). Tenant theme overrides these at runtime. */
+:root {
+  --color-primary: 14 116 144;
+  --color-primary-fg: 255 255 255;
+  --color-secondary: 30 41 59;
+  --color-accent: 234 88 12;
+  --color-bg: 255 255 255;
+  --color-surface: 248 250 252;
+  --color-fg: 15 23 42;
+  --color-muted: 100 116 139;
+  --color-border: 226 232 240;
+  --color-danger: 220 38 38;
+  --color-success: 22 163 74;
+  --radius: 0.5rem;
+  --font-body: ui-sans-serif, system-ui, "Noto Sans Bengali", sans-serif;
+  --font-heading: var(--font-body);
+}
+[data-theme="dark"] {
+  --color-bg: 2 6 23;
+  --color-surface: 15 23 42;
+  --color-fg: 241 245 249;
+  --color-muted: 148 163 184;
+  --color-border: 30 41 59;
+}
+body { @apply bg-bg text-fg font-body; }

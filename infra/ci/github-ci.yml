@@ -1,0 +1,42 @@
+name: ci
+on:
+  push: { branches: [main] }
+  pull_request:
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_HOST_AUTH_METHOD: trust }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 20
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+    defaults: { run: { working-directory: apps/api } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv python install 3.12 && uv sync --frozen
+      - run: uv run ruff check . && uv run ruff format --check .
+      - run: uv run pytest -q
+        env:
+          TEST_ADMIN_DATABASE_URL: postgresql+asyncpg://postgres@127.0.0.1:5432/postgres
+          TEST_REDIS_URL: redis://127.0.0.1:6379/15
+      - name: OpenAPI contract is up to date
+        run: uv run python scripts/export_openapi.py && git diff --exit-code ../../packages/api-contract/openapi.json
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -C packages/api-contract gen && git diff --exit-code packages/api-contract/src
+      - run: pnpm -C apps/web typecheck && pnpm -C apps/web test && pnpm -C apps/web build
+      - name: No raw hex colors in components (ADR 0012)
+        run: "! grep -rnE '#[0-9a-fA-F]{3,8}\\b' apps/web/src --include=*.tsx"

@@ -1,0 +1,10 @@
+{
+  "name": "ecomm-saas-marketplace",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "web:dev": "pnpm -C apps/web dev",
+    "web:build": "pnpm -C apps/web build",
+    "contract:gen": "pnpm -C packages/api-contract gen"
+  }
+}
