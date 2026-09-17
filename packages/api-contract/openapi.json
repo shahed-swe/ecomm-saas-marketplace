@@ -899,6 +899,52 @@
         "title": "ChecklistItem",
         "type": "object"
       },
+      "CollectionLayout": {
+        "additionalProperties": false,
+        "properties": {
+          "columns_desktop": {
+            "default": 4,
+            "enum": [
+              3,
+              4,
+              5
+            ],
+            "title": "Columns Desktop",
+            "type": "integer"
+          },
+          "columns_mobile": {
+            "default": 2,
+            "enum": [
+              1,
+              2
+            ],
+            "title": "Columns Mobile",
+            "type": "integer"
+          },
+          "default_sort": {
+            "default": "newest",
+            "enum": [
+              "newest",
+              "price_asc",
+              "price_desc",
+              "popular"
+            ],
+            "title": "Default Sort",
+            "type": "string"
+          },
+          "filters": {
+            "default": "sidebar",
+            "enum": [
+              "sidebar",
+              "drawer"
+            ],
+            "title": "Filters",
+            "type": "string"
+          }
+        },
+        "title": "CollectionLayout",
+        "type": "object"
+      },
       "CommissionIn": {
         "properties": {
           "expires_at": {
@@ -932,6 +978,50 @@
           "rate"
         ],
         "title": "CommissionIn",
+        "type": "object"
+      },
+      "CustomPage": {
+        "additionalProperties": false,
+        "properties": {
+          "published": {
+            "default": true,
+            "title": "Published",
+            "type": "boolean"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/Section"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "seo": {
+            "$ref": "#/components/schemas/Seo",
+            "default": {
+              "description": {
+                "bn": "",
+                "en": ""
+              },
+              "title": {
+                "bn": "",
+                "en": ""
+              }
+            }
+          },
+          "slug": {
+            "pattern": "^[a-z0-9](?:[a-z0-9-]{0,58}[a-z0-9])?$",
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Text"
+          }
+        },
+        "required": [
+          "slug",
+          "title"
+        ],
+        "title": "CustomPage",
         "type": "object"
       },
       "CycleIn": {
@@ -1176,6 +1266,73 @@
         "title": "DomainWithInstructions",
         "type": "object"
       },
+      "Footer": {
+        "additionalProperties": false,
+        "properties": {
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/FooterColumn"
+            },
+            "maxItems": 4,
+            "title": "Columns",
+            "type": "array"
+          },
+          "copyright": {
+            "$ref": "#/components/schemas/Text",
+            "default": {
+              "bn": "",
+              "en": ""
+            }
+          },
+          "show_payment_icons": {
+            "default": true,
+            "title": "Show Payment Icons",
+            "type": "boolean"
+          },
+          "social": {
+            "additionalProperties": {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "facebook",
+                "instagram",
+                "youtube",
+                "tiktok",
+                "linkedin"
+              ]
+            },
+            "title": "Social",
+            "type": "object"
+          }
+        },
+        "title": "Footer",
+        "type": "object"
+      },
+      "FooterColumn": {
+        "additionalProperties": false,
+        "properties": {
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "maxItems": 10,
+            "title": "Links",
+            "type": "array"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Text"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "FooterColumn",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1187,6 +1344,40 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "Header": {
+        "additionalProperties": false,
+        "properties": {
+          "logo_position": {
+            "default": "left",
+            "enum": [
+              "left",
+              "center"
+            ],
+            "title": "Logo Position",
+            "type": "string"
+          },
+          "menu": {
+            "items": {
+              "$ref": "#/components/schemas/MenuItem"
+            },
+            "maxItems": 12,
+            "title": "Menu",
+            "type": "array"
+          },
+          "show_search": {
+            "default": true,
+            "title": "Show Search",
+            "type": "boolean"
+          },
+          "sticky": {
+            "default": true,
+            "title": "Sticky",
+            "type": "boolean"
+          }
+        },
+        "title": "Header",
         "type": "object"
       },
       "ImportOut": {
@@ -1450,6 +1641,56 @@
         "title": "InvoiceOut",
         "type": "object"
       },
+      "Layouts": {
+        "additionalProperties": false,
+        "properties": {
+          "footer": {
+            "$ref": "#/components/schemas/Footer",
+            "default": {
+              "columns": [],
+              "copyright": {
+                "bn": "",
+                "en": ""
+              },
+              "show_payment_icons": true,
+              "social": {}
+            }
+          },
+          "header": {
+            "$ref": "#/components/schemas/Header",
+            "default": {
+              "logo_position": "left",
+              "menu": [],
+              "show_search": true,
+              "sticky": true
+            }
+          }
+        },
+        "title": "Layouts",
+        "type": "object"
+      },
+      "Link": {
+        "additionalProperties": false,
+        "properties": {
+          "href": {
+            "maxLength": 300,
+            "title": "Href",
+            "type": "string"
+          },
+          "label": {
+            "$ref": "#/components/schemas/Text",
+            "default": {
+              "bn": "",
+              "en": ""
+            }
+          }
+        },
+        "required": [
+          "href"
+        ],
+        "title": "Link",
+        "type": "object"
+      },
       "LoginIn": {
         "properties": {
           "email": {
@@ -1671,6 +1912,33 @@
         "title": "MediaOut",
         "type": "object"
       },
+      "MenuItem": {
+        "additionalProperties": false,
+        "properties": {
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "maxItems": 12,
+            "title": "Children",
+            "type": "array"
+          },
+          "href": {
+            "maxLength": 300,
+            "title": "Href",
+            "type": "string"
+          },
+          "label": {
+            "$ref": "#/components/schemas/Text"
+          }
+        },
+        "required": [
+          "label",
+          "href"
+        ],
+        "title": "MenuItem",
+        "type": "object"
+      },
       "ModerateIn": {
         "properties": {
           "decision": {
@@ -1830,6 +2098,67 @@
           "next_cursor"
         ],
         "title": "Page",
+        "type": "object"
+      },
+      "PageOut": {
+        "properties": {
+          "layouts": {
+            "additionalProperties": true,
+            "title": "Layouts",
+            "type": "object"
+          },
+          "preview": {
+            "title": "Preview",
+            "type": "boolean"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/ResolvedSection"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "seo": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seo"
+          },
+          "template": {
+            "title": "Template",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "template",
+          "version",
+          "preview",
+          "sections",
+          "layouts"
+        ],
+        "title": "PageOut",
         "type": "object"
       },
       "Palette": {
@@ -2442,6 +2771,45 @@
         "title": "ProductIn",
         "type": "object"
       },
+      "ProductLayout": {
+        "additionalProperties": false,
+        "properties": {
+          "blocks": {
+            "items": {
+              "enum": [
+                "title",
+                "price",
+                "variants",
+                "add_to_cart",
+                "vendor_card",
+                "delivery",
+                "description",
+                "specs",
+                "questions",
+                "reviews",
+                "related"
+              ],
+              "type": "string"
+            },
+            "maxItems": 11,
+            "minItems": 3,
+            "title": "Blocks",
+            "type": "array"
+          },
+          "gallery": {
+            "default": "thumbnails_bottom",
+            "enum": [
+              "thumbnails_left",
+              "thumbnails_bottom",
+              "grid"
+            ],
+            "title": "Gallery",
+            "type": "string"
+          }
+        },
+        "title": "ProductLayout",
+        "type": "object"
+      },
       "ProductOut": {
         "properties": {
           "attributes": {
@@ -2917,6 +3285,42 @@
         "title": "RegisterIn",
         "type": "object"
       },
+      "ResolvedSection": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "settings": {
+            "additionalProperties": true,
+            "title": "Settings",
+            "type": "object"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "settings"
+        ],
+        "title": "ResolvedSection",
+        "type": "object"
+      },
       "ReviewDoc": {
         "properties": {
           "content_type": {
@@ -3144,6 +3548,121 @@
           "is_system"
         ],
         "title": "RoleOut",
+        "type": "object"
+      },
+      "Section": {
+        "additionalProperties": false,
+        "properties": {
+          "hidden": {
+            "default": false,
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "id": {
+            "pattern": "^[a-z0-9]{6,24}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "settings": {
+            "additionalProperties": true,
+            "title": "Settings",
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "announcement_bar",
+              "hero_slider",
+              "image_banner",
+              "banner_grid",
+              "category_grid",
+              "product_carousel",
+              "product_grid",
+              "flash_sale",
+              "campaign_strip",
+              "brand_strip",
+              "top_vendors",
+              "featured_vendor",
+              "rich_text",
+              "image_with_text",
+              "faq",
+              "testimonials",
+              "newsletter",
+              "trust_badges",
+              "video_embed",
+              "spacer"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ],
+        "title": "Section",
+        "type": "object"
+      },
+      "SectionTypeOut": {
+        "properties": {
+          "max_per_page": {
+            "title": "Max Per Page",
+            "type": "integer"
+          },
+          "mobile_supported": {
+            "title": "Mobile Supported",
+            "type": "boolean"
+          },
+          "pages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Pages",
+            "type": "array"
+          },
+          "settings_schema": {
+            "additionalProperties": true,
+            "title": "Settings Schema",
+            "type": "object"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "vendor_allowed": {
+            "title": "Vendor Allowed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "pages",
+          "vendor_allowed",
+          "max_per_page",
+          "mobile_supported",
+          "settings_schema"
+        ],
+        "title": "SectionTypeOut",
+        "type": "object"
+      },
+      "Seo": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/Text",
+            "default": {
+              "bn": "",
+              "en": ""
+            }
+          },
+          "title": {
+            "$ref": "#/components/schemas/Text",
+            "default": {
+              "bn": "",
+              "en": ""
+            }
+          }
+        },
+        "title": "Seo",
         "type": "object"
       },
       "SettingsOut": {
@@ -3590,6 +4109,135 @@
         "title": "StoreOut",
         "type": "object"
       },
+      "StorePageOut": {
+        "properties": {
+          "accent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accent"
+          },
+          "banner_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Banner Url"
+          },
+          "products": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Products",
+            "type": "array"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/ResolvedSection"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "vendor": {
+            "additionalProperties": true,
+            "title": "Vendor",
+            "type": "object"
+          }
+        },
+        "required": [
+          "vendor",
+          "accent",
+          "banner_url",
+          "sections",
+          "products"
+        ],
+        "title": "StorePageOut",
+        "type": "object"
+      },
+      "StoreThemeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "accent": {
+            "anyOf": [
+              {
+                "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accent"
+          },
+          "banner_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Banner Url"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/Section"
+            },
+            "maxItems": 10,
+            "title": "Sections",
+            "type": "array"
+          }
+        },
+        "title": "StoreThemeIn",
+        "type": "object"
+      },
+      "StoreThemeOut": {
+        "properties": {
+          "draft": {
+            "$ref": "#/components/schemas/StoreThemeIn"
+          },
+          "published": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StoreThemeIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          }
+        },
+        "required": [
+          "draft",
+          "published",
+          "published_at"
+        ],
+        "title": "StoreThemeOut",
+        "type": "object"
+      },
       "StorefrontOut": {
         "properties": {
           "bio": {
@@ -3768,6 +4416,62 @@
           }
         },
         "title": "SubscriptionPatch",
+        "type": "object"
+      },
+      "Templates": {
+        "additionalProperties": false,
+        "properties": {
+          "category_top": {
+            "items": {
+              "$ref": "#/components/schemas/Section"
+            },
+            "title": "Category Top",
+            "type": "array"
+          },
+          "collection_layout": {
+            "$ref": "#/components/schemas/CollectionLayout",
+            "default": {
+              "columns_desktop": 4,
+              "columns_mobile": 2,
+              "default_sort": "newest",
+              "filters": "sidebar"
+            }
+          },
+          "home": {
+            "items": {
+              "$ref": "#/components/schemas/Section"
+            },
+            "title": "Home",
+            "type": "array"
+          },
+          "product_bottom": {
+            "items": {
+              "$ref": "#/components/schemas/Section"
+            },
+            "title": "Product Bottom",
+            "type": "array"
+          },
+          "product_layout": {
+            "$ref": "#/components/schemas/ProductLayout",
+            "default": {
+              "blocks": [
+                "title",
+                "price",
+                "variants",
+                "add_to_cart",
+                "vendor_card",
+                "delivery",
+                "description",
+                "specs",
+                "questions",
+                "reviews",
+                "related"
+              ],
+              "gallery": "thumbnails_bottom"
+            }
+          }
+        },
+        "title": "Templates",
         "type": "object"
       },
       "TenantCreate": {
@@ -4003,9 +4707,29 @@
         "title": "TenantPatch",
         "type": "object"
       },
+      "Text": {
+        "additionalProperties": false,
+        "description": "Bilingual short text. Plain text only; rendered escaped.",
+        "properties": {
+          "bn": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Bn",
+            "type": "string"
+          },
+          "en": {
+            "default": "",
+            "maxLength": 300,
+            "title": "En",
+            "type": "string"
+          }
+        },
+        "title": "Text",
+        "type": "object"
+      },
       "ThemeDocument": {
         "additionalProperties": false,
-        "description": "Phase 4 scope: tokens + brand. Phase 8 adds layouts, templates, pages, custom_css.",
+        "description": "v1: tokens + brand (Phase 4). v2 adds layouts, templates, custom pages, custom CSS (Phase 8).\nv1 documents validate unchanged; missing v2 parts take defaults.",
         "properties": {
           "brand": {
             "$ref": "#/components/schemas/Brand",
@@ -4013,16 +4737,83 @@
               "logo_height": 40
             }
           },
+          "custom_css": {
+            "default": "",
+            "maxLength": 50000,
+            "title": "Custom Css",
+            "type": "string"
+          },
+          "layouts": {
+            "$ref": "#/components/schemas/Layouts",
+            "default": {
+              "footer": {
+                "columns": [],
+                "copyright": {
+                  "bn": "",
+                  "en": ""
+                },
+                "show_payment_icons": true,
+                "social": {}
+              },
+              "header": {
+                "logo_position": "left",
+                "menu": [],
+                "show_search": true,
+                "sticky": true
+              }
+            }
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/CustomPage"
+            },
+            "maxItems": 30,
+            "title": "Pages",
+            "type": "array"
+          },
           "preset": {
             "pattern": "^[a-z][a-z0-9-]{1,40}$",
             "title": "Preset",
             "type": "string"
           },
           "schema_version": {
-            "const": 1,
-            "default": 1,
+            "default": 2,
+            "enum": [
+              1,
+              2
+            ],
             "title": "Schema Version",
             "type": "integer"
+          },
+          "templates": {
+            "$ref": "#/components/schemas/Templates",
+            "default": {
+              "category_top": [],
+              "collection_layout": {
+                "columns_desktop": 4,
+                "columns_mobile": 2,
+                "default_sort": "newest",
+                "filters": "sidebar"
+              },
+              "home": [],
+              "product_bottom": [],
+              "product_layout": {
+                "blocks": [
+                  "title",
+                  "price",
+                  "variants",
+                  "add_to_cart",
+                  "vendor_card",
+                  "delivery",
+                  "description",
+                  "specs",
+                  "questions",
+                  "reviews",
+                  "related"
+                ],
+                "gallery": "thumbnails_bottom"
+              }
+            }
           },
           "tokens": {
             "$ref": "#/components/schemas/Tokens"
@@ -7236,6 +8027,191 @@
         ]
       }
     },
+    "/api/v1/storefront/custom.css": {
+      "get": {
+        "operationId": "custom_css_api_v1_storefront_custom_css_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "preview",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Preview"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Custom Css",
+        "tags": [
+          "storefront"
+        ]
+      }
+    },
+    "/api/v1/storefront/page": {
+      "get": {
+        "operationId": "page_api_v1_storefront_page_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "template",
+            "required": false,
+            "schema": {
+              "default": "home",
+              "enum": [
+                "home",
+                "category_top",
+                "product_bottom",
+                "custom"
+              ],
+              "title": "Template",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "slug",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^[a-z0-9-]{1,60}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Slug"
+            }
+          },
+          {
+            "in": "query",
+            "name": "preview",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Preview"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Page",
+        "tags": [
+          "storefront"
+        ]
+      }
+    },
+    "/api/v1/storefront/stores/{slug}": {
+      "get": {
+        "operationId": "store_page_api_v1_storefront_stores__slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "maximum": 60,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorePageOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Store Page",
+        "tags": [
+          "storefront"
+        ]
+      }
+    },
     "/api/v1/theme": {
       "get": {
         "operationId": "get_theme_api_v1_theme_get",
@@ -7306,6 +8282,32 @@
           }
         },
         "summary": "Presets",
+        "tags": [
+          "theme"
+        ]
+      }
+    },
+    "/api/v1/theme/sections": {
+      "get": {
+        "description": "Drives the builder: forms are generated from these schemas, so a new section needs no UI code.",
+        "operationId": "section_registry_api_v1_theme_sections_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SectionTypeOut"
+                  },
+                  "title": "Response Section Registry Api V1 Theme Sections Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Section Registry",
         "tags": [
           "theme"
         ]
@@ -8380,6 +9382,89 @@
         "summary": "Update Vendor Staff",
         "tags": [
           "vendor:staff"
+        ]
+      }
+    },
+    "/api/v1/vendor/store-theme": {
+      "get": {
+        "operationId": "get_store_theme_api_v1_vendor_store_theme_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreThemeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Store Theme",
+        "tags": [
+          "vendor:store-theme"
+        ]
+      }
+    },
+    "/api/v1/vendor/store-theme/draft": {
+      "put": {
+        "operationId": "put_draft_api_v1_vendor_store_theme_draft_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreThemeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreThemeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Draft",
+        "tags": [
+          "vendor:store-theme"
+        ]
+      }
+    },
+    "/api/v1/vendor/store-theme/publish": {
+      "post": {
+        "operationId": "publish_api_v1_vendor_store_theme_publish_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreThemeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Publish",
+        "tags": [
+          "vendor:store-theme"
         ]
       }
     },

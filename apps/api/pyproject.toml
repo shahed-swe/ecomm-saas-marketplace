@@ -23,6 +23,7 @@ dependencies = [
   "boto3>=1.43.96",
   "python-multipart>=0.0.32",
   "cryptography>=50.0.1",
+  "tinycss2>=1.5.1",
 ]
 
 [dependency-groups]

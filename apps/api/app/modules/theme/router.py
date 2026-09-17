@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import text
 
 from app.core import audit
+from app.core.cache_keys import isr_tag
 from app.core.deps import Tenant, TenantDB, require_tenant_staff
 from app.core.security import Principal
 from app.modules.theme import service
@@ -163,6 +164,7 @@ async def publish(
         data={"number": v["number"]},
         request=request,
     )
+    await request.app.state.revalidator.revalidate(tenant.id, [isr_tag(tenant.id, "theme")])
     return VersionOut(
         id=str(v["id"]),
         number=v["number"],
@@ -229,6 +231,7 @@ async def restore(
         .mappings()
         .one()
     )
+    await request.app.state.revalidator.revalidate(tenant.id, [isr_tag(tenant.id, "theme")])
     return VersionOut(
         id=str(v["id"]),
         number=v["number"],
@@ -276,3 +279,30 @@ async def upload_brand_image(
         request=request,
     )
     return UploadOut(**out)
+
+
+class SectionTypeOut(BaseModel):
+    type: str
+    pages: list[str]
+    vendor_allowed: bool
+    max_per_page: int
+    mobile_supported: bool
+    settings_schema: dict
+
+
+@public.get("/sections", response_model=list[SectionTypeOut])
+async def section_registry():
+    """Drives the builder: forms are generated from these schemas, so a new section needs no UI code."""
+    from app.modules.theme.sections import REGISTRY
+
+    return [
+        SectionTypeOut(
+            type=k,
+            pages=list(pages),
+            vendor_allowed=va,
+            max_per_page=mx,
+            mobile_supported=mob,
+            settings_schema=model.model_json_schema(),
+        )
+        for k, (model, pages, va, mx, mob) in REGISTRY.items()
+    ]

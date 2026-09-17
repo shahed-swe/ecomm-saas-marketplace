@@ -86,8 +86,13 @@ async def process_media(ctx: dict, *, tenant_id: str, asset_id: str) -> dict:
     settings = get_settings()
     async with ctx["db"].sessionmaker() as session, session.begin():
         await scope_session(session, tenant_id)
-        return await process_asset(session, build_storage(settings), build_private_storage(settings),
-                                   tenant_id=tenant_id, asset_id=asset_id)
+        return await process_asset(
+            session,
+            build_storage(settings),
+            build_private_storage(settings),
+            tenant_id=tenant_id,
+            asset_id=asset_id,
+        )
 
 
 @tenant_job
@@ -98,11 +103,16 @@ async def import_products(ctx: dict, *, tenant_id: str, job_id: str) -> dict:
     from app.modules.catalog.revalidate import RecordingRevalidator, WebRevalidator
 
     settings = get_settings()
-    reval = WebRevalidator(settings.web_revalidate_url, settings.jwt_secret) if settings.web_revalidate_url \
+    reval = (
+        WebRevalidator(settings.web_revalidate_url, settings.jwt_secret)
+        if settings.web_revalidate_url
         else RecordingRevalidator()
+    )
     async with ctx["db"].sessionmaker() as session, session.begin():
         await scope_session(session, tenant_id)
-        return await run_import(session, build_private_storage(settings), reval, tenant_id=tenant_id, job_id=job_id)
+        return await run_import(
+            session, build_private_storage(settings), reval, tenant_id=tenant_id, job_id=job_id
+        )
 
 
 async def startup(ctx: dict) -> None:

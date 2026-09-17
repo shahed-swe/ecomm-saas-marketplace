@@ -905,6 +905,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/storefront/custom.css": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Custom Css */
+        get: operations["custom_css_api_v1_storefront_custom_css_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/storefront/page": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Page */
+        get: operations["page_api_v1_storefront_page_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/storefront/stores/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Store Page */
+        get: operations["store_page_api_v1_storefront_stores__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/theme": {
         parameters: {
             query?: never;
@@ -931,6 +982,26 @@ export interface paths {
         };
         /** Presets */
         get: operations["presets_api_v1_theme_presets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/theme/sections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Section Registry
+         * @description Drives the builder: forms are generated from these schemas, so a new section needs no UI code.
+         */
+        get: operations["section_registry_api_v1_theme_sections_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1332,6 +1403,57 @@ export interface paths {
         head?: never;
         /** Update Vendor Staff */
         patch: operations["update_vendor_staff_api_v1_vendor_staff__member_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/vendor/store-theme": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Store Theme */
+        get: operations["get_store_theme_api_v1_vendor_store_theme_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/store-theme/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put Draft */
+        put: operations["put_draft_api_v1_vendor_store_theme_draft_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/store-theme/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish */
+        post: operations["publish_api_v1_vendor_store_theme_publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/vendor/storefront": {
@@ -1913,12 +2035,65 @@ export interface components {
             /** Phase */
             phase: number;
         };
+        /** CollectionLayout */
+        CollectionLayout: {
+            /**
+             * Columns Desktop
+             * @default 4
+             * @enum {integer}
+             */
+            columns_desktop: 3 | 4 | 5;
+            /**
+             * Columns Mobile
+             * @default 2
+             * @enum {integer}
+             */
+            columns_mobile: 1 | 2;
+            /**
+             * Default Sort
+             * @default newest
+             * @enum {string}
+             */
+            default_sort: "newest" | "price_asc" | "price_desc" | "popular";
+            /**
+             * Filters
+             * @default sidebar
+             * @enum {string}
+             */
+            filters: "sidebar" | "drawer";
+        };
         /** CommissionIn */
         CommissionIn: {
             /** Expires At */
             expires_at?: string | null;
             /** Rate */
             rate: number | string;
+        };
+        /** CustomPage */
+        CustomPage: {
+            /**
+             * Published
+             * @default true
+             */
+            published: boolean;
+            /** Sections */
+            sections?: components["schemas"]["Section"][];
+            /**
+             * @default {
+             *       "description": {
+             *         "bn": "",
+             *         "en": ""
+             *       },
+             *       "title": {
+             *         "bn": "",
+             *         "en": ""
+             *       }
+             *     }
+             */
+            seo: components["schemas"]["Seo"];
+            /** Slug */
+            slug: string;
+            title: components["schemas"]["Text"];
         };
         /** CycleIn */
         CycleIn: {
@@ -2008,10 +2183,58 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** Footer */
+        Footer: {
+            /** Columns */
+            columns?: components["schemas"]["FooterColumn"][];
+            /**
+             * @default {
+             *       "bn": "",
+             *       "en": ""
+             *     }
+             */
+            copyright: components["schemas"]["Text"];
+            /**
+             * Show Payment Icons
+             * @default true
+             */
+            show_payment_icons: boolean;
+            /** Social */
+            social?: {
+                [key: string]: string;
+            };
+        };
+        /** FooterColumn */
+        FooterColumn: {
+            /** Links */
+            links?: components["schemas"]["Link"][];
+            title: components["schemas"]["Text"];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** Header */
+        Header: {
+            /**
+             * Logo Position
+             * @default left
+             * @enum {string}
+             */
+            logo_position: "left" | "center";
+            /** Menu */
+            menu?: components["schemas"]["MenuItem"][];
+            /**
+             * Show Search
+             * @default true
+             */
+            show_search: boolean;
+            /**
+             * Sticky
+             * @default true
+             */
+            sticky: boolean;
         };
         /** ImportOut */
         ImportOut: {
@@ -2120,6 +2343,42 @@ export interface components {
             /** Vat Amount */
             vat_amount: string;
         };
+        /** Layouts */
+        Layouts: {
+            /**
+             * @default {
+             *       "columns": [],
+             *       "copyright": {
+             *         "bn": "",
+             *         "en": ""
+             *       },
+             *       "show_payment_icons": true,
+             *       "social": {}
+             *     }
+             */
+            footer: components["schemas"]["Footer"];
+            /**
+             * @default {
+             *       "logo_position": "left",
+             *       "menu": [],
+             *       "show_search": true,
+             *       "sticky": true
+             *     }
+             */
+            header: components["schemas"]["Header"];
+        };
+        /** Link */
+        Link: {
+            /** Href */
+            href: string;
+            /**
+             * @default {
+             *       "bn": "",
+             *       "en": ""
+             *     }
+             */
+            label: components["schemas"]["Text"];
+        };
         /** LoginIn */
         LoginIn: {
             /**
@@ -2191,6 +2450,14 @@ export interface components {
             };
             /** Width */
             width: number | null;
+        };
+        /** MenuItem */
+        MenuItem: {
+            /** Children */
+            children?: components["schemas"]["Link"][];
+            /** Href */
+            href: string;
+            label: components["schemas"]["Text"];
         };
         /** ModerateIn */
         ModerateIn: {
@@ -2264,6 +2531,29 @@ export interface components {
             items: components["schemas"]["CardOut"][];
             /** Next Cursor */
             next_cursor: string | null;
+        };
+        /** PageOut */
+        PageOut: {
+            /** Layouts */
+            layouts: {
+                [key: string]: unknown;
+            };
+            /** Preview */
+            preview: boolean;
+            /** Sections */
+            sections: components["schemas"]["ResolvedSection"][];
+            /** Seo */
+            seo?: {
+                [key: string]: unknown;
+            } | null;
+            /** Template */
+            template: string;
+            /** Title */
+            title?: {
+                [key: string]: unknown;
+            } | null;
+            /** Version */
+            version: number;
         };
         /** Palette */
         Palette: {
@@ -2475,6 +2765,17 @@ export interface components {
             /** Weight Grams */
             weight_grams?: number | null;
         };
+        /** ProductLayout */
+        ProductLayout: {
+            /** Blocks */
+            blocks?: ("title" | "price" | "variants" | "add_to_cart" | "vendor_card" | "delivery" | "description" | "specs" | "questions" | "reviews" | "related")[];
+            /**
+             * Gallery
+             * @default thumbnails_bottom
+             * @enum {string}
+             */
+            gallery: "thumbnails_left" | "thumbnails_bottom" | "grid";
+        };
         /** ProductOut */
         ProductOut: {
             /** Attributes */
@@ -2631,6 +2932,21 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** ResolvedSection */
+        ResolvedSection: {
+            /** Data */
+            data?: {
+                [key: string]: unknown;
+            } | null;
+            /** Id */
+            id: string;
+            /** Settings */
+            settings: {
+                [key: string]: unknown;
+            };
+            /** Type */
+            type: string;
+        };
         /** ReviewDoc */
         ReviewDoc: {
             /** Content Type */
@@ -2707,6 +3023,59 @@ export interface components {
             name: string;
             /** Permissions */
             permissions: string[];
+        };
+        /** Section */
+        Section: {
+            /**
+             * Hidden
+             * @default false
+             */
+            hidden: boolean;
+            /** Id */
+            id: string;
+            /** Settings */
+            settings?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "announcement_bar" | "hero_slider" | "image_banner" | "banner_grid" | "category_grid" | "product_carousel" | "product_grid" | "flash_sale" | "campaign_strip" | "brand_strip" | "top_vendors" | "featured_vendor" | "rich_text" | "image_with_text" | "faq" | "testimonials" | "newsletter" | "trust_badges" | "video_embed" | "spacer";
+        };
+        /** SectionTypeOut */
+        SectionTypeOut: {
+            /** Max Per Page */
+            max_per_page: number;
+            /** Mobile Supported */
+            mobile_supported: boolean;
+            /** Pages */
+            pages: string[];
+            /** Settings Schema */
+            settings_schema: {
+                [key: string]: unknown;
+            };
+            /** Type */
+            type: string;
+            /** Vendor Allowed */
+            vendor_allowed: boolean;
+        };
+        /** Seo */
+        Seo: {
+            /**
+             * @default {
+             *       "bn": "",
+             *       "en": ""
+             *     }
+             */
+            description: components["schemas"]["Text"];
+            /**
+             * @default {
+             *       "bn": "",
+             *       "en": ""
+             *     }
+             */
+            title: components["schemas"]["Text"];
         };
         /** SettingsOut */
         SettingsOut: {
@@ -2846,6 +3215,39 @@ export interface components {
             /** Tenant Id */
             tenant_id: string;
         };
+        /** StorePageOut */
+        StorePageOut: {
+            /** Accent */
+            accent: string | null;
+            /** Banner Url */
+            banner_url: string | null;
+            /** Products */
+            products: {
+                [key: string]: unknown;
+            }[];
+            /** Sections */
+            sections: components["schemas"]["ResolvedSection"][];
+            /** Vendor */
+            vendor: {
+                [key: string]: unknown;
+            };
+        };
+        /** StoreThemeIn */
+        StoreThemeIn: {
+            /** Accent */
+            accent?: string | null;
+            /** Banner Url */
+            banner_url?: string | null;
+            /** Sections */
+            sections?: components["schemas"]["Section"][];
+        };
+        /** StoreThemeOut */
+        StoreThemeOut: {
+            draft: components["schemas"]["StoreThemeIn"];
+            published: components["schemas"]["StoreThemeIn"] | null;
+            /** Published At */
+            published_at: string | null;
+        };
         /** StorefrontOut */
         StorefrontOut: {
             /** Bio */
@@ -2888,6 +3290,43 @@ export interface components {
             plan_code?: string | null;
             /** Price Override */
             price_override?: number | string | null;
+        };
+        /** Templates */
+        Templates: {
+            /** Category Top */
+            category_top?: components["schemas"]["Section"][];
+            /**
+             * @default {
+             *       "columns_desktop": 4,
+             *       "columns_mobile": 2,
+             *       "default_sort": "newest",
+             *       "filters": "sidebar"
+             *     }
+             */
+            collection_layout: components["schemas"]["CollectionLayout"];
+            /** Home */
+            home?: components["schemas"]["Section"][];
+            /** Product Bottom */
+            product_bottom?: components["schemas"]["Section"][];
+            /**
+             * @default {
+             *       "blocks": [
+             *         "title",
+             *         "price",
+             *         "variants",
+             *         "add_to_cart",
+             *         "vendor_card",
+             *         "delivery",
+             *         "description",
+             *         "specs",
+             *         "questions",
+             *         "reviews",
+             *         "related"
+             *       ],
+             *       "gallery": "thumbnails_bottom"
+             *     }
+             */
+            product_layout: components["schemas"]["ProductLayout"];
         };
         /** TenantCreate */
         TenantCreate: {
@@ -2984,8 +3423,25 @@ export interface components {
             store_mode?: ("single" | "multi") | null;
         };
         /**
+         * Text
+         * @description Bilingual short text. Plain text only; rendered escaped.
+         */
+        Text: {
+            /**
+             * Bn
+             * @default
+             */
+            bn: string;
+            /**
+             * En
+             * @default
+             */
+            en: string;
+        };
+        /**
          * ThemeDocument
-         * @description Phase 4 scope: tokens + brand. Phase 8 adds layouts, templates, pages, custom_css.
+         * @description v1: tokens + brand (Phase 4). v2 adds layouts, templates, custom pages, custom CSS (Phase 8).
+         *     v1 documents validate unchanged; missing v2 parts take defaults.
          */
         ThemeDocument: {
             /**
@@ -2994,14 +3450,71 @@ export interface components {
              *     }
              */
             brand: components["schemas"]["Brand"];
+            /**
+             * Custom Css
+             * @default
+             */
+            custom_css: string;
+            /**
+             * @default {
+             *       "footer": {
+             *         "columns": [],
+             *         "copyright": {
+             *           "bn": "",
+             *           "en": ""
+             *         },
+             *         "show_payment_icons": true,
+             *         "social": {}
+             *       },
+             *       "header": {
+             *         "logo_position": "left",
+             *         "menu": [],
+             *         "show_search": true,
+             *         "sticky": true
+             *       }
+             *     }
+             */
+            layouts: components["schemas"]["Layouts"];
+            /** Pages */
+            pages?: components["schemas"]["CustomPage"][];
             /** Preset */
             preset: string;
             /**
              * Schema Version
-             * @default 1
-             * @constant
+             * @default 2
+             * @enum {integer}
              */
-            schema_version: 1;
+            schema_version: 1 | 2;
+            /**
+             * @default {
+             *       "category_top": [],
+             *       "collection_layout": {
+             *         "columns_desktop": 4,
+             *         "columns_mobile": 2,
+             *         "default_sort": "newest",
+             *         "filters": "sidebar"
+             *       },
+             *       "home": [],
+             *       "product_bottom": [],
+             *       "product_layout": {
+             *         "blocks": [
+             *           "title",
+             *           "price",
+             *           "variants",
+             *           "add_to_cart",
+             *           "vendor_card",
+             *           "delivery",
+             *           "description",
+             *           "specs",
+             *           "questions",
+             *           "reviews",
+             *           "related"
+             *         ],
+             *         "gallery": "thumbnails_bottom"
+             *       }
+             *     }
+             */
+            templates: components["schemas"]["Templates"];
             tokens: components["schemas"]["Tokens"];
         };
         /** TokenOut */
@@ -4992,6 +5505,103 @@ export interface operations {
             };
         };
     };
+    custom_css_api_v1_storefront_custom_css_get: {
+        parameters: {
+            query?: {
+                preview?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    page_api_v1_storefront_page_get: {
+        parameters: {
+            query?: {
+                template?: "home" | "category_top" | "product_bottom" | "custom";
+                slug?: string | null;
+                preview?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    store_page_api_v1_storefront_stores__slug__get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StorePageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_theme_api_v1_theme_get: {
         parameters: {
             query?: {
@@ -5039,6 +5649,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PresetOut"][];
+                };
+            };
+        };
+    };
+    section_registry_api_v1_theme_sections_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SectionTypeOut"][];
                 };
             };
         };
@@ -5840,6 +6470,79 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_store_theme_api_v1_vendor_store_theme_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoreThemeOut"];
+                };
+            };
+        };
+    };
+    put_draft_api_v1_vendor_store_theme_draft_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StoreThemeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoreThemeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_api_v1_vendor_store_theme_publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoreThemeOut"];
                 };
             };
         };

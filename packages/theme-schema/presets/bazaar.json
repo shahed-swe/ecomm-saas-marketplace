@@ -5,8 +5,105 @@
     "logo_height": 40,
     "logo_url": null
   },
+  "custom_css": "",
+  "layouts": {
+    "footer": {
+      "columns": [],
+      "copyright": {
+        "bn": "",
+        "en": ""
+      },
+      "show_payment_icons": true,
+      "social": {}
+    },
+    "header": {
+      "logo_position": "left",
+      "menu": [],
+      "show_search": true,
+      "sticky": true
+    }
+  },
+  "pages": [],
   "preset": "bazaar",
-  "schema_version": 1,
+  "schema_version": 2,
+  "templates": {
+    "category_top": [],
+    "collection_layout": {
+      "columns_desktop": 4,
+      "columns_mobile": 2,
+      "default_sort": "newest",
+      "filters": "sidebar"
+    },
+    "home": [
+      {
+        "hidden": false,
+        "id": "starterhero1",
+        "settings": {
+          "align": "center",
+          "body": {
+            "bn": "\u09aa\u09cd\u09b0\u09a4\u09bf \u09b8\u09aa\u09cd\u09a4\u09be\u09b9\u09c7 \u09a8\u09a4\u09c1\u09a8 \u09aa\u09a3\u09cd\u09af\u0964",
+            "en": "Fresh arrivals every week."
+          },
+          "heading": {
+            "bn": "\u0986\u09ae\u09be\u09a6\u09c7\u09b0 \u09a6\u09cb\u0995\u09be\u09a8\u09c7 \u09b8\u09cd\u09ac\u09be\u0997\u09a4\u09ae",
+            "en": "Welcome to our store"
+          }
+        },
+        "type": "rich_text"
+      },
+      {
+        "hidden": false,
+        "id": "starternew01",
+        "settings": {
+          "columns": 4,
+          "query": {
+            "brand_slug": null,
+            "category_slug": null,
+            "limit": 8,
+            "product_ids": [],
+            "source": "newest",
+            "store_slug": null
+          },
+          "title": {
+            "bn": "\u09a8\u09a4\u09c1\u09a8 \u098f\u09b8\u09c7\u099b\u09c7",
+            "en": "New arrivals"
+          },
+          "view_all": null
+        },
+        "type": "product_grid"
+      },
+      {
+        "hidden": false,
+        "id": "startertrust",
+        "settings": {
+          "badges": [
+            "cod",
+            "easy_return",
+            "original",
+            "support"
+          ]
+        },
+        "type": "trust_badges"
+      }
+    ],
+    "product_bottom": [],
+    "product_layout": {
+      "blocks": [
+        "title",
+        "price",
+        "variants",
+        "add_to_cart",
+        "vendor_card",
+        "delivery",
+        "description",
+        "specs",
+        "questions",
+        "reviews",
+        "related"
+      ],
+      "gallery": "thumbnails_bottom"
+    }
+  },
   "tokens": {
     "button_style": "pill",
     "colors": {

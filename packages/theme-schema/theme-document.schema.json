@@ -53,6 +53,274 @@
       "title": "Brand",
       "type": "object"
     },
+    "CollectionLayout": {
+      "additionalProperties": false,
+      "properties": {
+        "columns_desktop": {
+          "default": 4,
+          "enum": [
+            3,
+            4,
+            5
+          ],
+          "title": "Columns Desktop",
+          "type": "integer"
+        },
+        "columns_mobile": {
+          "default": 2,
+          "enum": [
+            1,
+            2
+          ],
+          "title": "Columns Mobile",
+          "type": "integer"
+        },
+        "default_sort": {
+          "default": "newest",
+          "enum": [
+            "newest",
+            "price_asc",
+            "price_desc",
+            "popular"
+          ],
+          "title": "Default Sort",
+          "type": "string"
+        },
+        "filters": {
+          "default": "sidebar",
+          "enum": [
+            "sidebar",
+            "drawer"
+          ],
+          "title": "Filters",
+          "type": "string"
+        }
+      },
+      "title": "CollectionLayout",
+      "type": "object"
+    },
+    "CustomPage": {
+      "additionalProperties": false,
+      "properties": {
+        "published": {
+          "default": true,
+          "title": "Published",
+          "type": "boolean"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/Section"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "seo": {
+          "$ref": "#/$defs/Seo",
+          "default": {
+            "description": {
+              "bn": "",
+              "en": ""
+            },
+            "title": {
+              "bn": "",
+              "en": ""
+            }
+          }
+        },
+        "slug": {
+          "pattern": "^[a-z0-9](?:[a-z0-9-]{0,58}[a-z0-9])?$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "slug",
+        "title"
+      ],
+      "title": "CustomPage",
+      "type": "object"
+    },
+    "Footer": {
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/FooterColumn"
+          },
+          "maxItems": 4,
+          "title": "Columns",
+          "type": "array"
+        },
+        "copyright": {
+          "$ref": "#/$defs/Text",
+          "default": {
+            "bn": "",
+            "en": ""
+          }
+        },
+        "show_payment_icons": {
+          "default": true,
+          "title": "Show Payment Icons",
+          "type": "boolean"
+        },
+        "social": {
+          "additionalProperties": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "facebook",
+              "instagram",
+              "youtube",
+              "tiktok",
+              "linkedin"
+            ]
+          },
+          "title": "Social",
+          "type": "object"
+        }
+      },
+      "title": "Footer",
+      "type": "object"
+    },
+    "FooterColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "links": {
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "maxItems": 10,
+          "title": "Links",
+          "type": "array"
+        },
+        "title": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "FooterColumn",
+      "type": "object"
+    },
+    "Header": {
+      "additionalProperties": false,
+      "properties": {
+        "logo_position": {
+          "default": "left",
+          "enum": [
+            "left",
+            "center"
+          ],
+          "title": "Logo Position",
+          "type": "string"
+        },
+        "menu": {
+          "items": {
+            "$ref": "#/$defs/MenuItem"
+          },
+          "maxItems": 12,
+          "title": "Menu",
+          "type": "array"
+        },
+        "show_search": {
+          "default": true,
+          "title": "Show Search",
+          "type": "boolean"
+        },
+        "sticky": {
+          "default": true,
+          "title": "Sticky",
+          "type": "boolean"
+        }
+      },
+      "title": "Header",
+      "type": "object"
+    },
+    "Layouts": {
+      "additionalProperties": false,
+      "properties": {
+        "footer": {
+          "$ref": "#/$defs/Footer",
+          "default": {
+            "columns": [],
+            "copyright": {
+              "bn": "",
+              "en": ""
+            },
+            "show_payment_icons": true,
+            "social": {}
+          }
+        },
+        "header": {
+          "$ref": "#/$defs/Header",
+          "default": {
+            "logo_position": "left",
+            "menu": [],
+            "show_search": true,
+            "sticky": true
+          }
+        }
+      },
+      "title": "Layouts",
+      "type": "object"
+    },
+    "Link": {
+      "additionalProperties": false,
+      "properties": {
+        "href": {
+          "maxLength": 300,
+          "title": "Href",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Text",
+          "default": {
+            "bn": "",
+            "en": ""
+          }
+        }
+      },
+      "required": [
+        "href"
+      ],
+      "title": "Link",
+      "type": "object"
+    },
+    "MenuItem": {
+      "additionalProperties": false,
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "maxItems": 12,
+          "title": "Children",
+          "type": "array"
+        },
+        "href": {
+          "maxLength": 300,
+          "title": "Href",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ],
+      "title": "MenuItem",
+      "type": "object"
+    },
     "Palette": {
       "additionalProperties": false,
       "properties": {
@@ -126,6 +394,194 @@
         "success"
       ],
       "title": "Palette",
+      "type": "object"
+    },
+    "ProductLayout": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "enum": [
+              "title",
+              "price",
+              "variants",
+              "add_to_cart",
+              "vendor_card",
+              "delivery",
+              "description",
+              "specs",
+              "questions",
+              "reviews",
+              "related"
+            ],
+            "type": "string"
+          },
+          "maxItems": 11,
+          "minItems": 3,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "gallery": {
+          "default": "thumbnails_bottom",
+          "enum": [
+            "thumbnails_left",
+            "thumbnails_bottom",
+            "grid"
+          ],
+          "title": "Gallery",
+          "type": "string"
+        }
+      },
+      "title": "ProductLayout",
+      "type": "object"
+    },
+    "Section": {
+      "additionalProperties": false,
+      "properties": {
+        "hidden": {
+          "default": false,
+          "title": "Hidden",
+          "type": "boolean"
+        },
+        "id": {
+          "pattern": "^[a-z0-9]{6,24}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "settings": {
+          "additionalProperties": true,
+          "title": "Settings",
+          "type": "object"
+        },
+        "type": {
+          "enum": [
+            "announcement_bar",
+            "hero_slider",
+            "image_banner",
+            "banner_grid",
+            "category_grid",
+            "product_carousel",
+            "product_grid",
+            "flash_sale",
+            "campaign_strip",
+            "brand_strip",
+            "top_vendors",
+            "featured_vendor",
+            "rich_text",
+            "image_with_text",
+            "faq",
+            "testimonials",
+            "newsletter",
+            "trust_badges",
+            "video_embed",
+            "spacer"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Section",
+      "type": "object"
+    },
+    "Seo": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "$ref": "#/$defs/Text",
+          "default": {
+            "bn": "",
+            "en": ""
+          }
+        },
+        "title": {
+          "$ref": "#/$defs/Text",
+          "default": {
+            "bn": "",
+            "en": ""
+          }
+        }
+      },
+      "title": "Seo",
+      "type": "object"
+    },
+    "Templates": {
+      "additionalProperties": false,
+      "properties": {
+        "category_top": {
+          "items": {
+            "$ref": "#/$defs/Section"
+          },
+          "title": "Category Top",
+          "type": "array"
+        },
+        "collection_layout": {
+          "$ref": "#/$defs/CollectionLayout",
+          "default": {
+            "columns_desktop": 4,
+            "columns_mobile": 2,
+            "default_sort": "newest",
+            "filters": "sidebar"
+          }
+        },
+        "home": {
+          "items": {
+            "$ref": "#/$defs/Section"
+          },
+          "title": "Home",
+          "type": "array"
+        },
+        "product_bottom": {
+          "items": {
+            "$ref": "#/$defs/Section"
+          },
+          "title": "Product Bottom",
+          "type": "array"
+        },
+        "product_layout": {
+          "$ref": "#/$defs/ProductLayout",
+          "default": {
+            "blocks": [
+              "title",
+              "price",
+              "variants",
+              "add_to_cart",
+              "vendor_card",
+              "delivery",
+              "description",
+              "specs",
+              "questions",
+              "reviews",
+              "related"
+            ],
+            "gallery": "thumbnails_bottom"
+          }
+        }
+      },
+      "title": "Templates",
+      "type": "object"
+    },
+    "Text": {
+      "additionalProperties": false,
+      "description": "Bilingual short text. Plain text only; rendered escaped.",
+      "properties": {
+        "bn": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Bn",
+          "type": "string"
+        },
+        "en": {
+          "default": "",
+          "maxLength": 300,
+          "title": "En",
+          "type": "string"
+        }
+      },
+      "title": "Text",
       "type": "object"
     },
     "Tokens": {
@@ -203,7 +659,7 @@
     }
   },
   "additionalProperties": false,
-  "description": "Phase 4 scope: tokens + brand. Phase 8 adds layouts, templates, pages, custom_css.",
+  "description": "v1: tokens + brand (Phase 4). v2 adds layouts, templates, custom pages, custom CSS (Phase 8).\nv1 documents validate unchanged; missing v2 parts take defaults.",
   "properties": {
     "brand": {
       "$ref": "#/$defs/Brand",
@@ -214,16 +670,83 @@
         "logo_url": null
       }
     },
+    "custom_css": {
+      "default": "",
+      "maxLength": 50000,
+      "title": "Custom Css",
+      "type": "string"
+    },
+    "layouts": {
+      "$ref": "#/$defs/Layouts",
+      "default": {
+        "footer": {
+          "columns": [],
+          "copyright": {
+            "bn": "",
+            "en": ""
+          },
+          "show_payment_icons": true,
+          "social": {}
+        },
+        "header": {
+          "logo_position": "left",
+          "menu": [],
+          "show_search": true,
+          "sticky": true
+        }
+      }
+    },
+    "pages": {
+      "items": {
+        "$ref": "#/$defs/CustomPage"
+      },
+      "maxItems": 30,
+      "title": "Pages",
+      "type": "array"
+    },
     "preset": {
       "pattern": "^[a-z][a-z0-9-]{1,40}$",
       "title": "Preset",
       "type": "string"
     },
     "schema_version": {
-      "const": 1,
-      "default": 1,
+      "default": 2,
+      "enum": [
+        1,
+        2
+      ],
       "title": "Schema Version",
       "type": "integer"
+    },
+    "templates": {
+      "$ref": "#/$defs/Templates",
+      "default": {
+        "category_top": [],
+        "collection_layout": {
+          "columns_desktop": 4,
+          "columns_mobile": 2,
+          "default_sort": "newest",
+          "filters": "sidebar"
+        },
+        "home": [],
+        "product_bottom": [],
+        "product_layout": {
+          "blocks": [
+            "title",
+            "price",
+            "variants",
+            "add_to_cart",
+            "vendor_card",
+            "delivery",
+            "description",
+            "specs",
+            "questions",
+            "reviews",
+            "related"
+          ],
+          "gallery": "thumbnails_bottom"
+        }
+      }
     },
     "tokens": {
       "$ref": "#/$defs/Tokens"

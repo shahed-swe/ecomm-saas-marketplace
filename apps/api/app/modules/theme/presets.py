@@ -106,6 +106,33 @@ PRESETS: dict[str, dict] = {
 }
 
 
+STARTER_HOME = [
+    {
+        "id": "starterhero1",
+        "type": "rich_text",
+        "settings": {
+            "heading": {"en": "Welcome to our store", "bn": "আমাদের দোকানে স্বাগতম"},
+            "body": {"en": "Fresh arrivals every week.", "bn": "প্রতি সপ্তাহে নতুন পণ্য।"},
+            "align": "center",
+        },
+    },
+    {
+        "id": "starternew01",
+        "type": "product_grid",
+        "settings": {
+            "title": {"en": "New arrivals", "bn": "নতুন এসেছে"},
+            "query": {"source": "newest", "limit": 8},
+            "columns": 4,
+        },
+    },
+    {
+        "id": "startertrust",
+        "type": "trust_badges",
+        "settings": {"badges": ["cod", "easy_return", "original", "support"]},
+    },
+]
+
+
 def preset_document(key: str) -> ThemeDocument:
     p = PRESETS[key]
-    return ThemeDocument(preset=key, tokens=p["tokens"])
+    return ThemeDocument(preset=key, tokens=p["tokens"], templates={"home": STARTER_HOME})

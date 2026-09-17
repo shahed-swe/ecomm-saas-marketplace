@@ -22,9 +22,13 @@ class ContrastError(AppError):
 
 
 def validate_document(doc: ThemeDocument, tenant_id: str) -> None:
+    """Every uploaded-image path anywhere in the document must belong to this tenant."""
+    import re
+
     prefix = f"/media/t/{tenant_id}/"
-    for url in (doc.brand.logo_url, doc.brand.logo_dark_url, doc.brand.favicon_url):
-        if url and not url.startswith(prefix):
+    raw = doc.model_dump_json()
+    for url in re.findall(r'"(/media/t/[^"]+)"', raw):
+        if not url.startswith(prefix):
             raise AppError("Image does not belong to this store", status=422, code="invalid_asset")
 
 
@@ -85,8 +89,21 @@ async def _insert_version(db, tenant_id: str, doc: dict, actor: str, note: str |
     return dict(row)
 
 
+MAX_DOCUMENT_BYTES = 64_000
+
+
 async def save_draft(db, tenant_id: str, doc: ThemeDocument, actor: str) -> None:
     validate_document(doc, tenant_id)
+    if len(doc.model_dump_json().encode()) > MAX_DOCUMENT_BYTES:
+        raise AppError(
+            "Theme is too large; remove some sections", status=422, code="theme_too_large"
+        )
+    if doc.custom_css:
+        from app.modules.billing.service import require_feature
+        from app.modules.theme.css import sanitize_css
+
+        await require_feature(db, tenant_id, "custom_css")
+        sanitize_css(doc.custom_css, tenant_id)
     await ensure_theme(db, tenant_id, actor)
     await db.execute(
         text(
@@ -101,8 +118,10 @@ async def apply_preset(db, tenant_id: str, key: str, actor: str) -> ThemeDocumen
     if key not in PRESETS:
         raise NotFound("Preset not found")
     current = await ensure_theme(db, tenant_id, actor)
-    doc = preset_document(key)
-    doc.brand = ThemeDocument.model_validate(current["draft_document"]).brand  # keep the logo
+    # A preset changes the look only: brand, layouts, sections, pages and CSS are kept.
+    doc = ThemeDocument.model_validate(current["draft_document"])
+    fresh = preset_document(key)
+    doc.preset, doc.tokens, doc.schema_version = key, fresh.tokens, 2
     await save_draft(db, tenant_id, doc, actor)
     return doc
 

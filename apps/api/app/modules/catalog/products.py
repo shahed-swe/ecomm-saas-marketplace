@@ -949,6 +949,14 @@ VISIBLE = """p.tenant_id = :t AND p.status = 'active' AND p.moderation_status = 
              AND v.status = 'approved'"""
 
 
+CARD_COLUMNS_SQL = f"""SELECT p.id, p.slug, p.title_en, p.title_bn, p.min_price, p.max_price, p.in_stock, p.vendor_id,
+       v.display_name AS vendor_name,
+       (SELECT ma.renditions FROM product_media pm JOIN media_assets ma ON ma.id = pm.asset_id AND ma.tenant_id = pm.tenant_id
+         WHERE pm.tenant_id = p.tenant_id AND pm.product_id = p.id AND ma.status = 'ready' ORDER BY pm.position LIMIT 1) AS image
+FROM products p JOIN vendors v ON v.id = p.vendor_id AND v.tenant_id = p.tenant_id
+WHERE {VISIBLE}"""
+
+
 class CardOut(BaseModel):
     id: uuid.UUID
     slug: str

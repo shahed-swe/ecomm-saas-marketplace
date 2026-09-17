@@ -7,7 +7,9 @@ validated so theme data can never become CSS/HTML injection.
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from app.modules.theme.sections import CustomPage, Layouts, Templates
 
 RGB_PATTERN = r"^(25[0-5]|2[0-4]\d|1?\d?\d) (25[0-5]|2[0-4]\d|1?\d?\d) (25[0-5]|2[0-4]\d|1?\d?\d)$"
 
@@ -69,11 +71,23 @@ class Brand(BaseModel):
 
 
 class ThemeDocument(BaseModel):
-    """Phase 4 scope: tokens + brand. Phase 8 adds layouts, templates, pages, custom_css."""
+    """v1: tokens + brand (Phase 4). v2 adds layouts, templates, custom pages, custom CSS (Phase 8).
+    v1 documents validate unchanged; missing v2 parts take defaults."""
 
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: Literal[1] = 1
+    schema_version: Literal[1, 2] = 2
     preset: str = Field(pattern=r"^[a-z][a-z0-9-]{1,40}$")
     tokens: Tokens
     brand: Brand = Brand()
+    layouts: Layouts = Layouts()
+    templates: Templates = Templates()
+    pages: list[CustomPage] = Field(default_factory=list, max_length=30)
+    custom_css: str = Field(default="", max_length=50_000)
+
+    @model_validator(mode="after")
+    def _unique_pages(self):
+        slugs = [p.slug for p in self.pages]
+        if len(set(slugs)) != len(slugs):
+            raise ValueError("page slugs must be unique")
+        return self

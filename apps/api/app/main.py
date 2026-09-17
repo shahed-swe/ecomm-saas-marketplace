@@ -28,6 +28,8 @@ from app.modules.platform.router import router as platform_router
 from app.modules.settings.router import router as settings_router
 from app.modules.store.router import router as store_router
 from app.modules.theme import router as theme
+from app.modules.theme import storefront as theme_storefront
+from app.modules.theme import vendor_store
 from app.modules.vendors import onboarding as vendor_onboarding
 from app.modules.vendors.router import admin_router as admin_vendors_router
 from app.modules.vendors.router import vendor_router
@@ -96,6 +98,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         store_router,
         theme.public,
         theme.admin,
+        theme_storefront.router,
+        vendor_store.vendor,
+        vendor_store.public,
         settings_router,
         billing.admin,
         billing.platform,
