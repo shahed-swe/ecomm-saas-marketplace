@@ -238,6 +238,41 @@
         "title": "ChecklistItem",
         "type": "object"
       },
+      "CommissionIn": {
+        "properties": {
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Rate"
+          }
+        },
+        "required": [
+          "rate"
+        ],
+        "title": "CommissionIn",
+        "type": "object"
+      },
       "CycleIn": {
         "properties": {
           "today": {
@@ -269,6 +304,128 @@
           }
         },
         "title": "CycleIn",
+        "type": "object"
+      },
+      "DocumentIn": {
+        "properties": {
+          "doc_type": {
+            "enum": [
+              "trade_licence",
+              "nid",
+              "tin",
+              "bin",
+              "bank_proof",
+              "other"
+            ],
+            "title": "Doc Type",
+            "type": "string"
+          },
+          "document_number": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Number"
+          },
+          "storage_key": {
+            "maxLength": 300,
+            "title": "Storage Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_type",
+          "storage_key"
+        ],
+        "title": "DocumentIn",
+        "type": "object"
+      },
+      "DocumentOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "doc_type": {
+            "title": "Doc Type",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "number_last4": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number Last4"
+          },
+          "rejection_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rejection Reason"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "doc_type",
+          "status",
+          "number_last4",
+          "rejection_reason",
+          "created_at"
+        ],
+        "title": "DocumentOut",
+        "type": "object"
+      },
+      "DocumentReviewIn": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "enum": [
+              "approved",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "DocumentReviewIn",
         "type": "object"
       },
       "DomainIn": {
@@ -369,6 +526,99 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "InviteIn": {
+        "properties": {
+          "commission_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commission Expires At"
+          },
+          "commission_rate": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commission Rate"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "max_uses": {
+            "default": 1,
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Max Uses",
+            "type": "integer"
+          },
+          "tier": {
+            "default": "standard",
+            "enum": [
+              "launch",
+              "standard",
+              "premium"
+            ],
+            "title": "Tier",
+            "type": "string"
+          }
+        },
+        "title": "InviteIn",
+        "type": "object"
+      },
+      "InviteOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "max_uses": {
+            "title": "Max Uses",
+            "type": "integer"
+          },
+          "tier": {
+            "title": "Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "tier",
+          "max_uses"
+        ],
+        "title": "InviteOut",
         "type": "object"
       },
       "InvoiceLineOut": {
@@ -641,27 +891,6 @@
         "title": "MeOut",
         "type": "object"
       },
-      "OnboardingOut": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/ChecklistItem"
-            },
-            "title": "Items",
-            "type": "array"
-          },
-          "ready_to_launch": {
-            "title": "Ready To Launch",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "items",
-          "ready_to_launch"
-        ],
-        "title": "OnboardingOut",
-        "type": "object"
-      },
       "OtpAccepted": {
         "properties": {
           "status": {
@@ -800,6 +1029,152 @@
         "title": "Palette",
         "type": "object"
       },
+      "PayoutMethodIn": {
+        "properties": {
+          "account_name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Account Name",
+            "type": "string"
+          },
+          "account_number": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "minLength": 6,
+                "pattern": "^[0-9 -]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Number"
+          },
+          "bank_name": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Name"
+          },
+          "bkash_number": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bkash Number"
+          },
+          "branch_name": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Branch Name"
+          },
+          "method": {
+            "enum": [
+              "bank",
+              "bkash"
+            ],
+            "title": "Method",
+            "type": "string"
+          },
+          "routing_number": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{9}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Routing Number"
+          }
+        },
+        "required": [
+          "method",
+          "account_name"
+        ],
+        "title": "PayoutMethodIn",
+        "type": "object"
+      },
+      "PayoutMethodOut": {
+        "properties": {
+          "account_name": {
+            "title": "Account Name",
+            "type": "string"
+          },
+          "bank_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Name"
+          },
+          "branch_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Branch Name"
+          },
+          "last4": {
+            "title": "Last4",
+            "type": "string"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "on_hold_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On Hold Until"
+          }
+        },
+        "required": [
+          "method",
+          "account_name",
+          "last4",
+          "bank_name",
+          "branch_name",
+          "on_hold_until"
+        ],
+        "title": "PayoutMethodOut",
+        "type": "object"
+      },
       "PlanOut": {
         "properties": {
           "code": {
@@ -934,6 +1309,51 @@
         "title": "PreviewOut",
         "type": "object"
       },
+      "ProfilePatch": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "legal_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Name"
+          }
+        },
+        "title": "ProfilePatch",
+        "type": "object"
+      },
       "PublishIn": {
         "properties": {
           "note": {
@@ -972,6 +1392,38 @@
           "document"
         ],
         "title": "PublishedTheme",
+        "type": "object"
+      },
+      "ReauthOut": {
+        "properties": {
+          "expires_in": {
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "reauth_token": {
+            "title": "Reauth Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reauth_token",
+          "expires_in"
+        ],
+        "title": "ReauthOut",
+        "type": "object"
+      },
+      "ReauthVerifyIn": {
+        "properties": {
+          "code": {
+            "pattern": "^\\d{6}$",
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "ReauthVerifyIn",
         "type": "object"
       },
       "RefreshIn": {
@@ -1022,6 +1474,198 @@
           "password"
         ],
         "title": "RegisterIn",
+        "type": "object"
+      },
+      "ReviewDoc": {
+        "properties": {
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "doc_type": {
+            "title": "Doc Type",
+            "type": "string"
+          },
+          "duplicate_of_vendor_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Duplicate Of Vendor Ids",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "number_last4": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number Last4"
+          },
+          "rejection_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rejection Reason"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "view_url": {
+            "title": "View Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "doc_type",
+          "status",
+          "number_last4",
+          "rejection_reason",
+          "created_at",
+          "view_url",
+          "content_type",
+          "duplicate_of_vendor_ids"
+        ],
+        "title": "ReviewDoc",
+        "type": "object"
+      },
+      "ReviewOut": {
+        "properties": {
+          "business_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Type"
+          },
+          "contact_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewDoc"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "duplicate_signals": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Duplicate Signals",
+            "type": "array"
+          },
+          "events": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "legal_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legal Name"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "tier": {
+            "title": "Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "display_name",
+          "legal_name",
+          "business_type",
+          "contact_email",
+          "contact_phone",
+          "district",
+          "status",
+          "tier",
+          "documents",
+          "duplicate_signals",
+          "events"
+        ],
+        "title": "ReviewOut",
         "type": "object"
       },
       "RoleOut": {
@@ -1174,6 +1818,117 @@
           }
         },
         "title": "SettingsPatch",
+        "type": "object"
+      },
+      "SignupIn": {
+        "properties": {
+          "accept_agreement": {
+            "title": "Accept Agreement",
+            "type": "boolean"
+          },
+          "business_type": {
+            "enum": [
+              "individual",
+              "proprietorship",
+              "partnership",
+              "company"
+            ],
+            "title": "Business Type",
+            "type": "string"
+          },
+          "contact_phone": {
+            "maxLength": 20,
+            "title": "Contact Phone",
+            "type": "string"
+          },
+          "display_name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "district": {
+            "maxLength": 60,
+            "minLength": 2,
+            "title": "District",
+            "type": "string"
+          },
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          },
+          "invite_code": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invite Code"
+          },
+          "legal_name": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Legal Name",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 200,
+            "minLength": 10,
+            "title": "Password",
+            "type": "string"
+          },
+          "slug": {
+            "pattern": "^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$",
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name",
+          "slug",
+          "legal_name",
+          "business_type",
+          "contact_phone",
+          "district",
+          "email",
+          "password",
+          "accept_agreement"
+        ],
+        "title": "SignupIn",
+        "type": "object"
+      },
+      "SignupOut": {
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "expires_in": {
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "vendor_id": {
+            "format": "uuid",
+            "title": "Vendor Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "vendor_id",
+          "status",
+          "access_token",
+          "expires_in"
+        ],
+        "title": "SignupOut",
         "type": "object"
       },
       "StaffInviteIn": {
@@ -1909,6 +2664,38 @@
         "title": "Tokens",
         "type": "object"
       },
+      "TransitionIn": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "to": {
+            "enum": [
+              "changes_requested",
+              "approved",
+              "rejected",
+              "suspended",
+              "closed"
+            ],
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "to"
+        ],
+        "title": "TransitionIn",
+        "type": "object"
+      },
       "UploadOut": {
         "properties": {
           "fallback_url": {
@@ -1935,6 +2722,73 @@
           "height"
         ],
         "title": "UploadOut",
+        "type": "object"
+      },
+      "UploadUrlIn": {
+        "properties": {
+          "byte_size": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 10485760.0,
+            "title": "Byte Size",
+            "type": "integer"
+          },
+          "content_type": {
+            "title": "Content Type",
+            "type": "string"
+          },
+          "doc_type": {
+            "enum": [
+              "trade_licence",
+              "nid",
+              "tin",
+              "bin",
+              "bank_proof",
+              "other"
+            ],
+            "title": "Doc Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_type",
+          "content_type",
+          "byte_size"
+        ],
+        "title": "UploadUrlIn",
+        "type": "object"
+      },
+      "UploadUrlOut": {
+        "properties": {
+          "expires_in": {
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "headers": {
+            "additionalProperties": true,
+            "title": "Headers",
+            "type": "object"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "storage_key": {
+            "title": "Storage Key",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "method",
+          "headers",
+          "storage_key",
+          "expires_in"
+        ],
+        "title": "UploadUrlOut",
         "type": "object"
       },
       "ValidationError": {
@@ -2200,6 +3054,81 @@
           "is_published"
         ],
         "title": "VersionOut",
+        "type": "object"
+      },
+      "app__modules__settings__router__OnboardingOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "ready_to_launch": {
+            "title": "Ready To Launch",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items",
+          "ready_to_launch"
+        ],
+        "title": "OnboardingOut",
+        "type": "object"
+      },
+      "app__modules__vendors__onboarding__OnboardingOut": {
+        "properties": {
+          "can_submit": {
+            "title": "Can Submit",
+            "type": "boolean"
+          },
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentOut"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "missing_documents": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Documents",
+            "type": "array"
+          },
+          "required_documents": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Documents",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason"
+          }
+        },
+        "required": [
+          "status",
+          "required_documents",
+          "missing_documents",
+          "documents",
+          "can_submit",
+          "status_reason"
+        ],
+        "title": "OnboardingOut",
         "type": "object"
       }
     }
@@ -2554,7 +3483,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OnboardingOut"
+                  "$ref": "#/components/schemas/app__modules__settings__router__OnboardingOut"
                 }
               }
             },
@@ -2564,6 +3493,47 @@
         "summary": "Onboarding",
         "tags": [
           "admin:settings"
+        ]
+      }
+    },
+    "/api/v1/admin/payout-holds/{hold_id}/release": {
+      "post": {
+        "operationId": "release_hold_api_v1_admin_payout_holds__hold_id__release_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hold_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Hold Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Release Hold",
+        "tags": [
+          "admin:vendor-review"
         ]
       }
     },
@@ -3107,6 +4077,100 @@
         ]
       }
     },
+    "/api/v1/admin/vendor-documents/{document_id}": {
+      "patch": {
+        "operationId": "review_document_api_v1_admin_vendor_documents__document_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Document",
+        "tags": [
+          "admin:vendor-review"
+        ]
+      }
+    },
+    "/api/v1/admin/vendor-invites": {
+      "post": {
+        "operationId": "create_invite_api_v1_admin_vendor_invites_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InviteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Invite",
+        "tags": [
+          "admin:vendor-review"
+        ]
+      }
+    },
     "/api/v1/admin/vendors": {
       "get": {
         "operationId": "list_vendors_api_v1_admin_vendors_get",
@@ -3210,6 +4274,151 @@
         "summary": "Get Vendor",
         "tags": [
           "admin:vendors"
+        ]
+      }
+    },
+    "/api/v1/admin/vendors/{vendor_id}/commission": {
+      "post": {
+        "operationId": "set_commission_api_v1_admin_vendors__vendor_id__commission_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vendor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Vendor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommissionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Commission",
+        "tags": [
+          "admin:vendor-review"
+        ]
+      }
+    },
+    "/api/v1/admin/vendors/{vendor_id}/review": {
+      "get": {
+        "operationId": "review_api_v1_admin_vendors__vendor_id__review_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vendor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Vendor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review",
+        "tags": [
+          "admin:vendor-review"
+        ]
+      }
+    },
+    "/api/v1/admin/vendors/{vendor_id}/transition": {
+      "post": {
+        "operationId": "transition_vendor_api_v1_admin_vendors__vendor_id__transition_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vendor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Vendor Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Transition Vendor",
+        "tags": [
+          "admin:vendor-review"
         ]
       }
     },
@@ -3581,6 +4790,356 @@
         "summary": "Presets",
         "tags": [
           "theme"
+        ]
+      }
+    },
+    "/api/v1/vendor-signup": {
+      "post": {
+        "operationId": "vendor_signup_api_v1_vendor_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignupOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Signup",
+        "tags": [
+          "vendor-signup"
+        ]
+      }
+    },
+    "/api/v1/vendor/documents": {
+      "post": {
+        "operationId": "register_document_api_v1_vendor_documents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Register Document",
+        "tags": [
+          "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/documents/upload-url": {
+      "post": {
+        "operationId": "document_upload_url_api_v1_vendor_documents_upload_url_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadUrlIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadUrlOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Document Upload Url",
+        "tags": [
+          "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/onboarding": {
+      "get": {
+        "operationId": "onboarding_status_api_v1_vendor_onboarding_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__vendors__onboarding__OnboardingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Onboarding Status",
+        "tags": [
+          "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/onboarding/submit": {
+      "post": {
+        "operationId": "submit_onboarding_api_v1_vendor_onboarding_submit_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__modules__vendors__onboarding__OnboardingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Submit Onboarding",
+        "tags": [
+          "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/payout-method": {
+      "get": {
+        "operationId": "get_payout_method_api_v1_vendor_payout_method_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/PayoutMethodOut"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Payout Method Api V1 Vendor Payout Method Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Payout Method",
+        "tags": [
+          "vendor:onboarding"
+        ]
+      },
+      "put": {
+        "operationId": "set_payout_method_api_v1_vendor_payout_method_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-reauth-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reauth-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayoutMethodIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutMethodOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Payout Method",
+        "tags": [
+          "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/profile": {
+      "patch": {
+        "operationId": "patch_profile_api_v1_vendor_profile_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfilePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Profile",
+        "tags": [
+          "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/reauth/request": {
+      "post": {
+        "operationId": "reauth_request_api_v1_vendor_reauth_request_post",
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Reauth Request",
+        "tags": [
+          "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/reauth/verify": {
+      "post": {
+        "operationId": "reauth_verify_api_v1_vendor_reauth_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReauthVerifyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReauthOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reauth Verify",
+        "tags": [
+          "vendor:onboarding"
         ]
       }
     },

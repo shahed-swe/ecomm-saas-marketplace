@@ -69,6 +69,13 @@ async def app(settings):
 
     application = create_app(settings)
     application.state.sms = FakeSms()
+    import tempfile
+
+    from app.core.storage.private import LocalPrivateStorage
+
+    application.state.private_storage = LocalPrivateStorage(
+        tempfile.mkdtemp(prefix="priv-"), settings.jwt_secret
+    )
     async with application.router.lifespan_context(application):
         await application.state.redis.flushdb()  # rate-limit counters must not leak between runs
         yield application
@@ -107,6 +114,8 @@ class TenantWorld:
     owner_staff_member_id: str = ""
     theme_version_id: str = ""
     invoice_id: str = ""
+    document_id: str = ""
+    payout_hold_id: str = ""
     domain_id: str = ""
 
 
@@ -224,6 +233,39 @@ async def world(app, settings, platform_headers):
                 )
                 inv = await generate_invoice(ps, tw.id)
                 tw.invoice_id = str(inv["id"])
+                tw.payout_hold_id = str(
+                    (
+                        await ps.execute(
+                            sql(
+                                "INSERT INTO payout_holds (tenant_id, vendor_id, reason, created_by) "
+                                "VALUES (:t, :v, 'manual', 'test') RETURNING id"
+                            ),
+                            {"t": tw.id, "v": tw.vendors[f"{key}1"]},
+                        )
+                    ).scalar()
+                )
+            v1 = tw.vendor_actors[f"{key}1"].headers()
+            up = (
+                await c.post(
+                    "/api/v1/vendor/documents/upload-url",
+                    headers=v1,
+                    json={"doc_type": "nid", "content_type": "application/pdf", "byte_size": 12},
+                )
+            ).json()
+            assert (
+                await c.put(up["url"], content=b"%PDF-1.4 nid", headers=up["headers"])
+            ).status_code == 201
+            doc = await c.post(
+                "/api/v1/vendor/documents",
+                headers=v1,
+                json={
+                    "doc_type": "nid",
+                    "storage_key": up["storage_key"],
+                    "document_number": "1990123456",
+                },
+            )
+            assert doc.status_code == 201, doc.text
+            tw.document_id = doc.json()["id"]
             out[key] = tw
         eng = app.state.platform_db.engine
         async with eng.connect() as conn:

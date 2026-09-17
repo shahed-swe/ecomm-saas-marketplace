@@ -10,7 +10,7 @@ from app.core.logging import configure_logging
 from app.core.metrics import MetricsMiddleware, metrics_endpoint
 from app.core.middleware import RequestContextMiddleware
 from app.core.redis import create_redis
-from app.core.storage import build_storage
+from app.core.storage import build_private_storage, build_storage
 from app.modules.billing import router as billing
 from app.modules.domains.router import internal as internal_router
 from app.modules.domains.router import router as domains_router
@@ -23,6 +23,7 @@ from app.modules.platform.router import router as platform_router
 from app.modules.settings.router import router as settings_router
 from app.modules.store.router import router as store_router
 from app.modules.theme import router as theme
+from app.modules.vendors import onboarding as vendor_onboarding
 from app.modules.vendors.router import admin_router as admin_vendors_router
 from app.modules.vendors.router import vendor_router
 
@@ -37,6 +38,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.db = Database(settings)
         app.state.platform_db = Database(settings, platform=True)
         app.state.storage = getattr(app.state, "storage", None) or build_storage(settings)
+        app.state.private_storage = getattr(
+            app.state, "private_storage", None
+        ) or build_private_storage(settings)
         app.state.sms = getattr(app.state, "sms", None) or ConsoleSms()
         app.state.dns_lookup = getattr(app.state, "dns_lookup", None) or real_dns_lookup
         app.state.redis = create_redis(settings)
@@ -77,6 +81,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         settings_router,
         billing.admin,
         billing.platform,
+        vendor_onboarding.public,
+        vendor_onboarding.vendor,
+        vendor_onboarding.admin,
+        vendor_onboarding.internal,
         vendor_router,
         admin_vendors_router,
         domains_router,

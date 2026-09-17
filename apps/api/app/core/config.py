@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     s3_access_key: str = ""
     s3_secret_key: str = ""
     local_media_root: str = "var/media"
+    local_private_root: str = "var/private"
+    s3_private_bucket: str = "private-kyc"
+    # Envelope key for PII at rest (Vault transit in production). 32 url-safe base64 bytes.
+    data_encryption_key: str = "dGVzdC1rZXktdGVzdC1rZXktdGVzdC1rZXktMDEyMzQ="
+    hash_key: str = Field(default="change-me-hash-key-change-me-hash-key", min_length=32)
     cors_origins: list[str] = []
     db_pool_size: int = 10
     db_statement_timeout_ms: int = 5000

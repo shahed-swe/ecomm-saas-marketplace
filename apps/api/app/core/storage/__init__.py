@@ -80,3 +80,19 @@ def build_storage(settings) -> ObjectStorage:
             secret_key=settings.s3_secret_key,
         )
     return LocalStorage(settings.local_media_root)
+
+
+def build_private_storage(settings):
+    from app.core.storage.private import LocalPrivateStorage, S3PrivateStorage
+
+    if settings.s3_endpoint:
+        import boto3
+
+        client = boto3.client(
+            "s3",
+            endpoint_url=settings.s3_endpoint,
+            aws_access_key_id=settings.s3_access_key,
+            aws_secret_access_key=settings.s3_secret_key,
+        )
+        return S3PrivateStorage(client, settings.s3_private_bucket)
+    return LocalPrivateStorage(settings.local_private_root, settings.jwt_secret)

@@ -22,6 +22,11 @@ SCOPED_ROUTES = [
     ("PATCH", "/api/v1/vendor/staff/{id}", VENDOR, "vendor_user", {"status": "active"}),
     ("POST", "/api/v1/admin/theme/versions/{id}/restore", STAFF, "theme_version", None),
     ("GET", "/api/v1/admin/billing/invoices/{id}", STAFF, "invoice", None),
+    ("GET", "/api/v1/admin/vendors/{id}/review", STAFF, "vendor", None),
+    ("POST", "/api/v1/admin/vendors/{id}/transition", STAFF, "vendor", {"to": "closed"}),
+    ("POST", "/api/v1/admin/vendors/{id}/commission", STAFF, "vendor", {"rate": "0.05"}),
+    ("PATCH", "/api/v1/admin/vendor-documents/{id}", STAFF, "document", {"status": "approved"}),
+    ("POST", "/api/v1/admin/payout-holds/{id}/release", STAFF, "payout_hold", None),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
@@ -37,6 +42,10 @@ def _resource(world_t, kind, name):
         return world_t.theme_version_id
     if kind == "invoice":
         return world_t.invoice_id
+    if kind == "document":
+        return world_t.document_id
+    if kind == "payout_hold":
+        return world_t.payout_hold_id
     table = {
         "storefront": world_t.storefronts,
         "vendor": world_t.vendors,

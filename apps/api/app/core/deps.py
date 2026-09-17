@@ -74,7 +74,9 @@ async def current_principal(request: Request, tenant: Tenant) -> Principal:
 CurrentPrincipal = Annotated[Principal, Depends(current_principal)]
 
 
-async def current_vendor(p: CurrentPrincipal, tenant: Tenant, session: TenantDB) -> Principal:
+async def current_vendor(
+    request: Request, p: CurrentPrincipal, tenant: Tenant, session: TenantDB
+) -> Principal:
     """Vendor boundary: membership and vendor state are re-checked on every request, so a removed
     staff member or suspended vendor loses access before the access token expires."""
     if p.kind != "vendor_staff" or not p.vid:
@@ -89,7 +91,10 @@ async def current_vendor(p: CurrentPrincipal, tenant: Tenant, session: TenantDB)
     ).first()
     if row is None or row.status in ("rejected", "closed"):
         raise Unauthorized("Invalid token")
+    if row.status == "suspended" and request.method not in _SAFE_METHODS:
+        raise StoreLocked("This vendor account is suspended")
     await scope_session(session, tenant.id, p.vid)
+    request.state.vendor_status = row.status
     return Principal(sub=p.sub, kind=p.kind, tid=p.tid, vid=p.vid, roles=(row.role,))
 
 
@@ -120,8 +125,10 @@ def require_tenant_staff(*permissions: str):
     return dep
 
 
-def require_vendor_role(*perms: str):
-    async def dep(p: CurrentVendor) -> Principal:
+def require_vendor_role(*perms: str, approved: bool = False):
+    async def dep(request: Request, p: CurrentVendor) -> Principal:
+        if approved and request.state.vendor_status != "approved":
+            raise Forbidden("Your shop is not approved yet")
         granted = VENDOR_ROLE_PERMISSIONS.get(p.roles[0] if p.roles else "", set())
         if not all(has_permission(granted, perm) for perm in perms):
             raise Forbidden("Missing permission")
