@@ -349,7 +349,7 @@ async def cancel_shipment(
 
 # ------------------------------------------------------------------------------------- events
 async def apply_event(
-    db: AsyncSession, tenant_id: str, *, courier: str, event: CourierEvent
+    db: AsyncSession, tenant_id: str, *, courier: str, event: CourierEvent, app_state=None
 ) -> dict:
     """Store the event once, then move the shipment forward only if it really is forward."""
     shipment = (
@@ -456,6 +456,12 @@ async def apply_event(
         await payments.collect_cod(db, tenant_id, shipment["sub_order_id"], courier=courier)
     if new == "returned":
         await _restock(db, tenant_id, shipment)
+    if app_state is not None:
+        from app.modules.notifications import service as notifications
+
+        await notifications.on_shipment_status(
+            db, app_state, tenant_id, shipment_id=shipment["id"], status=new
+        )
     return {"status": new, "shipment_id": str(shipment["id"])}
 
 
@@ -530,6 +536,7 @@ async def poll_open_shipments(
     stale_minutes: int = 30,
     limit: int = 100,
     overrides: dict | None = None,
+    app_state=None,
 ) -> dict:
     """Webhooks get lost. Every non-terminal parcel is asked directly, on a schedule."""
     rows = (
@@ -561,7 +568,9 @@ async def poll_open_shipments(
             event = await adapter.track(
                 credentials=account.credentials, consignment_id=row["consignment_id"]
             )
-            result = await apply_event(db, tenant_id, courier=row["courier"], event=event)
+            result = await apply_event(
+                db, tenant_id, courier=row["courier"], event=event, app_state=app_state
+            )
         except Exception:
             out["errors"] += 1
             continue

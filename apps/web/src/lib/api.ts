@@ -32,6 +32,15 @@ export async function getStore(): Promise<StoreInfo | null> {
   }
 }
 
+export async function getAnalyticsIds(): Promise<{ ga4?: string; meta?: string }> {
+  try {
+    const r = await apiFetch("/api/v1/storefront/analytics", { tags: ["analytics"] });
+    return r.ok ? await r.json() : {};
+  } catch {
+    return {};
+  }
+}
+
 export async function getPublishedTheme(): Promise<import("./theme").PublishedTheme | null> {
   try {
     const r = await apiFetch("/api/v1/theme");

@@ -139,7 +139,12 @@ async def confirm(
     gateway = build_gateway(row["provider"], account.mode, _overrides(request.app))
     try:
         return await service.settle(
-            db, tenant.id, payment_id=payment_id, gateway=gateway, account=account
+            db,
+            tenant.id,
+            payment_id=payment_id,
+            gateway=gateway,
+            account=account,
+            app_state=request.app.state,
         )
     except GatewayError as exc:
         raise AppError(
@@ -280,6 +285,7 @@ async def provider_webhook(
                     payment_id=payment_id,
                     gateway=gateway,
                     account=account,
+                    app_state=request.app.state,
                 )
             except GatewayError:
                 return {"status": "retry_later"}

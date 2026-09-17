@@ -318,11 +318,57 @@ async def trust_sweep(ctx: dict) -> dict:
     return {"tenants": len(tenant_ids), "escalated": escalated, "scored": scored}
 
 
+@platform_job
+async def marketing_sweep(ctx: dict) -> dict:
+    """Abandoned-cart nudges and queued analytics events, per tenant, on the hour."""
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.notifications import analytics
+    from app.modules.notifications.campaigns import nudge_abandoned_carts
+
+    settings = get_settings()
+    totals = {"tenants": 0, "nudged": 0, "events_sent": 0}
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenant_ids = [
+            str(r[0])
+            for r in (
+                await session.execute(
+                    text("SELECT id FROM tenants WHERE status IN ('trial','active') LIMIT 500")
+                )
+            ).all()
+        ]
+    for tenant_id in tenant_ids:
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, tenant_id)
+            nudges = await nudge_abandoned_carts(session, ctx["app_state"], tenant_id)
+            flushed = await analytics.flush(session, settings, tenant_id)
+        totals["tenants"] += 1
+        totals["nudged"] += nudges["nudged"]
+        totals["events_sent"] += flushed["sent"]
+    log.info("marketing_sweep", **totals)
+    return totals
+
+
+class WorkerAppState:
+    """The little bit of app state the notification service needs outside a request."""
+
+    def __init__(self, settings):
+        from app.modules.identity.sms import ConsoleSms
+        from app.modules.notifications.channels import ConsoleEmail, ConsolePush
+
+        self.settings = settings
+        self.sms = ConsoleSms()
+        self.push = ConsolePush()
+        self.email = ConsoleEmail()
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
     ctx["db"] = Database(settings)
     ctx["platform_db"] = Database(settings, platform=True)
+    ctx["app_state"] = WorkerAppState(settings)
 
 
 async def shutdown(ctx: dict) -> None:
@@ -344,6 +390,7 @@ class WorkerSettings:
         finance_reconcile,
         payout_runs,
         trust_sweep,
+        marketing_sweep,
     ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
@@ -355,6 +402,7 @@ class WorkerSettings:
         cron(finance_reconcile, hour={21}, minute={30}),  # 03:30 Asia/Dhaka
         cron(payout_runs, hour={22}, minute={15}),  # 04:15 Asia/Dhaka
         cron(trust_sweep, hour={1, 13}, minute={50}),
+        cron(marketing_sweep, minute={25}),  # hourly
     ]
     on_startup = startup
     on_shutdown = shutdown

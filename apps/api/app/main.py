@@ -34,6 +34,8 @@ from app.modules.identity import router as identity
 from app.modules.identity import staff_router
 from app.modules.identity.sms import ConsoleSms
 from app.modules.ledger import router as ledger
+from app.modules.notifications import router as notifications
+from app.modules.notifications.channels import ConsoleEmail, ConsolePush
 from app.modules.payments import router as payments
 from app.modules.platform.router import router as platform_router
 from app.modules.returns import router as returns
@@ -80,6 +82,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             app.state, "import_queue", None
         ) or catalog_imports.InlineImportQueue(app)
         app.state.sms = getattr(app.state, "sms", None) or ConsoleSms()
+        app.state.push = getattr(app.state, "push", None) or ConsolePush()
+        app.state.email = getattr(app.state, "email", None) or ConsoleEmail()
         app.state.dns_lookup = getattr(app.state, "dns_lookup", None) or real_dns_lookup
         app.state.redis = create_redis(settings)
         try:
@@ -157,6 +161,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         trust.buyer,
         trust.vendor,
         trust.admin,
+        notifications.buyer,
+        notifications.vendor,
+        notifications.admin,
         vendor_router,
         admin_vendors_router,
         domains_router,

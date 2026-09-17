@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
-import { getPublishedTheme, getStore } from "@/lib/api";
+import { getAnalyticsIds, getPublishedTheme, getStore } from "@/lib/api";
+import { AnalyticsTags } from "@/components/shop/AnalyticsTags";
 import { t } from "@/lib/i18n";
 import { getMessages } from "@/lib/locale";
 import { themeToCss } from "@/lib/theme";
@@ -8,7 +9,7 @@ import { themeToCss } from "@/lib/theme";
 // Storefront shell: tenant tokens become CSS variables before first paint; header/footer come from the
 // published theme layouts. Custom CSS is scoped to [data-tenant-css] and never loaded on checkout.
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
-  const [theme, store, h] = await Promise.all([getPublishedTheme(), getStore(), headers()]);
+  const [theme, store, h, analytics] = await Promise.all([getPublishedTheme(), getStore(), headers(), getAnalyticsIds()]);
   const doc = theme?.document as any;
   const brand = doc?.brand;
   const { locale, m } = await getMessages();
@@ -18,6 +19,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
   const sensitive = /^\/(checkout|account\/security|payment)/.test(path);
   return (
     <div data-surface="shop" lang={locale} className="min-h-screen bg-bg text-fg">
+      <AnalyticsTags ids={analytics} />
       {theme && <style id="tenant-theme" dangerouslySetInnerHTML={{ __html: themeToCss(theme.document) }} />}
       {doc?.custom_css && !sensitive && <link rel="stylesheet" href="/api/v1/storefront/custom.css" />}
       <div data-tenant-css="">

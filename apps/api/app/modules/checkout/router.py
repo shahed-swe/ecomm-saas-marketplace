@@ -394,6 +394,19 @@ async def place(
             data={"number": order["number"], "method": body.payment_method},
             request=request,
         )
+        from app.modules.notifications import service as notifications
+
+        await notifications.on_order_placed(
+            db,
+            request.app.state,
+            tenant.id,
+            order={
+                "id": order["id"],
+                "number": order["number"],
+                "user_id": p.sub,
+                "total": body.expected_total,
+            },
+        )
     return {**order, "tracking_token": token}
 
 

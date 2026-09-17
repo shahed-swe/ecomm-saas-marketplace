@@ -217,7 +217,7 @@ async def start_payment(
 
 # ---------------------------------------------------------------------------------- settlement
 async def settle(
-    db: AsyncSession, tenant_id: str, *, payment_id, gateway, account: Account
+    db: AsyncSession, tenant_id: str, *, payment_id, gateway, account: Account, app_state=None
 ) -> dict:
     """Verify with the provider and, only then, pay the order. Safe to call repeatedly."""
     payment = (
@@ -304,7 +304,7 @@ async def settle(
     confirmed = 0
     if due <= 0:
         confirmed = await confirm_paid_order(
-            db, tenant_id, payment["order_id"], ref=order["number"]
+            db, tenant_id, payment["order_id"], ref=order["number"], app_state=app_state
         )
     return {
         "status": "paid",
@@ -315,7 +315,9 @@ async def settle(
     }
 
 
-async def confirm_paid_order(db: AsyncSession, tenant_id: str, order_id, *, ref: str) -> int:
+async def confirm_paid_order(
+    db: AsyncSession, tenant_id: str, order_id, *, ref: str, app_state=None
+) -> int:
     """pending_payment -> confirmed, reservations consumed into the stock ledger, money booked.
     Idempotent: the ledger refuses a second posting of the same capture."""
     subs = (
@@ -335,7 +337,59 @@ async def confirm_paid_order(db: AsyncSession, tenant_id: str, order_id, *, ref:
     from app.modules.ledger import service as ledger
 
     await ledger.post_capture(db, tenant_id, order_id)
+    await _announce_paid_order(db, tenant_id, order_id, app_state)
     return len(subs)
+
+
+async def _announce_paid_order(db: AsyncSession, tenant_id: str, order_id, app_state) -> None:
+    """Tell the buyer, and tell the tenant's own analytics — both exactly once per order."""
+    from app.modules.notifications import analytics
+
+    order = (
+        (
+            await db.execute(
+                text(
+                    """SELECT o.id, o.number, o.grand_total, o.user_id, o.contact_email, o.contact_phone
+                       FROM orders o WHERE o.tenant_id = :t AND o.id = :o"""
+                ),
+                {"t": tenant_id, "o": order_id},
+            )
+        )
+        .mappings()
+        .first()
+    )
+    if order is None:
+        return
+    items = (
+        (
+            await db.execute(
+                text(
+                    """SELECT i.title_snapshot AS item_name, i.sku_snapshot AS item_id, i.qty AS quantity,
+                              i.unit_price AS price
+                       FROM order_items i
+                       JOIN sub_orders s ON s.id = i.sub_order_id AND s.tenant_id = i.tenant_id
+                       WHERE i.tenant_id = :t AND s.order_id = :o"""
+                ),
+                {"t": tenant_id, "o": order_id},
+            )
+        )
+        .mappings()
+        .all()
+    )
+    await analytics.queue_purchase(
+        db,
+        tenant_id,
+        order_id=order_id,
+        number=order["number"],
+        value=order["grand_total"],
+        items=[{k: str(v) for k, v in dict(i).items()} for i in items],
+        email=order["contact_email"],
+        phone=order["contact_phone"],
+    )
+    if app_state is not None:
+        from app.modules.notifications import service as notifications
+
+        await notifications.on_payment_paid(db, app_state, tenant_id, order_id=order_id)
 
 
 async def consume_reservations(db: AsyncSession, tenant_id: str, order_id, *, ref: str) -> int:
@@ -535,6 +589,7 @@ async def reconcile_pending(
     older_than_minutes: int = 10,
     overrides: dict | None = None,
     limit: int = 100,
+    app_state=None,
 ) -> dict:
     """Ask the provider about every attempt that never came back.
 
@@ -570,7 +625,12 @@ async def reconcile_pending(
             account = accounts[provider]
             gateway = build_gateway(provider, account.mode, overrides)
             result = await settle(
-                db, tenant_id, payment_id=row["id"], gateway=gateway, account=account
+                db,
+                tenant_id,
+                payment_id=row["id"],
+                gateway=gateway,
+                account=account,
+                app_state=app_state,
             )
         except Exception:  # a provider outage must not abort the rest of the sweep
             out["unresolved"] += 1

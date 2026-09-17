@@ -820,54 +820,6 @@
         "title": "BrandOut",
         "type": "object"
       },
-      "CampaignIn": {
-        "properties": {
-          "ends_at": {
-            "format": "date-time",
-            "title": "Ends At",
-            "type": "string"
-          },
-          "max_discount_percent": {
-            "anyOf": [
-              {
-                "exclusiveMinimum": 0.0,
-                "maximum": 90.0,
-                "type": "number"
-              },
-              {
-                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
-                "type": "string"
-              }
-            ],
-            "default": "90",
-            "title": "Max Discount Percent"
-          },
-          "name": {
-            "maxLength": 80,
-            "minLength": 2,
-            "title": "Name",
-            "type": "string"
-          },
-          "slug": {
-            "pattern": "^[a-z0-9-]{2,60}$",
-            "title": "Slug",
-            "type": "string"
-          },
-          "starts_at": {
-            "format": "date-time",
-            "title": "Starts At",
-            "type": "string"
-          }
-        },
-        "required": [
-          "slug",
-          "name",
-          "starts_at",
-          "ends_at"
-        ],
-        "title": "CampaignIn",
-        "type": "object"
-      },
       "CardOut": {
         "properties": {
           "blur_data": {
@@ -1722,6 +1674,90 @@
           "approve"
         ],
         "title": "DecisionIn",
+        "type": "object"
+      },
+      "DestinationIn": {
+        "properties": {
+          "provider": {
+            "enum": [
+              "ga4",
+              "meta"
+            ],
+            "title": "Provider",
+            "type": "string"
+          },
+          "public_id": {
+            "maxLength": 80,
+            "minLength": 3,
+            "title": "Public Id",
+            "type": "string"
+          },
+          "secret": {
+            "anyOf": [
+              {
+                "maxLength": 400,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secret"
+          },
+          "server_side": {
+            "default": true,
+            "title": "Server Side",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "provider",
+          "public_id"
+        ],
+        "title": "DestinationIn",
+        "type": "object"
+      },
+      "DeviceIn": {
+        "properties": {
+          "app": {
+            "default": "buyer",
+            "enum": [
+              "buyer",
+              "vendor"
+            ],
+            "title": "App",
+            "type": "string"
+          },
+          "locale": {
+            "default": "bn",
+            "enum": [
+              "bn",
+              "en"
+            ],
+            "title": "Locale",
+            "type": "string"
+          },
+          "platform": {
+            "enum": [
+              "ios",
+              "android",
+              "web"
+            ],
+            "title": "Platform",
+            "type": "string"
+          },
+          "token": {
+            "maxLength": 512,
+            "minLength": 10,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "platform"
+        ],
+        "title": "DeviceIn",
         "type": "object"
       },
       "DisputeIn": {
@@ -3588,6 +3624,53 @@
           "totp"
         ],
         "title": "PlatformLoginIn",
+        "type": "object"
+      },
+      "PreferencesIn": {
+        "properties": {
+          "marketing_email": {
+            "default": true,
+            "title": "Marketing Email",
+            "type": "boolean"
+          },
+          "marketing_push": {
+            "default": true,
+            "title": "Marketing Push",
+            "type": "boolean"
+          },
+          "marketing_sms": {
+            "default": false,
+            "title": "Marketing Sms",
+            "type": "boolean"
+          },
+          "quiet_hours_end": {
+            "anyOf": [
+              {
+                "maximum": 23.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quiet Hours End"
+          },
+          "quiet_hours_start": {
+            "anyOf": [
+              {
+                "maximum": 23.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quiet Hours Start"
+          }
+        },
+        "title": "PreferencesIn",
         "type": "object"
       },
       "PresetIn": {
@@ -6056,6 +6139,65 @@
         "title": "TaxRateIn",
         "type": "object"
       },
+      "TemplateIn": {
+        "properties": {
+          "body": {
+            "maxLength": 2000,
+            "minLength": 2,
+            "title": "Body",
+            "type": "string"
+          },
+          "channel": {
+            "enum": [
+              "push",
+              "sms",
+              "email",
+              "in_app"
+            ],
+            "title": "Channel",
+            "type": "string"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "key": {
+            "maxLength": 60,
+            "minLength": 3,
+            "title": "Key",
+            "type": "string"
+          },
+          "locale": {
+            "default": "bn",
+            "enum": [
+              "bn",
+              "en"
+            ],
+            "title": "Locale",
+            "type": "string"
+          },
+          "subject": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subject"
+          }
+        },
+        "required": [
+          "key",
+          "channel",
+          "body"
+        ],
+        "title": "TemplateIn",
+        "type": "object"
+      },
       "Templates": {
         "additionalProperties": false,
         "properties": {
@@ -6462,6 +6604,106 @@
           "tokens"
         ],
         "title": "ThemeDocument",
+        "type": "object"
+      },
+      "TicketIn": {
+        "properties": {
+          "body": {
+            "maxLength": 8000,
+            "minLength": 3,
+            "title": "Body",
+            "type": "string"
+          },
+          "category": {
+            "default": "other",
+            "enum": [
+              "order",
+              "payment",
+              "delivery",
+              "return",
+              "account",
+              "vendor",
+              "other"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "order_number": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Order Number"
+          },
+          "subject": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "body"
+        ],
+        "title": "TicketIn",
+        "type": "object"
+      },
+      "TicketMessageIn": {
+        "properties": {
+          "body": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          },
+          "internal": {
+            "default": false,
+            "title": "Internal",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "title": "TicketMessageIn",
+        "type": "object"
+      },
+      "TicketStatusIn": {
+        "properties": {
+          "assignee_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee Id"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "pending_customer",
+              "pending_staff",
+              "resolved",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "TicketStatusIn",
         "type": "object"
       },
       "TokenOut": {
@@ -7267,6 +7509,54 @@
         "title": "ModerateIn",
         "type": "object"
       },
+      "app__modules__checkout__router__CampaignIn": {
+        "properties": {
+          "ends_at": {
+            "format": "date-time",
+            "title": "Ends At",
+            "type": "string"
+          },
+          "max_discount_percent": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 90.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "90",
+            "title": "Max Discount Percent"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "pattern": "^[a-z0-9-]{2,60}$",
+            "title": "Slug",
+            "type": "string"
+          },
+          "starts_at": {
+            "format": "date-time",
+            "title": "Starts At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "starts_at",
+          "ends_at"
+        ],
+        "title": "CampaignIn",
+        "type": "object"
+      },
       "app__modules__fulfilment__router__ResolveIn": {
         "properties": {
           "note": {
@@ -7306,6 +7596,58 @@
           "sub_order_id"
         ],
         "title": "DocumentIn",
+        "type": "object"
+      },
+      "app__modules__notifications__router__CampaignIn": {
+        "properties": {
+          "body": {
+            "maxLength": 300,
+            "minLength": 2,
+            "title": "Body",
+            "type": "string"
+          },
+          "deep_link": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deep Link"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "segment": {
+            "default": "all",
+            "enum": [
+              "all",
+              "buyers_with_orders",
+              "abandoned_cart",
+              "inactive_30d"
+            ],
+            "title": "Segment",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "title",
+          "body"
+        ],
+        "title": "CampaignIn",
         "type": "object"
       },
       "app__modules__settings__router__OnboardingOut": {
@@ -7472,6 +7814,62 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/admin/analytics-destinations": {
+      "get": {
+        "operationId": "list_destinations_api_v1_admin_analytics_destinations_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Destinations",
+        "tags": [
+          "admin:notifications"
+        ]
+      },
+      "put": {
+        "operationId": "put_destination_api_v1_admin_analytics_destinations_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DestinationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Destination",
+        "tags": [
+          "admin:notifications"
+        ]
+      }
+    },
     "/api/v1/admin/audit": {
       "get": {
         "operationId": "audit_log_api_v1_admin_audit_get",
@@ -7667,7 +8065,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CampaignIn"
+                "$ref": "#/components/schemas/app__modules__checkout__router__CampaignIn"
               }
             }
           },
@@ -9176,6 +9574,120 @@
         ]
       }
     },
+    "/api/v1/admin/notification-templates": {
+      "get": {
+        "operationId": "list_templates_api_v1_admin_notification_templates_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Templates",
+        "tags": [
+          "admin:notifications"
+        ]
+      },
+      "put": {
+        "description": "Tenants may reword anything; the platform's defaults remain the fallback.",
+        "operationId": "put_template_api_v1_admin_notification_templates_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Template",
+        "tags": [
+          "admin:notifications"
+        ]
+      }
+    },
+    "/api/v1/admin/notifications": {
+      "get": {
+        "operationId": "notification_log_api_v1_admin_notifications_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Notification Log",
+        "tags": [
+          "admin:notifications"
+        ]
+      }
+    },
     "/api/v1/admin/onboarding": {
       "get": {
         "operationId": "onboarding_api_v1_admin_onboarding_get",
@@ -9896,6 +10408,161 @@
         "summary": "Moderate",
         "tags": [
           "admin:moderation"
+        ]
+      }
+    },
+    "/api/v1/admin/push-campaigns": {
+      "get": {
+        "operationId": "list_campaigns_api_v1_admin_push_campaigns_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Campaigns",
+        "tags": [
+          "admin:notifications"
+        ]
+      },
+      "post": {
+        "operationId": "create_campaign_api_v1_admin_push_campaigns_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__notifications__router__CampaignIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Campaign",
+        "tags": [
+          "admin:notifications"
+        ]
+      }
+    },
+    "/api/v1/admin/push-campaigns/{campaign_id}/cancel": {
+      "post": {
+        "operationId": "cancel_campaign_api_v1_admin_push_campaigns__campaign_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Campaign",
+        "tags": [
+          "admin:notifications"
+        ]
+      }
+    },
+    "/api/v1/admin/push-campaigns/{campaign_id}/send": {
+      "post": {
+        "operationId": "send_campaign_api_v1_admin_push_campaigns__campaign_id__send_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send Campaign",
+        "tags": [
+          "admin:notifications"
         ]
       }
     },
@@ -11362,6 +12029,206 @@
         "summary": "Restore",
         "tags": [
           "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/tickets": {
+      "get": {
+        "operationId": "staff_tickets_api_v1_admin_tickets_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Staff Tickets",
+        "tags": [
+          "admin:notifications"
+        ]
+      }
+    },
+    "/api/v1/admin/tickets/{ticket_id}": {
+      "get": {
+        "operationId": "staff_ticket_api_v1_admin_tickets__ticket_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticket_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ticket Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Staff Ticket",
+        "tags": [
+          "admin:notifications"
+        ]
+      }
+    },
+    "/api/v1/admin/tickets/{ticket_id}/messages": {
+      "post": {
+        "operationId": "staff_reply_api_v1_admin_tickets__ticket_id__messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticket_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ticket Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketMessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Staff Reply",
+        "tags": [
+          "admin:notifications"
+        ]
+      }
+    },
+    "/api/v1/admin/tickets/{ticket_id}/status": {
+      "post": {
+        "operationId": "staff_ticket_status_api_v1_admin_tickets__ticket_id__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticket_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ticket Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketStatusIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Staff Ticket Status",
+        "tags": [
+          "admin:notifications"
         ]
       }
     },
@@ -12970,6 +13837,81 @@
         ]
       }
     },
+    "/api/v1/me/devices": {
+      "post": {
+        "description": "A token belongs to one person: re-registering moves it rather than duplicating it.",
+        "operationId": "register_device_api_v1_me_devices_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Register Device",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/me/devices/{token}": {
+      "delete": {
+        "operationId": "revoke_device_api_v1_me_devices__token__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke Device",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
     "/api/v1/me/disputes": {
       "get": {
         "operationId": "my_disputes_api_v1_me_disputes_get",
@@ -13171,6 +14113,117 @@
         "summary": "Buyer Thread",
         "tags": [
           "trust"
+        ]
+      }
+    },
+    "/api/v1/me/notification-preferences": {
+      "get": {
+        "operationId": "get_preferences_api_v1_me_notification_preferences_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Preferences",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "put": {
+        "operationId": "set_preferences_api_v1_me_notification_preferences_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferencesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Preferences",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/me/notifications": {
+      "get": {
+        "operationId": "inbox_api_v1_me_notifications_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Inbox",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/me/notifications/read": {
+      "post": {
+        "operationId": "mark_read_api_v1_me_notifications_read_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mark Read",
+        "tags": [
+          "notifications"
         ]
       }
     },
@@ -13705,6 +14758,154 @@
         ]
       }
     },
+    "/api/v1/me/tickets": {
+      "get": {
+        "operationId": "my_tickets_api_v1_me_tickets_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Tickets",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "post": {
+        "operationId": "open_ticket_api_v1_me_tickets_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Open Ticket",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/me/tickets/{ticket_id}": {
+      "get": {
+        "operationId": "my_ticket_api_v1_me_tickets__ticket_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticket_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ticket Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Ticket",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/me/tickets/{ticket_id}/messages": {
+      "post": {
+        "operationId": "reply_ticket_api_v1_me_tickets__ticket_id__messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ticket_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ticket Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketMessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reply Ticket",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
     "/api/v1/me/wishlist": {
       "get": {
         "operationId": "wishlist_api_v1_me_wishlist_get",
@@ -14128,6 +15329,26 @@
         "summary": "Store Info",
         "tags": [
           "store"
+        ]
+      }
+    },
+    "/api/v1/storefront/analytics": {
+      "get": {
+        "description": "What the storefront may put in the page: public ids only, never a secret.",
+        "operationId": "storefront_analytics_api_v1_storefront_analytics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Storefront Analytics",
+        "tags": [
+          "notifications"
         ]
       }
     },
@@ -16994,6 +18215,45 @@
         "summary": "Update Storefront",
         "tags": [
           "vendor"
+        ]
+      }
+    },
+    "/api/v1/vendor/tickets": {
+      "post": {
+        "operationId": "vendor_ticket_api_v1_vendor_tickets_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Ticket",
+        "tags": [
+          "vendor:support"
         ]
       }
     },

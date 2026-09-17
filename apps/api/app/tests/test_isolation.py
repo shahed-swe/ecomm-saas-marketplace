@@ -141,6 +141,12 @@ SCOPED_ROUTES = [
         {"in_favour_of": "vendor", "note": "closed"},
     ),
     ("POST", "/api/v1/admin/conversations/{id}/block", STAFF, "conversation", None),
+    # notifications, marketing and support (Phase 16)
+    ("POST", "/api/v1/admin/push-campaigns/{id}/send", STAFF, "push_campaign", None),
+    ("POST", "/api/v1/admin/push-campaigns/{id}/cancel", STAFF, "push_campaign", None),
+    ("GET", "/api/v1/admin/tickets/{id}", STAFF, "ticket", None),
+    ("POST", "/api/v1/admin/tickets/{id}/messages", STAFF, "ticket", {"body": "Checking"}),
+    ("POST", "/api/v1/admin/tickets/{id}/status", STAFF, "ticket", {"status": "closed"}),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).

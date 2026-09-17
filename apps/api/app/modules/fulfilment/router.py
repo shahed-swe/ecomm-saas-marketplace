@@ -272,7 +272,9 @@ async def courier_webhook(courier: str, tenant_public_id: str, request: Request)
                 return problem_response(
                     request, AppError(str(exc), status=400, code="bad_callback")
                 )
-            return await service.apply_event(session, tenant_id, courier=courier, event=event)
+            return await service.apply_event(
+                session, tenant_id, courier=courier, event=event, app_state=request.app.state
+            )
 
 
 # --------------------------------------------------------------------------------- staff admin

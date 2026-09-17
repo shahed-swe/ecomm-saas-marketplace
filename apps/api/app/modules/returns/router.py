@@ -522,6 +522,8 @@ async def admin_refund(
         actor_id=p.sub,
         overrides=_overrides(request.app),
     )
+    if out["status"] == "completed":
+        await _tell_the_buyer(db, request, tenant.id, return_id, out)
     await audit.record(
         db,
         tenant_id=tenant.id,
@@ -576,6 +578,7 @@ async def complete_refund(
     out = await service.complete_manual_refund(
         db, tenant.id, refund_id, reference=body.reference, actor_id=p.sub
     )
+    await _tell_the_buyer(db, request, tenant.id, None, out, refund_id=refund_id)
     await audit.record(
         db,
         tenant_id=tenant.id,
@@ -587,6 +590,42 @@ async def complete_refund(
         request=request,
     )
     return out
+
+
+async def _tell_the_buyer(
+    db, request, tenant_id: str, return_id, out: dict, refund_id=None
+) -> None:
+    """A refund the buyer is not told about is a support ticket waiting to happen."""
+    from app.modules.notifications import service as notifications
+
+    row = (
+        (
+            await db.execute(
+                text(
+                    """SELECT f.id, f.amount, f.method, r.user_id FROM refunds f
+                       JOIN return_requests r ON r.id = f.return_id AND r.tenant_id = f.tenant_id
+                       WHERE f.tenant_id = :t
+                         AND (CAST(:r AS uuid) IS NULL OR f.return_id = CAST(:r AS uuid))
+                         AND (CAST(:f AS uuid) IS NULL OR f.id = CAST(:f AS uuid))
+                       ORDER BY f.created_at DESC LIMIT 1"""
+                ),
+                {"t": tenant_id, "r": return_id, "f": refund_id},
+            )
+        )
+        .mappings()
+        .first()
+    )
+    if row is None:
+        return
+    await notifications.on_refund_completed(
+        db,
+        request.app.state,
+        tenant_id,
+        user_id=str(row["user_id"]),
+        amount=row["amount"],
+        method=row["method"],
+        refund_id=row["id"],
+    )
 
 
 @admin.get("/credit-notes")

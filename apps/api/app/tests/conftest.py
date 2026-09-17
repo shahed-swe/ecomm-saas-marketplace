@@ -493,6 +493,23 @@ async def build_catalog(c, app, tw, key):
                 {"t": tw.id, "s": sub_id},
             )
             tw.catalog["conversation"][name] = str(convo_id)
+        # A draft campaign and an open ticket per tenant (Phase 16 isolation targets).
+        campaign_id = await conn.scalar(
+            sql(
+                """INSERT INTO push_campaigns (tenant_id, name, segment, title, body, created_by)
+                   VALUES (:t, 'Seed campaign', 'all', 'Hello', 'Seed body', 'seed') RETURNING id"""
+            ),
+            {"t": tw.id},
+        )
+        tw.catalog["push_campaign"] = {"tenant": str(campaign_id)}
+        ticket_id = await conn.scalar(
+            sql(
+                """INSERT INTO support_tickets (tenant_id, number, subject, category)
+                   VALUES (:t, :n, 'Seed ticket', 'other') RETURNING id"""
+            ),
+            {"t": tw.id, "n": f"TKT-W{key}"},
+        )
+        tw.catalog["ticket"] = {"tenant": str(ticket_id)}
 
 
 @pytest.fixture(scope="session")
