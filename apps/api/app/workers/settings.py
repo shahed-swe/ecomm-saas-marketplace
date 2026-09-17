@@ -77,6 +77,34 @@ async def billing_cycle(ctx: dict) -> dict:
         return await run_billing_cycle(session)
 
 
+@tenant_job
+async def process_media(ctx: dict, *, tenant_id: str, asset_id: str) -> dict:
+    from app.core.storage import build_private_storage, build_storage
+    from app.core.tenancy import scope_session
+    from app.modules.catalog.media import process_asset
+
+    settings = get_settings()
+    async with ctx["db"].sessionmaker() as session, session.begin():
+        await scope_session(session, tenant_id)
+        return await process_asset(session, build_storage(settings), build_private_storage(settings),
+                                   tenant_id=tenant_id, asset_id=asset_id)
+
+
+@tenant_job
+async def import_products(ctx: dict, *, tenant_id: str, job_id: str) -> dict:
+    from app.core.storage import build_private_storage
+    from app.core.tenancy import scope_session
+    from app.modules.catalog.imports import run_import
+    from app.modules.catalog.revalidate import RecordingRevalidator, WebRevalidator
+
+    settings = get_settings()
+    reval = WebRevalidator(settings.web_revalidate_url, settings.jwt_secret) if settings.web_revalidate_url \
+        else RecordingRevalidator()
+    async with ctx["db"].sessionmaker() as session, session.begin():
+        await scope_session(session, tenant_id)
+        return await run_import(session, build_private_storage(settings), reval, tenant_id=tenant_id, job_id=job_id)
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -90,7 +118,7 @@ async def shutdown(ctx: dict) -> None:
 
 
 class WorkerSettings:
-    functions = [heartbeat, recheck_domains, billing_cycle]
+    functions = [heartbeat, recheck_domains, billing_cycle, process_media, import_products]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
         cron(billing_cycle, hour={20}, minute=5),  # 02:05 Asia/Dhaka

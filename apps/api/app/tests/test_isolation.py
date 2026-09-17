@@ -27,10 +27,62 @@ SCOPED_ROUTES = [
     ("POST", "/api/v1/admin/vendors/{id}/commission", STAFF, "vendor", {"rate": "0.05"}),
     ("PATCH", "/api/v1/admin/vendor-documents/{id}", STAFF, "document", {"status": "approved"}),
     ("POST", "/api/v1/admin/payout-holds/{id}/release", STAFF, "payout_hold", None),
+    # catalog (Phase 7)
+    ("GET", "/api/v1/vendor/products/{id}", VENDOR, "product", None),
+    ("PATCH", "/api/v1/vendor/products/{id}", VENDOR, "product", {"title_en": "Renamed kurti"}),
+    (
+        "POST",
+        "/api/v1/vendor/products/{id}/variants",
+        VENDOR,
+        "product",
+        {"sku": "ISO-OWN-L", "options": {"Size": "L"}, "price": "1300.00"},
+    ),
+    (
+        "POST",
+        "/api/v1/vendor/products/{id}/media",
+        VENDOR,
+        "product",
+        {"asset_id": "00000000-0000-7000-8000-000000000000"},
+    ),
+    ("PATCH", "/api/v1/vendor/variants/{id}", VENDOR, "variant", {"price": "1200.00"}),
+    ("POST", "/api/v1/vendor/variants/{id}/stock", VENDOR, "variant", {"delta": 1}),
+    ("DELETE", "/api/v1/vendor/product-media/{id}", VENDOR, "product_media", None),
+    ("GET", "/api/v1/vendor/media/{id}", VENDOR, "asset", None),
+    ("GET", "/api/v1/vendor/imports/{id}", VENDOR, "import_job", None),
+    (
+        "POST",
+        "/api/v1/vendor/questions/{id}/answer",
+        VENDOR,
+        "question",
+        {"answer": "Yes, true to size."},
+    ),
+    ("PATCH", "/api/v1/admin/catalog/categories/{id}", STAFF, "category", {"position": 1}),
+    (
+        "POST",
+        "/api/v1/admin/catalog/categories/{id}/attributes",
+        STAFF,
+        "category",
+        {"key": "iso_attr", "label_en": "Iso", "type": "text"},
+    ),
+    ("DELETE", "/api/v1/admin/catalog/category-attributes/{id}", STAFF, "attribute", None),
+    (
+        "PATCH",
+        "/api/v1/admin/catalog/brands/{id}",
+        STAFF,
+        "brand",
+        {"slug": "aarong", "name": "Aarong"},
+    ),
+    ("POST", "/api/v1/admin/products/{id}/moderate", STAFF, "product", {"decision": "approve"}),
+    ("POST", "/api/v1/admin/questions/{id}/hide", STAFF, "question", None),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
-OWN_STATUS = {("PATCH", "/api/v1/vendor/staff/{id}"): 409}
+OWN_STATUS = {
+    ("PATCH", "/api/v1/vendor/staff/{id}"): 409,
+    ("POST", "/api/v1/vendor/products/{id}/variants"): 201,
+    ("POST", "/api/v1/vendor/products/{id}/media"): 404,  # placeholder asset id does not exist
+    ("DELETE", "/api/v1/vendor/product-media/{id}"): 204,
+}
 
 
 def _resource(world_t, kind, name):
@@ -46,6 +98,9 @@ def _resource(world_t, kind, name):
         return world_t.document_id
     if kind == "payout_hold":
         return world_t.payout_hold_id
+    if kind in world_t.catalog:
+        ids = world_t.catalog[kind]
+        return ids.get(name) or ids["tenant"]
     table = {
         "storefront": world_t.storefronts,
         "vendor": world_t.vendors,

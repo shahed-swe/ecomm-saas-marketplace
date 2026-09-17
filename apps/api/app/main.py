@@ -12,6 +12,11 @@ from app.core.middleware import RequestContextMiddleware
 from app.core.redis import create_redis
 from app.core.storage import build_private_storage, build_storage
 from app.modules.billing import router as billing
+from app.modules.catalog import imports as catalog_imports
+from app.modules.catalog import media as catalog_media
+from app.modules.catalog import products as catalog_products
+from app.modules.catalog import taxonomy as catalog_taxonomy
+from app.modules.catalog.revalidate import RecordingRevalidator, WebRevalidator
 from app.modules.domains.router import internal as internal_router
 from app.modules.domains.router import router as domains_router
 from app.modules.domains.service import real_dns_lookup
@@ -41,6 +46,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.private_storage = getattr(
             app.state, "private_storage", None
         ) or build_private_storage(settings)
+        if getattr(app.state, "revalidator", None) is None:
+            app.state.revalidator = (
+                WebRevalidator(settings.web_revalidate_url, settings.jwt_secret)
+                if settings.web_revalidate_url
+                else RecordingRevalidator()
+            )
+        # Dev/test process inline (threadpool); production wires ARQ queues in the worker bootstrap.
+        app.state.media_queue = getattr(
+            app.state, "media_queue", None
+        ) or catalog_media.InlineMediaQueue(app)
+        app.state.import_queue = getattr(
+            app.state, "import_queue", None
+        ) or catalog_imports.InlineImportQueue(app)
         app.state.sms = getattr(app.state, "sms", None) or ConsoleSms()
         app.state.dns_lookup = getattr(app.state, "dns_lookup", None) or real_dns_lookup
         app.state.redis = create_redis(settings)
@@ -85,6 +103,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         vendor_onboarding.vendor,
         vendor_onboarding.admin,
         vendor_onboarding.internal,
+        catalog_taxonomy.admin,
+        catalog_taxonomy.public,
+        catalog_products.vendor,
+        catalog_products.admin,
+        catalog_products.public,
+        catalog_media.router,
+        catalog_imports.router,
         vendor_router,
         admin_vendors_router,
         domains_router,

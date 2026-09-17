@@ -13,10 +13,13 @@ export async function apiFetch(path: string, init: RequestInit & { tags?: string
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
   const { tags, ...rest } = init;
+  // Cache tags must match the API's tenant-prefixed tags (t:{tenant_id}:...), or invalidation misses.
+  const store = tags ? await getStore() : null;
+  const fullTags = store ? tags!.map((t) => `t:${store.tenant_id}:${t}`) : undefined;
   return fetch(`${API}${path}`, {
     ...rest,
     headers: { ...(rest.headers ?? {}), "x-forwarded-host": host, "x-request-id": h.get("x-request-id") ?? "" },
-    next: tags ? { tags, revalidate: 60 } : undefined,
+    next: fullTags ? { tags: fullTags, revalidate: 60 } : { revalidate: 0 },
   });
 }
 

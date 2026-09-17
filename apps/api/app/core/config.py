@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     s3_secret_key: str = ""
     local_media_root: str = "var/media"
     local_private_root: str = "var/private"
+    web_revalidate_url: str | None = None
     s3_private_bucket: str = "private-kyc"
     # Envelope key for PII at rest (Vault transit in production). 32 url-safe base64 bytes.
     data_encryption_key: str = "dGVzdC1rZXktdGVzdC1rZXktdGVzdC1rZXktMDEyMzQ="

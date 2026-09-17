@@ -10,6 +10,7 @@ router = APIRouter(prefix="/api/v1/store", tags=["store"])
 
 
 class StoreOut(BaseModel):
+    tenant_id: str  # used by the web to build tenant-prefixed ISR cache tags
     name: str
     store_mode: str
     default_locale: str
@@ -24,6 +25,7 @@ async def store_info(tenant: Tenant, db: TenantDB):
     if len(t) != 1:
         raise NotFound("Store not found")
     return StoreOut(
+        tenant_id=tenant.id,
         name=t[0].name,
         store_mode=t[0].store_mode,
         default_locale=t[0].default_locale,

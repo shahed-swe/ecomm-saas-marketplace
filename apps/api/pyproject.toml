@@ -53,3 +53,5 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.File", "a
 [tool.ruff.lint.per-file-ignores]
 "app/tests/**" = ["S608", "ASYNC221", "E501"]
 "migrations/**" = ["E501", "S608"]
+# SQL fragments interpolated here are module constants (VISIBLE), never user input.
+"app/modules/catalog/products.py" = ["S608"]

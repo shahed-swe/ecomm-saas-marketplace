@@ -115,6 +115,7 @@ class TenantWorld:
     theme_version_id: str = ""
     invoice_id: str = ""
     document_id: str = ""
+    catalog: dict = field(default_factory=dict)  # kind -> {vendor name or "tenant": id}
     payout_hold_id: str = ""
     domain_id: str = ""
 
@@ -169,6 +170,130 @@ async def make_tenant(c, app, platform_headers, *, slug: str, name: str, store_m
     body["owner_email"] = owner
     body["staff_token"] = await login(c, body["primary_host"], owner, "staff")
     return body
+
+
+def jpeg_bytes(w=1200, h=900, color=(30, 120, 200)) -> bytes:
+    import io
+
+    from PIL import Image
+
+    buf = io.BytesIO()
+    Image.new("RGB", (w, h), color).save(buf, "JPEG", quality=90)
+    return buf.getvalue()
+
+
+async def build_catalog(c, app, tw, key):
+    """Per tenant: category + attribute + brand; per vendor X1/X2: approved, product, media, question, import."""
+    from sqlalchemy import text as sql
+
+    async with app.state.platform_db.engine.begin() as conn:
+        await conn.execute(
+            sql("UPDATE vendors SET status='approved' WHERE tenant_id=:t"), {"t": tw.id}
+        )
+        await conn.execute(
+            sql("UPDATE tenant_settings SET moderation_mode='none' WHERE tenant_id=:t"),
+            {"t": tw.id},
+        )
+    staff = tw.staff.headers()
+    cat = (
+        await c.post(
+            "/api/v1/admin/catalog/categories",
+            headers=staff,
+            json={"slug": "fashion", "name_en": "Fashion", "name_bn": "ফ্যাশন"},
+        )
+    ).json()
+    attr = (
+        await c.post(
+            f"/api/v1/admin/catalog/categories/{cat['id']}/attributes",
+            headers=staff,
+            json={
+                "key": "material",
+                "label_en": "Material",
+                "type": "select",
+                "options": ["cotton", "silk"],
+            },
+        )
+    ).json()
+    brand = (
+        await c.post(
+            "/api/v1/admin/catalog/brands", headers=staff, json={"slug": "aarong", "name": "Aarong"}
+        )
+    ).json()
+    tw.catalog = {
+        "category": {"tenant": cat["id"]},
+        "attribute": {"tenant": attr["id"]},
+        "brand": {"tenant": brand["id"]},
+        "product": {},
+        "variant": {},
+        "asset": {},
+        "product_media": {},
+        "question": {},
+        "import_job": {},
+    }
+    buyer = await c.post(
+        "/api/v1/auth/register",
+        headers={"host": tw.host},
+        json={"email": f"buyer-{key.lower()}@example.com", "password": PASSWORD},
+    )
+    buyer_h = {"authorization": f"Bearer {buyer.json()['access_token']}", "host": tw.host}
+    c.cookies.clear()
+    for n in (1, 2):
+        name = f"{key}{n}"
+        vh = tw.vendor_actors[name].headers()
+        asset = await c.post(
+            "/api/v1/vendor/media",
+            headers=vh,
+            files={"file": ("p.jpg", jpeg_bytes(color=(n * 60, 80, 120)), "image/jpeg")},
+        )
+        assert asset.status_code == 202 and asset.json()["status"] == "ready", asset.text
+        prod = await c.post(
+            "/api/v1/vendor/products",
+            headers=vh,
+            json={
+                "slug": f"kurti-{name.lower()}",
+                "title_en": f"Cotton Kurti {name}",
+                "category_id": cat["id"],
+                "brand_id": brand["id"],
+                "attributes": {"material": "cotton"},
+                "variants": [
+                    {
+                        "sku": f"KURTI-{name}-M",
+                        "options": {"Size": "M"},
+                        "price": "1250.00",
+                        "stock": 5,
+                    }
+                ],
+            },
+        )
+        assert prod.status_code == 201, prod.text
+        pid = prod.json()["id"]
+        media = await c.post(
+            f"/api/v1/vendor/products/{pid}/media",
+            headers=vh,
+            json={"asset_id": asset.json()["id"]},
+        )
+        assert media.status_code == 201, media.text
+        assert (
+            await c.patch(f"/api/v1/vendor/products/{pid}", headers=vh, json={"status": "active"})
+        ).status_code == 200
+        q = await c.post(
+            f"/api/v1/catalog/products/kurti-{name.lower()}/questions",
+            headers=buyer_h,
+            json={"question": "Is this true to size?"},
+        )
+        assert q.status_code == 201, q.text
+        imp = await c.post(
+            "/api/v1/vendor/imports",
+            headers=vh,
+            files={"file": ("p.csv", b"handle,title_en,category,sku,price\n", "text/csv")},
+        )
+        assert imp.status_code == 202, imp.text
+        tw.catalog["product"][name] = pid
+        tw.catalog["variant"][name] = prod.json()["variants"][0]["id"]
+        tw.catalog["asset"][name] = asset.json()["id"]
+        tw.catalog["product_media"][name] = media.json()["id"]
+        tw.catalog["question"][name] = q.json()["id"]
+        tw.catalog["import_job"][name] = imp.json()["id"]
 
 
 @pytest.fixture(scope="session")
@@ -266,6 +391,7 @@ async def world(app, settings, platform_headers):
             )
             assert doc.status_code == 201, doc.text
             tw.document_id = doc.json()["id"]
+            await build_catalog(c, app, tw, key)
             out[key] = tw
         eng = app.state.platform_db.engine
         async with eng.connect() as conn:
