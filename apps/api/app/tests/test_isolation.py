@@ -120,6 +120,27 @@ SCOPED_ROUTES = [
     ("GET", "/api/v1/admin/payout-batches/{id}/export", STAFF, "payout_batch", None),
     ("POST", "/api/v1/admin/payout-lines/{id}/paid", STAFF, "payout_line", {"reference": "TRX-9"}),
     ("POST", "/api/v1/admin/payout-lines/{id}/failed", STAFF, "payout_line", {"reason": "bounced"}),
+    # trust & safety (Phase 15)
+    ("POST", "/api/v1/vendor/reviews/{id}/reply", VENDOR, "review", {"reply": "Thank you!"}),
+    (
+        "POST",
+        "/api/v1/vendor/disputes/{id}/messages",
+        VENDOR,
+        "dispute",
+        {"body": "Looking into it"},
+    ),
+    ("GET", "/api/v1/vendor/messages/{id}", VENDOR, "conversation", None),
+    ("POST", "/api/v1/vendor/messages/{id}", VENDOR, "conversation", {"body": "On its way"}),
+    ("POST", "/api/v1/admin/reviews/{id}/moderate", STAFF, "review", {"decision": "approve"}),
+    ("GET", "/api/v1/admin/disputes/{id}", STAFF, "dispute", None),
+    (
+        "POST",
+        "/api/v1/admin/disputes/{id}/resolve",
+        STAFF,
+        "dispute",
+        {"in_favour_of": "vendor", "note": "closed"},
+    ),
+    ("POST", "/api/v1/admin/conversations/{id}/block", STAFF, "conversation", None),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
@@ -133,6 +154,8 @@ OWN_STATUS = {
     ("POST", "/api/v1/vendor/returns/{id}/pickup"): 409,
     ("POST", "/api/v1/vendor/returns/{id}/mark"): 409,
     ("POST", "/api/v1/vendor/returns/{id}/qc"): 409,
+    ("POST", "/api/v1/vendor/disputes/{id}/messages"): 409,  # the world dispute is resolved
+    ("POST", "/api/v1/vendor/messages/{id}"): 201,
     ("POST", "/api/v1/vendor/products/{id}/variants"): 201,
     ("POST", "/api/v1/vendor/products/{id}/media"): 404,  # placeholder asset id does not exist
     (

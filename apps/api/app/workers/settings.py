@@ -291,6 +291,33 @@ async def payout_runs(ctx: dict) -> dict:
     return {"tenants": len(tenants), "batches": built}
 
 
+@platform_job
+async def trust_sweep(ctx: dict) -> dict:
+    """Disputes nobody answered escalate; vendor scorecards are recomputed from the week's facts."""
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.trust.service import escalate_overdue_disputes, score_all
+
+    escalated, scored = 0, 0
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenant_ids = [
+            str(r[0])
+            for r in (
+                await session.execute(
+                    text("SELECT id FROM tenants WHERE status IN ('trial','active') LIMIT 500")
+                )
+            ).all()
+        ]
+    for tenant_id in tenant_ids:
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, tenant_id)
+            escalated += await escalate_overdue_disputes(session, tenant_id)
+            scored += (await score_all(session, tenant_id))["scored"]
+    log.info("trust_sweep", tenants=len(tenant_ids), escalated=escalated, scored=scored)
+    return {"tenants": len(tenant_ids), "escalated": escalated, "scored": scored}
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -316,6 +343,7 @@ class WorkerSettings:
         escalate_returns,
         finance_reconcile,
         payout_runs,
+        trust_sweep,
     ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
@@ -326,6 +354,7 @@ class WorkerSettings:
         cron(escalate_returns, minute={40}),  # hourly
         cron(finance_reconcile, hour={21}, minute={30}),  # 03:30 Asia/Dhaka
         cron(payout_runs, hour={22}, minute={15}),  # 04:15 Asia/Dhaka
+        cron(trust_sweep, hour={1, 13}, minute={50}),
     ]
     on_startup = startup
     on_shutdown = shutdown

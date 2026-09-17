@@ -42,6 +42,7 @@ from app.modules.store.router import router as store_router
 from app.modules.theme import router as theme
 from app.modules.theme import storefront as theme_storefront
 from app.modules.theme import vendor_store
+from app.modules.trust import router as trust
 from app.modules.vendors import onboarding as vendor_onboarding
 from app.modules.vendors.router import admin_router as admin_vendors_router
 from app.modules.vendors.router import vendor_router
@@ -153,6 +154,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         ledger.admin,
         ledger.vendor,
         ledger.buyer,
+        trust.buyer,
+        trust.vendor,
+        trust.admin,
         vendor_router,
         admin_vendors_router,
         domains_router,

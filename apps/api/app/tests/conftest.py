@@ -449,6 +449,50 @@ async def build_catalog(c, app, tw, key):
         )
         tw.catalog["payout_batch"] = {"tenant": str(batch_id)}
         tw.catalog["payout_line"] = {"tenant": str(line_id)}
+    # A published review, a closed dispute and an open conversation per vendor (Phase 15).
+    tw.catalog["review"] = {}
+    tw.catalog["dispute"] = {}
+    tw.catalog["conversation"] = {}
+    async with app.state.platform_db.engine.begin() as conn:
+        for n in (1, 2):
+            name = f"{key}{n}"
+            sub_id = tw.catalog["sub_order"][name]
+            review_id = await conn.scalar(
+                sql(
+                    """INSERT INTO reviews (tenant_id, vendor_id, product_id, user_id, order_item_id,
+                           rating, title, body)
+                       SELECT i.tenant_id, i.vendor_id, i.product_id, o.user_id, i.id, 5, 'Good',
+                              'Nice fabric'
+                       FROM order_items i
+                       JOIN sub_orders s ON s.id = i.sub_order_id AND s.tenant_id = i.tenant_id
+                       JOIN orders o ON o.id = s.order_id AND o.tenant_id = s.tenant_id
+                       WHERE i.tenant_id = :t AND i.sub_order_id = :s LIMIT 1 RETURNING id"""
+                ),
+                {"t": tw.id, "s": sub_id},
+            )
+            tw.catalog["review"][name] = str(review_id)
+            dispute_id = await conn.scalar(
+                sql(
+                    """INSERT INTO disputes (tenant_id, vendor_id, order_id, sub_order_id, user_id,
+                           number, reason, amount, status)
+                       SELECT s.tenant_id, s.vendor_id, s.order_id, s.id, o.user_id, :num, 'damaged',
+                              s.total, 'resolved_vendor'
+                       FROM sub_orders s JOIN orders o ON o.id = s.order_id AND o.tenant_id = s.tenant_id
+                       WHERE s.tenant_id = :t AND s.id = :s RETURNING id"""
+                ),
+                {"num": f"DSP-W{key}{n}", "t": tw.id, "s": sub_id},
+            )
+            tw.catalog["dispute"][name] = str(dispute_id)
+            convo_id = await conn.scalar(
+                sql(
+                    """INSERT INTO conversations (tenant_id, vendor_id, user_id, sub_order_id)
+                       SELECT s.tenant_id, s.vendor_id, o.user_id, s.id
+                       FROM sub_orders s JOIN orders o ON o.id = s.order_id AND o.tenant_id = s.tenant_id
+                       WHERE s.tenant_id = :t AND s.id = :s RETURNING id"""
+                ),
+                {"t": tw.id, "s": sub_id},
+            )
+            tw.catalog["conversation"][name] = str(convo_id)
 
 
 @pytest.fixture(scope="session")

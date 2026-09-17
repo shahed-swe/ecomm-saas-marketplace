@@ -1387,6 +1387,39 @@
         "title": "CommissionIn",
         "type": "object"
       },
+      "ConversationIn": {
+        "properties": {
+          "body": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          },
+          "sub_order_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sub Order Id"
+          },
+          "vendor_id": {
+            "format": "uuid",
+            "title": "Vendor Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "vendor_id",
+          "body"
+        ],
+        "title": "ConversationIn",
+        "type": "object"
+      },
       "CouponIn": {
         "properties": {
           "code": {
@@ -1689,6 +1722,44 @@
           "approve"
         ],
         "title": "DecisionIn",
+        "type": "object"
+      },
+      "DisputeIn": {
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "reason": {
+            "enum": [
+              "not_received",
+              "not_as_described",
+              "damaged",
+              "refund_not_received",
+              "other"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "sub_order_id": {
+            "format": "uuid",
+            "title": "Sub Order Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sub_order_id",
+          "reason"
+        ],
+        "title": "DisputeIn",
         "type": "object"
       },
       "DocumentOut": {
@@ -2664,33 +2735,19 @@
         "title": "MenuItem",
         "type": "object"
       },
-      "ModerateIn": {
+      "MessageIn": {
         "properties": {
-          "decision": {
-            "enum": [
-              "approve",
-              "reject"
-            ],
-            "title": "Decision",
+          "body": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Body",
             "type": "string"
-          },
-          "reason": {
-            "anyOf": [
-              {
-                "maxLength": 300,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reason"
           }
         },
         "required": [
-          "decision"
+          "body"
         ],
-        "title": "ModerateIn",
+        "title": "MessageIn",
         "type": "object"
       },
       "ModerationItem": {
@@ -3222,6 +3279,17 @@
           "moderation_status": {
             "title": "Moderation Status",
             "type": "string"
+          },
+          "rating_avg": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Rating Avg",
+            "type": "string"
+          },
+          "rating_count": {
+            "default": 0,
+            "title": "Rating Count",
+            "type": "integer"
           },
           "slug": {
             "title": "Slug",
@@ -3784,6 +3852,17 @@
             "title": "Moderation Status",
             "type": "string"
           },
+          "rating_avg": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Rating Avg",
+            "type": "string"
+          },
+          "rating_count": {
+            "default": 0,
+            "title": "Rating Count",
+            "type": "integer"
+          },
           "slug": {
             "title": "Slug",
             "type": "string"
@@ -4291,22 +4370,19 @@
         "title": "RegisterIn",
         "type": "object"
       },
-      "ResolveIn": {
+      "ReplyIn": {
         "properties": {
-          "note": {
-            "anyOf": [
-              {
-                "maxLength": 250,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Note"
+          "reply": {
+            "maxLength": 1000,
+            "minLength": 2,
+            "title": "Reply",
+            "type": "string"
           }
         },
-        "title": "ResolveIn",
+        "required": [
+          "reply"
+        ],
+        "title": "ReplyIn",
         "type": "object"
       },
       "ResolvedSection": {
@@ -4523,6 +4599,51 @@
           "duplicate_of_vendor_ids"
         ],
         "title": "ReviewDoc",
+        "type": "object"
+      },
+      "ReviewIn": {
+        "properties": {
+          "body": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Body"
+          },
+          "order_item_id": {
+            "format": "uuid",
+            "title": "Order Item Id",
+            "type": "string"
+          },
+          "rating": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Rating",
+            "type": "integer"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "order_item_id",
+          "rating"
+        ],
+        "title": "ReviewIn",
         "type": "object"
       },
       "ReviewOut": {
@@ -7117,6 +7238,53 @@
         "title": "VersionOut",
         "type": "object"
       },
+      "app__modules__catalog__products__ModerateIn": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approve",
+              "reject"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "ModerateIn",
+        "type": "object"
+      },
+      "app__modules__fulfilment__router__ResolveIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 250,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "ResolveIn",
+        "type": "object"
+      },
       "app__modules__ledger__router__DocumentIn": {
         "properties": {
           "kind": {
@@ -7159,6 +7327,48 @@
           "ready_to_launch"
         ],
         "title": "OnboardingOut",
+        "type": "object"
+      },
+      "app__modules__trust__router__ModerateIn": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "approve",
+              "reject",
+              "hide"
+            ],
+            "title": "Decision",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "ModerateIn",
+        "type": "object"
+      },
+      "app__modules__trust__router__ResolveIn": {
+        "properties": {
+          "in_favour_of": {
+            "enum": [
+              "buyer",
+              "vendor"
+            ],
+            "title": "In Favour Of",
+            "type": "string"
+          },
+          "note": {
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "in_favour_of",
+          "note"
+        ],
+        "title": "ResolveIn",
         "type": "object"
       },
       "app__modules__vendors__onboarding__DocumentIn": {
@@ -8010,6 +8220,42 @@
         ]
       }
     },
+    "/api/v1/admin/conversations/{conversation_id}/block": {
+      "post": {
+        "operationId": "block_conversation_api_v1_admin_conversations__conversation_id__block_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conversation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Block Conversation",
+        "tags": [
+          "admin:trust"
+        ]
+      }
+    },
     "/api/v1/admin/courier-accounts": {
       "get": {
         "operationId": "list_courier_accounts_api_v1_admin_courier_accounts_get",
@@ -8393,6 +8639,145 @@
         ]
       }
     },
+    "/api/v1/admin/disputes": {
+      "get": {
+        "operationId": "admin_disputes_api_v1_admin_disputes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Disputes",
+        "tags": [
+          "admin:trust"
+        ]
+      }
+    },
+    "/api/v1/admin/disputes/{dispute_id}": {
+      "get": {
+        "operationId": "admin_dispute_api_v1_admin_disputes__dispute_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispute_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispute Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Dispute",
+        "tags": [
+          "admin:trust"
+        ]
+      }
+    },
+    "/api/v1/admin/disputes/{dispute_id}/resolve": {
+      "post": {
+        "operationId": "resolve_dispute_api_v1_admin_disputes__dispute_id__resolve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispute_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispute Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__trust__router__ResolveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resolve Dispute",
+        "tags": [
+          "admin:trust"
+        ]
+      }
+    },
     "/api/v1/admin/domains": {
       "get": {
         "operationId": "list_domains_api_v1_admin_domains_get",
@@ -8697,6 +9082,48 @@
         "summary": "Trial Balance",
         "tags": [
           "admin:finance"
+        ]
+      }
+    },
+    "/api/v1/admin/messages/flagged": {
+      "get": {
+        "description": "What staff need to see: attempts to take a deal off the platform, with who and when.",
+        "operationId": "flagged_messages_api_v1_admin_messages_flagged_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Flagged Messages",
+        "tags": [
+          "admin:trust"
         ]
       }
     },
@@ -9438,7 +9865,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ModerateIn"
+                "$ref": "#/components/schemas/app__modules__catalog__products__ModerateIn"
               }
             }
           },
@@ -9859,6 +10286,114 @@
         ]
       }
     },
+    "/api/v1/admin/reviews": {
+      "get": {
+        "operationId": "admin_reviews_api_v1_admin_reviews_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Reviews",
+        "tags": [
+          "admin:trust"
+        ]
+      }
+    },
+    "/api/v1/admin/reviews/{review_id}/moderate": {
+      "post": {
+        "operationId": "moderate_review_api_v1_admin_reviews__review_id__moderate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Review Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__trust__router__ModerateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Moderate Review",
+        "tags": [
+          "admin:trust"
+        ]
+      }
+    },
     "/api/v1/admin/roles": {
       "get": {
         "operationId": "list_roles_api_v1_admin_roles_get",
@@ -10095,7 +10630,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ResolveIn"
+                "$ref": "#/components/schemas/app__modules__fulfilment__router__ResolveIn"
               }
             }
           },
@@ -10940,6 +11475,88 @@
         "summary": "Create Invite",
         "tags": [
           "admin:vendor-review"
+        ]
+      }
+    },
+    "/api/v1/admin/vendor-scores": {
+      "get": {
+        "operationId": "vendor_scores_api_v1_admin_vendor_scores_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "window_days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "title": "Window Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Scores",
+        "tags": [
+          "admin:trust"
+        ]
+      }
+    },
+    "/api/v1/admin/vendor-scores/recompute": {
+      "post": {
+        "operationId": "recompute_scores_api_v1_admin_vendor_scores_recompute_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "window_days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "title": "Window Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Recompute Scores",
+        "tags": [
+          "admin:trust"
         ]
       }
     },
@@ -12353,6 +12970,210 @@
         ]
       }
     },
+    "/api/v1/me/disputes": {
+      "get": {
+        "operationId": "my_disputes_api_v1_me_disputes_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Disputes",
+        "tags": [
+          "trust"
+        ]
+      },
+      "post": {
+        "operationId": "open_dispute_api_v1_me_disputes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisputeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Open Dispute",
+        "tags": [
+          "trust"
+        ]
+      }
+    },
+    "/api/v1/me/disputes/{dispute_id}/messages": {
+      "post": {
+        "operationId": "buyer_dispute_message_api_v1_me_disputes__dispute_id__messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispute_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispute Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Buyer Dispute Message",
+        "tags": [
+          "trust"
+        ]
+      }
+    },
+    "/api/v1/me/messages": {
+      "get": {
+        "operationId": "buyer_threads_api_v1_me_messages_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Buyer Threads",
+        "tags": [
+          "trust"
+        ]
+      },
+      "post": {
+        "operationId": "buyer_send_api_v1_me_messages_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConversationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Buyer Send",
+        "tags": [
+          "trust"
+        ]
+      }
+    },
+    "/api/v1/me/messages/{conversation_id}": {
+      "get": {
+        "operationId": "buyer_thread_api_v1_me_messages__conversation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conversation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Buyer Thread",
+        "tags": [
+          "trust"
+        ]
+      }
+    },
     "/api/v1/me/orders": {
       "get": {
         "operationId": "my_orders_api_v1_me_orders_get",
@@ -12809,6 +13630,62 @@
         ]
       }
     },
+    "/api/v1/me/reviews": {
+      "get": {
+        "operationId": "my_reviews_api_v1_me_reviews_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Reviews",
+        "tags": [
+          "trust"
+        ]
+      },
+      "post": {
+        "operationId": "write_review_api_v1_me_reviews_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Write Review",
+        "tags": [
+          "trust"
+        ]
+      }
+    },
     "/api/v1/me/store-credit": {
       "get": {
         "operationId": "my_store_credit_api_v1_me_store_credit_get",
@@ -13087,6 +13964,103 @@
         "summary": "Confirm",
         "tags": [
           "payments"
+        ]
+      }
+    },
+    "/api/v1/products/{product_id}/reviews": {
+      "get": {
+        "operationId": "product_reviews_api_v1_products__product_id__reviews_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Product Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Product Reviews",
+        "tags": [
+          "trust"
+        ]
+      }
+    },
+    "/api/v1/reviews/{review_id}/helpful": {
+      "post": {
+        "operationId": "vote_helpful_api_v1_reviews__review_id__helpful_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Review Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vote Helpful",
+        "tags": [
+          "trust"
         ]
       }
     },
@@ -13722,6 +14696,104 @@
         ]
       }
     },
+    "/api/v1/vendor/disputes": {
+      "get": {
+        "operationId": "vendor_disputes_api_v1_vendor_disputes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Disputes",
+        "tags": [
+          "vendor:trust"
+        ]
+      }
+    },
+    "/api/v1/vendor/disputes/{dispute_id}/messages": {
+      "post": {
+        "operationId": "vendor_dispute_message_api_v1_vendor_disputes__dispute_id__messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dispute_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dispute Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Dispute Message",
+        "tags": [
+          "vendor:trust"
+        ]
+      }
+    },
     "/api/v1/vendor/documents": {
       "post": {
         "operationId": "register_document_api_v1_vendor_documents_post",
@@ -14030,6 +15102,115 @@
         "summary": "Get Asset",
         "tags": [
           "vendor:media"
+        ]
+      }
+    },
+    "/api/v1/vendor/messages": {
+      "get": {
+        "operationId": "vendor_threads_api_v1_vendor_messages_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Vendor Threads",
+        "tags": [
+          "vendor:trust"
+        ]
+      }
+    },
+    "/api/v1/vendor/messages/{conversation_id}": {
+      "get": {
+        "operationId": "vendor_thread_api_v1_vendor_messages__conversation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conversation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Thread",
+        "tags": [
+          "vendor:trust"
+        ]
+      },
+      "post": {
+        "operationId": "vendor_send_api_v1_vendor_messages__conversation_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conversation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Send",
+        "tags": [
+          "vendor:trust"
         ]
       }
     },
@@ -15212,6 +16393,156 @@
         "summary": "Vendor Qc",
         "tags": [
           "vendor:returns"
+        ]
+      }
+    },
+    "/api/v1/vendor/reviews": {
+      "get": {
+        "operationId": "vendor_reviews_api_v1_vendor_reviews_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Reviews",
+        "tags": [
+          "vendor:trust"
+        ]
+      }
+    },
+    "/api/v1/vendor/reviews/{review_id}/reply": {
+      "post": {
+        "operationId": "reply_review_api_v1_vendor_reviews__review_id__reply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Review Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reply Review",
+        "tags": [
+          "vendor:trust"
+        ]
+      }
+    },
+    "/api/v1/vendor/scorecard": {
+      "get": {
+        "description": "A vendor can always see the same numbers the tenant sees about them.",
+        "operationId": "my_scorecard_api_v1_vendor_scorecard_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "window_days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "title": "Window Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Scorecard",
+        "tags": [
+          "vendor:trust"
         ]
       }
     },

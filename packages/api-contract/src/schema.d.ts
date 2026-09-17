@@ -277,6 +277,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/conversations/{conversation_id}/block": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Block Conversation */
+        post: operations["block_conversation_api_v1_admin_conversations__conversation_id__block_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/courier-accounts": {
         parameters: {
             query?: never;
@@ -402,6 +419,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/disputes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Disputes */
+        get: operations["admin_disputes_api_v1_admin_disputes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/disputes/{dispute_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Dispute */
+        get: operations["admin_dispute_api_v1_admin_disputes__dispute_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/disputes/{dispute_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resolve Dispute */
+        post: operations["resolve_dispute_api_v1_admin_disputes__dispute_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/domains": {
         parameters: {
             query?: never;
@@ -503,6 +571,26 @@ export interface paths {
          * @description Debits must equal credits. If they ever do not, something is very wrong — say so loudly.
          */
         get: operations["trial_balance_api_v1_admin_ledger_trial_balance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/messages/flagged": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Flagged Messages
+         * @description What staff need to see: attempts to take a deal off the platform, with who and when.
+         */
+        get: operations["flagged_messages_api_v1_admin_messages_flagged_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -924,6 +1012,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Reviews */
+        get: operations["admin_reviews_api_v1_admin_reviews_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/reviews/{review_id}/moderate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Moderate Review */
+        post: operations["moderate_review_api_v1_admin_reviews__review_id__moderate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/roles": {
         parameters: {
             query?: never;
@@ -1319,6 +1441,40 @@ export interface paths {
         put?: never;
         /** Create Invite */
         post: operations["create_invite_api_v1_admin_vendor_invites_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/vendor-scores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor Scores */
+        get: operations["vendor_scores_api_v1_admin_vendor_scores_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/vendor-scores/recompute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Recompute Scores */
+        post: operations["recompute_scores_api_v1_admin_vendor_scores_recompute_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1816,6 +1972,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/disputes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Disputes */
+        get: operations["my_disputes_api_v1_me_disputes_get"];
+        put?: never;
+        /** Open Dispute */
+        post: operations["open_dispute_api_v1_me_disputes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/disputes/{dispute_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Buyer Dispute Message */
+        post: operations["buyer_dispute_message_api_v1_me_disputes__dispute_id__messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Buyer Threads */
+        get: operations["buyer_threads_api_v1_me_messages_get"];
+        put?: never;
+        /** Buyer Send */
+        post: operations["buyer_send_api_v1_me_messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/messages/{conversation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Buyer Thread */
+        get: operations["buyer_thread_api_v1_me_messages__conversation_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/orders": {
         parameters: {
             query?: never;
@@ -2001,6 +2227,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Reviews */
+        get: operations["my_reviews_api_v1_me_reviews_get"];
+        put?: never;
+        /** Write Review */
+        post: operations["write_review_api_v1_me_reviews_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/store-credit": {
         parameters: {
             query?: never;
@@ -2121,6 +2365,40 @@ export interface paths {
          * @description Called by the return page. The provider's answer decides, not the query string it carried.
          */
         post: operations["confirm_api_v1_payments__payment_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/products/{product_id}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Product Reviews */
+        get: operations["product_reviews_api_v1_products__product_id__reviews_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reviews/{review_id}/helpful": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Vote Helpful */
+        post: operations["vote_helpful_api_v1_reviews__review_id__helpful_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2389,6 +2667,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vendor/disputes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor Disputes */
+        get: operations["vendor_disputes_api_v1_vendor_disputes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/disputes/{dispute_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Vendor Dispute Message */
+        post: operations["vendor_dispute_message_api_v1_vendor_disputes__dispute_id__messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vendor/documents": {
         parameters: {
             query?: never;
@@ -2522,6 +2834,41 @@ export interface paths {
         get: operations["get_asset_api_v1_vendor_media__asset_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor Threads */
+        get: operations["vendor_threads_api_v1_vendor_messages_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/messages/{conversation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor Thread */
+        get: operations["vendor_thread_api_v1_vendor_messages__conversation_id__get"];
+        put?: never;
+        /** Vendor Send */
+        post: operations["vendor_send_api_v1_vendor_messages__conversation_id__post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2933,6 +3280,60 @@ export interface paths {
         put?: never;
         /** Vendor Qc */
         post: operations["vendor_qc_api_v1_vendor_returns__return_id__qc_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor Reviews */
+        get: operations["vendor_reviews_api_v1_vendor_reviews_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/reviews/{review_id}/reply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reply Review */
+        post: operations["reply_review_api_v1_vendor_reviews__review_id__reply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/scorecard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My Scorecard
+         * @description A vendor can always see the same numbers the tenant sees about them.
+         */
+        get: operations["my_scorecard_api_v1_vendor_scorecard_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -3810,6 +4211,18 @@ export interface components {
             /** Rate */
             rate: number | string;
         };
+        /** ConversationIn */
+        ConversationIn: {
+            /** Body */
+            body: string;
+            /** Sub Order Id */
+            sub_order_id?: string | null;
+            /**
+             * Vendor Id
+             * Format: uuid
+             */
+            vendor_id: string;
+        };
         /** CouponIn */
         CouponIn: {
             /** Code */
@@ -3922,6 +4335,21 @@ export interface components {
             approve: boolean;
             /** Note */
             note?: string | null;
+        };
+        /** DisputeIn */
+        DisputeIn: {
+            /** Detail */
+            detail?: string | null;
+            /**
+             * Reason
+             * @enum {string}
+             */
+            reason: "not_received" | "not_as_described" | "damaged" | "refund_not_received" | "other";
+            /**
+             * Sub Order Id
+             * Format: uuid
+             */
+            sub_order_id: string;
         };
         /** DocumentOut */
         DocumentOut: {
@@ -4311,15 +4739,10 @@ export interface components {
             href: string;
             label: components["schemas"]["Text"];
         };
-        /** ModerateIn */
-        ModerateIn: {
-            /**
-             * Decision
-             * @enum {string}
-             */
-            decision: "approve" | "reject";
-            /** Reason */
-            reason?: string | null;
+        /** MessageIn */
+        MessageIn: {
+            /** Body */
+            body: string;
         };
         /** ModerationItem */
         ModerationItem: {
@@ -4515,6 +4938,16 @@ export interface components {
             moderation_reason: string | null;
             /** Moderation Status */
             moderation_status: string;
+            /**
+             * Rating Avg
+             * @default 0
+             */
+            rating_avg: string;
+            /**
+             * Rating Count
+             * @default 0
+             */
+            rating_count: number;
             /** Slug */
             slug: string;
             /** Status */
@@ -4717,6 +5150,16 @@ export interface components {
             moderation_reason: string | null;
             /** Moderation Status */
             moderation_status: string;
+            /**
+             * Rating Avg
+             * @default 0
+             */
+            rating_avg: string;
+            /**
+             * Rating Count
+             * @default 0
+             */
+            rating_count: number;
             /** Slug */
             slug: string;
             /** Status */
@@ -4879,10 +5322,10 @@ export interface components {
             /** Password */
             password: string;
         };
-        /** ResolveIn */
-        ResolveIn: {
-            /** Note */
-            note?: string | null;
+        /** ReplyIn */
+        ReplyIn: {
+            /** Reply */
+            reply: string;
         };
         /** ResolvedSection */
         ResolvedSection: {
@@ -4964,6 +5407,20 @@ export interface components {
             status: string;
             /** View Url */
             view_url: string;
+        };
+        /** ReviewIn */
+        ReviewIn: {
+            /** Body */
+            body?: string | null;
+            /**
+             * Order Item Id
+             * Format: uuid
+             */
+            order_item_id: string;
+            /** Rating */
+            rating: number;
+            /** Title */
+            title?: string | null;
         };
         /** ReviewOut */
         ReviewOut: {
@@ -5905,6 +6362,21 @@ export interface components {
             /** Number */
             number: number;
         };
+        /** ModerateIn */
+        app__modules__catalog__products__ModerateIn: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "approve" | "reject";
+            /** Reason */
+            reason?: string | null;
+        };
+        /** ResolveIn */
+        app__modules__fulfilment__router__ResolveIn: {
+            /** Note */
+            note?: string | null;
+        };
         /** DocumentIn */
         app__modules__ledger__router__DocumentIn: {
             /**
@@ -5925,6 +6397,24 @@ export interface components {
             items: components["schemas"]["ChecklistItem"][];
             /** Ready To Launch */
             ready_to_launch: boolean;
+        };
+        /** ModerateIn */
+        app__modules__trust__router__ModerateIn: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "approve" | "reject" | "hide";
+        };
+        /** ResolveIn */
+        app__modules__trust__router__ResolveIn: {
+            /**
+             * In Favour Of
+             * @enum {string}
+             */
+            in_favour_of: "buyer" | "vendor";
+            /** Note */
+            note: string;
         };
         /** DocumentIn */
         app__modules__vendors__onboarding__DocumentIn: {
@@ -6475,6 +6965,35 @@ export interface operations {
             };
         };
     };
+    block_conversation_api_v1_admin_conversations__conversation_id__block_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_courier_accounts_api_v1_admin_courier_accounts_get: {
         parameters: {
             query?: never;
@@ -6775,6 +7294,103 @@ export interface operations {
             };
         };
     };
+    admin_disputes_api_v1_admin_disputes_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_dispute_api_v1_admin_disputes__dispute_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dispute_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resolve_dispute_api_v1_admin_disputes__dispute_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dispute_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["app__modules__trust__router__ResolveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_domains_api_v1_admin_domains_get: {
         parameters: {
             query?: never;
@@ -6948,6 +7564,37 @@ export interface operations {
         parameters: {
             query?: {
                 since?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    flagged_messages_api_v1_admin_messages_flagged_get: {
+        parameters: {
+            query?: {
+                limit?: number;
             };
             header?: never;
             path?: never;
@@ -7511,7 +8158,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ModerateIn"];
+                "application/json": components["schemas"]["app__modules__catalog__products__ModerateIn"];
             };
         };
         responses: {
@@ -7790,6 +8437,73 @@ export interface operations {
             };
         };
     };
+    admin_reviews_api_v1_admin_reviews_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    moderate_review_api_v1_admin_reviews__review_id__moderate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["app__modules__trust__router__ModerateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_roles_api_v1_admin_roles_get: {
         parameters: {
             query?: never;
@@ -7939,7 +8653,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ResolveIn"];
+                "application/json": components["schemas"]["app__modules__fulfilment__router__ResolveIn"];
             };
         };
         responses: {
@@ -8582,6 +9296,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InviteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vendor_scores_api_v1_admin_vendor_scores_get: {
+        parameters: {
+            query?: {
+                window_days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recompute_scores_api_v1_admin_vendor_scores_recompute_post: {
+        parameters: {
+            query?: {
+                window_days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -9527,6 +10303,178 @@ export interface operations {
             };
         };
     };
+    my_disputes_api_v1_me_disputes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    open_dispute_api_v1_me_disputes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DisputeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    buyer_dispute_message_api_v1_me_disputes__dispute_id__messages_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dispute_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MessageIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    buyer_threads_api_v1_me_messages_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    buyer_send_api_v1_me_messages_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConversationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    buyer_thread_api_v1_me_messages__conversation_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     my_orders_api_v1_me_orders_get: {
         parameters: {
             query?: {
@@ -9887,6 +10835,59 @@ export interface operations {
             };
         };
     };
+    my_reviews_api_v1_me_reviews_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    write_review_api_v1_me_reviews_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     my_store_credit_api_v1_me_store_credit_get: {
         parameters: {
             query?: never;
@@ -10102,6 +11103,69 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    product_reviews_api_v1_products__product_id__reviews_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                product_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vote_helpful_api_v1_reviews__review_id__helpful_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -10555,6 +11619,72 @@ export interface operations {
             };
         };
     };
+    vendor_disputes_api_v1_vendor_disputes_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vendor_dispute_message_api_v1_vendor_disputes__dispute_id__messages_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dispute_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MessageIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     register_document_api_v1_vendor_documents_post: {
         parameters: {
             query?: never;
@@ -10787,6 +11917,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssetOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vendor_threads_api_v1_vendor_messages_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    vendor_thread_api_v1_vendor_messages__conversation_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vendor_send_api_v1_vendor_messages__conversation_id__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MessageIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -11608,6 +12824,104 @@ export interface operations {
                 "application/json": components["schemas"]["QcIn"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vendor_reviews_api_v1_vendor_reviews_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reply_review_api_v1_vendor_reviews__review_id__reply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                review_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReplyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_scorecard_api_v1_vendor_scorecard_get: {
+        parameters: {
+            query?: {
+                window_days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

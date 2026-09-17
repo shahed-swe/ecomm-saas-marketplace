@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import { getStore } from "@/lib/api";
 import { ProductImage } from "@/components/catalog/ProductImage";
 import { AddToCart } from "@/components/shop/AddToCart";
+import { Reviews } from "@/components/shop/Reviews";
 import { apiFetch } from "@/lib/api";
 import { taka } from "@/lib/money";
 
 type Pdp = {
   id: string; slug: string; title_en: string; title_bn?: string | null; description: string;
+  rating_avg?: string; rating_count?: number;
   variants: { id: string; sku: string; options: Record<string, string>; price: string; compare_at_price?: string | null; available: number }[];
   media: { id: string; renditions: Record<string, Record<string, string>>; blur_data?: string | null; alt_text?: string | null }[];
   vendor: { slug: string; display_name: string; district?: string | null; return_policy?: string | null; is_house: boolean };
@@ -48,6 +50,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       offerCount: p.variants.length,
       availability: p.variants.some((v) => v.available > 0) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       seller: { "@type": "Organization", name: p.vendor.is_house ? store?.name : p.vendor.display_name } },
+    ...(Number(p.rating_count ?? 0) > 0
+      ? { aggregateRating: { "@type": "AggregateRating", ratingValue: p.rating_avg, reviewCount: p.rating_count } }
+      : {}),
   };
   const crumbs = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
     { "@type": "ListItem", position: 1, name: p.category.name_en, item: `${origin}/c/${p.category.slug}` },
@@ -90,6 +95,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </section>
         )}
         <p className="whitespace-pre-line text-fg">{p.description}</p>
+      </div>
+      <div className="md:col-span-2">
+        <Reviews productId={p.id} />
       </div>
     </main>
   );

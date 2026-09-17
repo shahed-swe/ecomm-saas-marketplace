@@ -156,6 +156,8 @@ class ProductOut(BaseModel):
     min_price: Decimal | None
     max_price: Decimal | None
     in_stock: bool
+    rating_avg: Decimal = Decimal("0")
+    rating_count: int = 0
     updated_at: datetime
     variants: list[VariantOut] = []
     media: list[MediaOut] = []
