@@ -454,6 +454,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Entries */
+        get: operations["entries_api_v1_admin_ledger_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/ledger/reconciliation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Reconciliation
+         * @description Ledger vs payments, couriers, refunds and wallets. Drift is shown, never silently fixed.
+         */
+        get: operations["reconciliation_api_v1_admin_ledger_reconciliation_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/ledger/trial-balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Trial Balance
+         * @description Debits must equal credits. If they ever do not, something is very wrong — say so loudly.
+         */
+        get: operations["trial_balance_api_v1_admin_ledger_trial_balance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/moderation/products": {
         parameters: {
             query?: never;
@@ -591,6 +648,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/payout-batches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Batches */
+        get: operations["list_batches_api_v1_admin_payout_batches_get"];
+        put?: never;
+        /** Build Batch */
+        post: operations["build_batch_api_v1_admin_payout_batches_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/payout-batches/{batch_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Batch Detail */
+        get: operations["batch_detail_api_v1_admin_payout_batches__batch_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/payout-batches/{batch_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve Batch */
+        post: operations["approve_batch_api_v1_admin_payout_batches__batch_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/payout-batches/{batch_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export Batch */
+        get: operations["export_batch_api_v1_admin_payout_batches__batch_id__export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/payout-holds/{hold_id}/release": {
         parameters: {
             query?: never;
@@ -602,6 +728,40 @@ export interface paths {
         put?: never;
         /** Release Hold */
         post: operations["release_hold_api_v1_admin_payout_holds__hold_id__release_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/payout-lines/{line_id}/failed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark Line Failed */
+        post: operations["mark_line_failed_api_v1_admin_payout_lines__line_id__failed_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/payout-lines/{line_id}/paid": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark Line Paid */
+        post: operations["mark_line_paid_api_v1_admin_payout_lines__line_id__paid_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -943,6 +1103,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/tax-documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Documents */
+        get: operations["list_documents_api_v1_admin_tax_documents_get"];
+        put?: never;
+        /** Issue Document */
+        post: operations["issue_document_api_v1_admin_tax_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/tax-rates": {
         parameters: {
             query?: never;
@@ -1090,6 +1268,23 @@ export interface paths {
         put?: never;
         /** Restore */
         post: operations["restore_api_v1_admin_theme_versions__version_id__restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/vendor-balances": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor Balances */
+        get: operations["vendor_balances_api_v1_admin_vendor_balances_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1655,6 +1850,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/orders/{number}/invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My Invoices
+         * @description A buyer's own tax invoices, generated on first ask and served by a short-lived signed URL.
+         */
+        get: operations["my_invoices_api_v1_me_orders__number__invoices_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/orders/{number}/payment": {
         parameters: {
             query?: never;
@@ -2071,6 +2286,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vendor/balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Balance */
+        get: operations["my_balance_api_v1_vendor_balance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vendor/campaigns": {
         parameters: {
             query?: never;
@@ -2242,6 +2474,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vendor/ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My Ledger
+         * @description A vendor sees its own entries only — RLS says so, and so does this query.
+         */
+        get: operations["my_ledger_api_v1_vendor_ledger_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vendor/media": {
         parameters: {
             query?: never;
@@ -2389,6 +2641,23 @@ export interface paths {
         get: operations["get_payout_method_api_v1_vendor_payout_method_get"];
         /** Set Payout Method */
         put: operations["set_payout_method_api_v1_vendor_payout_method_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/payouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Payouts */
+        get: operations["my_payouts_api_v1_vendor_payouts_get"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -3263,6 +3532,11 @@ export interface components {
             /** Vendor Id */
             vendor_id: string | null;
         };
+        /** BatchIn */
+        BatchIn: {
+            /** Period End */
+            period_end?: string | null;
+        };
         /** BillingOverview */
         BillingOverview: {
             /** Limits */
@@ -3649,18 +3923,6 @@ export interface components {
             /** Note */
             note?: string | null;
         };
-        /** DocumentIn */
-        DocumentIn: {
-            /**
-             * Doc Type
-             * @enum {string}
-             */
-            doc_type: "trade_licence" | "nid" | "tin" | "bin" | "bank_proof" | "other";
-            /** Document Number */
-            document_number?: string | null;
-            /** Storage Key */
-            storage_key: string;
-        };
         /** DocumentOut */
         DocumentOut: {
             /**
@@ -3742,6 +4004,11 @@ export interface components {
             label: string;
             /** Value */
             value: string;
+        };
+        /** FailedIn */
+        FailedIn: {
+            /** Reason */
+            reason: string;
         };
         /** Footer */
         Footer: {
@@ -4139,6 +4406,11 @@ export interface components {
             } | null;
             /** Version */
             version: number;
+        };
+        /** PaidIn */
+        PaidIn: {
+            /** Reference */
+            reference: string;
         };
         /** Palette */
         Palette: {
@@ -5633,12 +5905,38 @@ export interface components {
             /** Number */
             number: number;
         };
+        /** DocumentIn */
+        app__modules__ledger__router__DocumentIn: {
+            /**
+             * Kind
+             * @default invoice
+             * @enum {string}
+             */
+            kind: "invoice" | "credit_note";
+            /**
+             * Sub Order Id
+             * Format: uuid
+             */
+            sub_order_id: string;
+        };
         /** OnboardingOut */
         app__modules__settings__router__OnboardingOut: {
             /** Items */
             items: components["schemas"]["ChecklistItem"][];
             /** Ready To Launch */
             ready_to_launch: boolean;
+        };
+        /** DocumentIn */
+        app__modules__vendors__onboarding__DocumentIn: {
+            /**
+             * Doc Type
+             * @enum {string}
+             */
+            doc_type: "trade_licence" | "nid" | "tin" | "bin" | "bank_proof" | "other";
+            /** Document Number */
+            document_number?: string | null;
+            /** Storage Key */
+            storage_key: string;
         };
         /** OnboardingOut */
         app__modules__vendors__onboarding__OnboardingOut: {
@@ -6592,6 +6890,91 @@ export interface operations {
             };
         };
     };
+    entries_api_v1_admin_ledger_get: {
+        parameters: {
+            query?: {
+                account?: string | null;
+                entry_type?: string | null;
+                vendor_id?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reconciliation_api_v1_admin_ledger_reconciliation_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    trial_balance_api_v1_admin_ledger_trial_balance_get: {
+        parameters: {
+            query?: {
+                since?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     moderation_queue_api_v1_admin_moderation_products_get: {
         parameters: {
             query?: {
@@ -6857,6 +7240,165 @@ export interface operations {
             };
         };
     };
+    list_batches_api_v1_admin_payout_batches_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    build_batch_api_v1_admin_payout_batches_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    batch_detail_api_v1_admin_payout_batches__batch_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                batch_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_batch_api_v1_admin_payout_batches__batch_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                batch_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_batch_api_v1_admin_payout_batches__batch_id__export_get: {
+        parameters: {
+            query?: {
+                method?: "bank" | "bkash";
+            };
+            header?: never;
+            path: {
+                batch_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     release_hold_api_v1_admin_payout_holds__hold_id__release_post: {
         parameters: {
             query?: never;
@@ -6867,6 +7409,76 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_line_failed_api_v1_admin_payout_lines__line_id__failed_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FailedIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_line_paid_api_v1_admin_payout_lines__line_id__paid_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaidIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -7565,6 +8177,71 @@ export interface operations {
             };
         };
     };
+    list_documents_api_v1_admin_tax_documents_get: {
+        parameters: {
+            query?: {
+                order_number?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    issue_document_api_v1_admin_tax_documents_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["app__modules__ledger__router__DocumentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     set_tax_rate_api_v1_admin_tax_rates_put: {
         parameters: {
             query?: never;
@@ -7826,6 +8503,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vendor_balances_api_v1_admin_vendor_balances_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };
@@ -8892,6 +9589,37 @@ export interface operations {
             };
         };
     };
+    my_invoices_api_v1_me_orders__number__invoices_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     latest_payment_api_v1_me_orders__number__payment_get: {
         parameters: {
             query?: never;
@@ -9638,6 +10366,26 @@ export interface operations {
             };
         };
     };
+    my_balance_api_v1_vendor_balance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     open_campaigns_api_v1_vendor_campaigns_get: {
         parameters: {
             query?: never;
@@ -9816,7 +10564,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["DocumentIn"];
+                "application/json": components["schemas"]["app__modules__vendors__onboarding__DocumentIn"];
             };
         };
         responses: {
@@ -9944,6 +10692,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ImportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_ledger_api_v1_vendor_ledger_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -10232,6 +11011,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PayoutMethodOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_payouts_api_v1_vendor_payouts_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

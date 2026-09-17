@@ -316,7 +316,8 @@ async def settle(
 
 
 async def confirm_paid_order(db: AsyncSession, tenant_id: str, order_id, *, ref: str) -> int:
-    """pending_payment -> confirmed, reservations consumed into the stock ledger. Idempotent."""
+    """pending_payment -> confirmed, reservations consumed into the stock ledger, money booked.
+    Idempotent: the ledger refuses a second posting of the same capture."""
     subs = (
         await db.execute(
             text(
@@ -331,6 +332,9 @@ async def confirm_paid_order(db: AsyncSession, tenant_id: str, order_id, *, ref:
         text("UPDATE orders SET payment_due_at = NULL WHERE tenant_id = :t AND id = :o"),
         {"t": tenant_id, "o": order_id},
     )
+    from app.modules.ledger import service as ledger
+
+    await ledger.post_capture(db, tenant_id, order_id)
     return len(subs)
 
 
@@ -449,6 +453,10 @@ async def collect_cod(
         ),
         {"t": tenant_id, "o": updated.order_id},
     )
+    # COD money exists from the moment the courier takes it, not when it reaches the bank.
+    from app.modules.ledger import service as ledger
+
+    await ledger.post_cod_delivery(db, tenant_id, sub_order_id, courier or "unknown")
     return True
 
 

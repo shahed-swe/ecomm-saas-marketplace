@@ -114,6 +114,12 @@ SCOPED_ROUTES = [
     ("POST", "/api/v1/admin/returns/{id}/refund", STAFF, "return", None),
     ("POST", "/api/v1/admin/returns/{id}/cancel", STAFF, "return", None),
     ("POST", "/api/v1/admin/refunds/{id}/complete", STAFF, "refund", {"reference": "TRX-1"}),
+    # finance (Phase 14)
+    ("GET", "/api/v1/admin/payout-batches/{id}", STAFF, "payout_batch", None),
+    ("POST", "/api/v1/admin/payout-batches/{id}/approve", STAFF, "payout_batch", None),
+    ("GET", "/api/v1/admin/payout-batches/{id}/export", STAFF, "payout_batch", None),
+    ("POST", "/api/v1/admin/payout-lines/{id}/paid", STAFF, "payout_line", {"reference": "TRX-9"}),
+    ("POST", "/api/v1/admin/payout-lines/{id}/failed", STAFF, "payout_line", {"reason": "bounced"}),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).

@@ -235,15 +235,20 @@ async def create_request(
 
 
 async def _price_items(db: AsyncSession, tenant_id: str, sub_order_id, items: list[dict]):
-    """Refund value comes from the order line, never from the buyer's request."""
+    """Refund value comes from the order line, never from the buyer's request.
+
+    Under exclusive VAT pricing the buyer paid the line *plus* VAT, so that is what comes back;
+    under inclusive pricing the VAT is already inside the line total."""
     lines, total, vat_total = [], ZERO, ZERO
     for item in items:
         row = (
             (
                 await db.execute(
                     text(
-                        """SELECT i.id, i.variant_id, i.qty, i.line_total, i.vat_amount
+                        """SELECT i.id, i.variant_id, i.qty, i.line_total, i.vat_amount, o.vat_pricing
                            FROM order_items i
+                           JOIN sub_orders s ON s.id = i.sub_order_id AND s.tenant_id = i.tenant_id
+                           JOIN orders o ON o.id = s.order_id AND o.tenant_id = s.tenant_id
                            WHERE i.tenant_id = :t AND i.sub_order_id = :s AND i.id = :i"""
                     ),
                     {"t": tenant_id, "s": sub_order_id, "i": item["order_item_id"]},
@@ -258,7 +263,10 @@ async def _price_items(db: AsyncSession, tenant_id: str, sub_order_id, items: li
         if qty < 1 or qty > row["qty"]:
             raise ReturnError("You cannot return more than you bought", code="bad_quantity")
         share = Decimal(qty) / Decimal(row["qty"])
-        amount = money(Decimal(str(row["line_total"])) * share)
+        paid = Decimal(str(row["line_total"]))
+        if row["vat_pricing"] == "exclusive":
+            paid += Decimal(str(row["vat_amount"]))
+        amount = money(paid * share)
         vat = money(Decimal(str(row["vat_amount"])) * share)
         total += amount
         vat_total += vat
@@ -662,6 +670,7 @@ async def refund(
     if payment is not None and rail != "store_credit":
         await _record_payment_refund(db, tenant_id, payment, amount)
     await _set_status(db, tenant_id, return_id, "refunded")
+    await _post_refund_ledger(db, tenant_id, ret, refund_id=refund_id, amount=amount, rail=rail)
     note = await issue_credit_note(db, tenant_id, return_id, actor_id=actor_id)
     return {
         "id": str(refund_id),
@@ -671,6 +680,39 @@ async def refund(
         "return_status": "refunded",
         "credit_note": note["number"],
     }
+
+
+async def _post_refund_ledger(
+    db: AsyncSession, tenant_id: str, ret, *, refund_id, amount, rail
+) -> None:
+    """Unwind the money: the vendor's payable, the tenant's commission and the VAT all come back."""
+    from app.modules.ledger import service as ledger
+
+    vat = (
+        await db.execute(
+            text(
+                "SELECT coalesce(sum(vat_amount), 0) FROM return_items WHERE tenant_id = :t AND return_id = :r"
+            ),
+            {"t": tenant_id, "r": ret["id"]},
+        )
+    ).scalar()
+    commission_rate = (
+        await db.execute(
+            text("SELECT commission_rate FROM sub_orders WHERE tenant_id = :t AND id = :s"),
+            {"t": tenant_id, "s": ret["sub_order_id"]},
+        )
+    ).scalar()
+    await ledger.post_refund(
+        db,
+        tenant_id,
+        refund_id=refund_id,
+        sub_order_id=ret["sub_order_id"],
+        vendor_id=str(ret["vendor_id"]),
+        amount=amount,
+        vat_amount=money(min(Decimal(str(vat)), Decimal(str(amount)))),
+        commission_rate=commission_rate or Decimal("0"),
+        rail=rail,
+    )
 
 
 async def _record_payment_refund(
@@ -719,7 +761,17 @@ async def complete_manual_refund(
         raise NotFound("Not found")
     await _complete_refund(db, tenant_id, refund_id, actor_id, provider_ref=reference)
     if row["return_id"]:
+        ret = await load(db, tenant_id, row["return_id"])
         await _set_status(db, tenant_id, row["return_id"], "refunded")
+        await _post_refund_ledger(
+            db, tenant_id, ret, refund_id=refund_id, amount=row["amount"], rail=row["method"]
+        )
+        from app.modules.ledger import service as ledger
+
+        # the tenant owed the buyer, and has now actually paid it
+        await ledger.post_manual_refund_paid(
+            db, tenant_id, refund_id=refund_id, amount=row["amount"]
+        )
         note = await issue_credit_note(db, tenant_id, row["return_id"], actor_id=actor_id)
         return {"id": str(refund_id), "status": "completed", "credit_note": note["number"]}
     return {"id": str(refund_id), "status": "completed"}

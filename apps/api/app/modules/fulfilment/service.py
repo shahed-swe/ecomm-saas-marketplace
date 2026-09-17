@@ -679,6 +679,16 @@ async def import_settlement(
         await _line(
             db, tenant_id, settlement_id, consignment, amount, fee, shipment["id"], "matched"
         )
+        from app.modules.ledger import service as ledger
+
+        await ledger.post_cod_settlement(
+            db,
+            tenant_id,
+            shipment_id=shipment["id"],
+            courier=courier,
+            amount=amount,
+            fee=fee,
+        )
         await db.execute(
             text(
                 """UPDATE cod_receivables SET status = 'settled', settled_at = now(), settlement_ref = :r

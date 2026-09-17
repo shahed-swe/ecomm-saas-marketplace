@@ -222,6 +222,75 @@ async def escalate_returns(ctx: dict) -> int:
     return total
 
 
+@platform_job
+async def finance_reconcile(ctx: dict) -> dict:
+    """Nightly, per tenant: does the ledger still agree with the systems it describes?"""
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.ledger.reconcile import reconcile
+
+    drifted = []
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenant_ids = [
+            str(r[0])
+            for r in (
+                await session.execute(
+                    text("SELECT DISTINCT tenant_id FROM ledger_entries LIMIT 500")
+                )
+            ).all()
+        ]
+    for tenant_id in tenant_ids:
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, tenant_id)
+            result = await reconcile(session, tenant_id)
+        if not result["clean"]:
+            drifted.append(
+                {"tenant_id": tenant_id, "checks": [c for c in result["checks"] if c["drift"]]}
+            )
+            log.error("ledger_drift", tenant_id=tenant_id, drift_count=result["drift_count"])
+    log.info("finance_reconciled", tenants=len(tenant_ids), drifted=len(drifted))
+    return {"tenants": len(tenant_ids), "drifted": len(drifted)}
+
+
+@platform_job
+async def payout_runs(ctx: dict) -> dict:
+    """Prepare each tenant's payout batch on its own schedule. Preparing is not paying: a batch is
+    a draft until a human with the right permission approves it (ADR 0009)."""
+    from datetime import date
+
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.ledger import payouts
+
+    built = 0
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenants = (
+            await session.execute(
+                text(
+                    """SELECT t.id, ts.payout_schedule FROM tenants t
+                       JOIN tenant_settings ts ON ts.tenant_id = t.id
+                       WHERE t.status IN ('trial','active') LIMIT 500"""
+                )
+            )
+        ).all()
+    for tenant_id, schedule in tenants:
+        period_end = payouts.period_end_for(schedule, date.today())
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, str(tenant_id))
+            try:
+                result = await payouts.build_batch(
+                    session, str(tenant_id), period_end=period_end, actor_id="scheduler"
+                )
+            except payouts.PayoutError:
+                continue  # this period already has a batch
+        if result["line_count"]:
+            built += 1
+    log.info("payout_runs", tenants=len(tenants), batches=built)
+    return {"tenants": len(tenants), "batches": built}
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -245,6 +314,8 @@ class WorkerSettings:
         reconcile_payments,
         courier_sweep,
         escalate_returns,
+        finance_reconcile,
+        payout_runs,
     ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
@@ -253,6 +324,8 @@ class WorkerSettings:
         cron(reconcile_payments, minute={3, 18, 33, 48}),  # four sweeps an hour
         cron(courier_sweep, minute={8, 23, 38, 53}),
         cron(escalate_returns, minute={40}),  # hourly
+        cron(finance_reconcile, hour={21}, minute={30}),  # 03:30 Asia/Dhaka
+        cron(payout_runs, hour={22}, minute={15}),  # 04:15 Asia/Dhaka
     ]
     on_startup = startup
     on_shutdown = shutdown

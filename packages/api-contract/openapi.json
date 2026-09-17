@@ -525,6 +525,24 @@
         "title": "AuditOut",
         "type": "object"
       },
+      "BatchIn": {
+        "properties": {
+          "period_end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          }
+        },
+        "title": "BatchIn",
+        "type": "object"
+      },
       "BillingOverview": {
         "properties": {
           "limits": {
@@ -1673,45 +1691,6 @@
         "title": "DecisionIn",
         "type": "object"
       },
-      "DocumentIn": {
-        "properties": {
-          "doc_type": {
-            "enum": [
-              "trade_licence",
-              "nid",
-              "tin",
-              "bin",
-              "bank_proof",
-              "other"
-            ],
-            "title": "Doc Type",
-            "type": "string"
-          },
-          "document_number": {
-            "anyOf": [
-              {
-                "maxLength": 40,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Document Number"
-          },
-          "storage_key": {
-            "maxLength": 300,
-            "title": "Storage Key",
-            "type": "string"
-          }
-        },
-        "required": [
-          "doc_type",
-          "storage_key"
-        ],
-        "title": "DocumentIn",
-        "type": "object"
-      },
       "DocumentOut": {
         "properties": {
           "created_at": {
@@ -1928,6 +1907,21 @@
           "count"
         ],
         "title": "Facet",
+        "type": "object"
+      },
+      "FailedIn": {
+        "properties": {
+          "reason": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "FailedIn",
         "type": "object"
       },
       "Footer": {
@@ -2890,6 +2884,21 @@
           "layouts"
         ],
         "title": "PageOut",
+        "type": "object"
+      },
+      "PaidIn": {
+        "properties": {
+          "reference": {
+            "maxLength": 80,
+            "minLength": 3,
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference"
+        ],
+        "title": "PaidIn",
         "type": "object"
       },
       "Palette": {
@@ -7108,6 +7117,29 @@
         "title": "VersionOut",
         "type": "object"
       },
+      "app__modules__ledger__router__DocumentIn": {
+        "properties": {
+          "kind": {
+            "default": "invoice",
+            "enum": [
+              "invoice",
+              "credit_note"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "sub_order_id": {
+            "format": "uuid",
+            "title": "Sub Order Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sub_order_id"
+        ],
+        "title": "DocumentIn",
+        "type": "object"
+      },
       "app__modules__settings__router__OnboardingOut": {
         "properties": {
           "items": {
@@ -7127,6 +7159,45 @@
           "ready_to_launch"
         ],
         "title": "OnboardingOut",
+        "type": "object"
+      },
+      "app__modules__vendors__onboarding__DocumentIn": {
+        "properties": {
+          "doc_type": {
+            "enum": [
+              "trade_licence",
+              "nid",
+              "tin",
+              "bin",
+              "bank_proof",
+              "other"
+            ],
+            "title": "Doc Type",
+            "type": "string"
+          },
+          "document_number": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Number"
+          },
+          "storage_key": {
+            "maxLength": 300,
+            "title": "Storage Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_type",
+          "storage_key"
+        ],
+        "title": "DocumentIn",
         "type": "object"
       },
       "app__modules__vendors__onboarding__OnboardingOut": {
@@ -8470,6 +8541,165 @@
         ]
       }
     },
+    "/api/v1/admin/ledger": {
+      "get": {
+        "operationId": "entries_api_v1_admin_ledger_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "account",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account"
+            }
+          },
+          {
+            "in": "query",
+            "name": "entry_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Entry Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "vendor_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Vendor Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Entries",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
+    "/api/v1/admin/ledger/reconciliation": {
+      "get": {
+        "description": "Ledger vs payments, couriers, refunds and wallets. Drift is shown, never silently fixed.",
+        "operationId": "reconciliation_api_v1_admin_ledger_reconciliation_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Reconciliation",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
+    "/api/v1/admin/ledger/trial-balance": {
+      "get": {
+        "description": "Debits must equal credits. If they ever do not, something is very wrong \u2014 say so loudly.",
+        "operationId": "trial_balance_api_v1_admin_ledger_trial_balance_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Trial Balance",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
     "/api/v1/admin/moderation/products": {
       "get": {
         "operationId": "moderation_queue_api_v1_admin_moderation_products_get",
@@ -8831,6 +9061,221 @@
         ]
       }
     },
+    "/api/v1/admin/payout-batches": {
+      "get": {
+        "operationId": "list_batches_api_v1_admin_payout_batches_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Batches",
+        "tags": [
+          "admin:finance"
+        ]
+      },
+      "post": {
+        "operationId": "build_batch_api_v1_admin_payout_batches_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Build Batch",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
+    "/api/v1/admin/payout-batches/{batch_id}": {
+      "get": {
+        "operationId": "batch_detail_api_v1_admin_payout_batches__batch_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "batch_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Batch Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Batch Detail",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
+    "/api/v1/admin/payout-batches/{batch_id}/approve": {
+      "post": {
+        "operationId": "approve_batch_api_v1_admin_payout_batches__batch_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "batch_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Batch Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve Batch",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
+    "/api/v1/admin/payout-batches/{batch_id}/export": {
+      "get": {
+        "operationId": "export_batch_api_v1_admin_payout_batches__batch_id__export_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "batch_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Batch Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "method",
+            "required": false,
+            "schema": {
+              "default": "bank",
+              "enum": [
+                "bank",
+                "bkash"
+              ],
+              "title": "Method",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Batch",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
     "/api/v1/admin/payout-holds/{hold_id}/release": {
       "post": {
         "operationId": "release_hold_api_v1_admin_payout_holds__hold_id__release_post",
@@ -8869,6 +9314,108 @@
         "summary": "Release Hold",
         "tags": [
           "admin:vendor-review"
+        ]
+      }
+    },
+    "/api/v1/admin/payout-lines/{line_id}/failed": {
+      "post": {
+        "operationId": "mark_line_failed_api_v1_admin_payout_lines__line_id__failed_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FailedIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mark Line Failed",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
+    "/api/v1/admin/payout-lines/{line_id}/paid": {
+      "post": {
+        "operationId": "mark_line_paid_api_v1_admin_payout_lines__line_id__paid_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaidIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mark Line Paid",
+        "tags": [
+          "admin:finance"
         ]
       }
     },
@@ -9858,6 +10405,100 @@
         ]
       }
     },
+    "/api/v1/admin/tax-documents": {
+      "get": {
+        "operationId": "list_documents_api_v1_admin_tax_documents_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_number",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Order Number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Documents",
+        "tags": [
+          "admin:finance"
+        ]
+      },
+      "post": {
+        "operationId": "issue_document_api_v1_admin_tax_documents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__ledger__router__DocumentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Issue Document",
+        "tags": [
+          "admin:finance"
+        ]
+      }
+    },
     "/api/v1/admin/tax-rates": {
       "put": {
         "operationId": "set_tax_rate_api_v1_admin_tax_rates_put",
@@ -10186,6 +10827,25 @@
         "summary": "Restore",
         "tags": [
           "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/vendor-balances": {
+      "get": {
+        "operationId": "vendor_balances_api_v1_admin_vendor_balances_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Vendor Balances",
+        "tags": [
+          "admin:finance"
         ]
       }
     },
@@ -11776,6 +12436,47 @@
         ]
       }
     },
+    "/api/v1/me/orders/{number}/invoices": {
+      "get": {
+        "description": "A buyer's own tax invoices, generated on first ask and served by a short-lived signed URL.",
+        "operationId": "my_invoices_api_v1_me_orders__number__invoices_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Invoices",
+        "tags": [
+          "finance"
+        ]
+      }
+    },
     "/api/v1/me/orders/{number}/payment": {
       "get": {
         "description": "The return page comes back with nothing but the order number; this is how it finds its attempt.",
@@ -12783,6 +13484,25 @@
         ]
       }
     },
+    "/api/v1/vendor/balance": {
+      "get": {
+        "operationId": "my_balance_api_v1_vendor_balance_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Balance",
+        "tags": [
+          "vendor:finance"
+        ]
+      }
+    },
     "/api/v1/vendor/campaigns": {
       "get": {
         "operationId": "open_campaigns_api_v1_vendor_campaigns_get",
@@ -13009,7 +13729,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DocumentIn"
+                "$ref": "#/components/schemas/app__modules__vendors__onboarding__DocumentIn"
               }
             }
           },
@@ -13184,6 +13904,48 @@
         "summary": "Get Import",
         "tags": [
           "vendor:imports"
+        ]
+      }
+    },
+    "/api/v1/vendor/ledger": {
+      "get": {
+        "description": "A vendor sees its own entries only \u2014 RLS says so, and so does this query.",
+        "operationId": "my_ledger_api_v1_vendor_ledger_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Ledger",
+        "tags": [
+          "vendor:finance"
         ]
       }
     },
@@ -13589,6 +14351,47 @@
         "summary": "Set Payout Method",
         "tags": [
           "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/payouts": {
+      "get": {
+        "operationId": "my_payouts_api_v1_vendor_payouts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Payouts",
+        "tags": [
+          "vendor:finance"
         ]
       }
     },

@@ -33,6 +33,7 @@ from app.modules.health.router import router as health_router
 from app.modules.identity import router as identity
 from app.modules.identity import staff_router
 from app.modules.identity.sms import ConsoleSms
+from app.modules.ledger import router as ledger
 from app.modules.payments import router as payments
 from app.modules.platform.router import router as platform_router
 from app.modules.returns import router as returns
@@ -149,6 +150,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         returns.buyer,
         returns.vendor,
         returns.admin,
+        ledger.admin,
+        ledger.vendor,
+        ledger.buyer,
         vendor_router,
         admin_vendors_router,
         domains_router,

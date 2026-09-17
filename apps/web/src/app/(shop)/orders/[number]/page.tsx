@@ -8,6 +8,7 @@ export default function OrderPage({ params }: { params: Promise<{ number: string
   const [order, setOrder] = useState<any>(null);
   const [tracking, setTracking] = useState<any[]>([]);
   const [returns, setReturns] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
   const [returnable, setReturnable] = useState(false);
   const [error, setError] = useState("");
   useEffect(() => { api<any>(`/me/orders/${number}`).then(setOrder).catch(() => setError("Order not found")); }, [number]);
@@ -16,6 +17,7 @@ export default function OrderPage({ params }: { params: Promise<{ number: string
   useEffect(() => {
     api<any[]>(`/me/orders/${number}/return-window`).then((rows) => setReturnable(rows.some((r) => r.returnable))).catch(() => setReturnable(false));
     api<any[]>("/me/returns").then((rows) => setReturns(rows.filter((r) => r.order_number === number))).catch(() => setReturns([]));
+    api<any[]>(`/me/orders/${number}/invoices`).then(setInvoices).catch(() => setInvoices([]));
   }, [number]);
   if (error) return <main className="p-8 text-center text-muted">{error}</main>;
   if (!order) return <main className="p-8 text-center text-muted">Loading…</main>;
@@ -51,6 +53,11 @@ export default function OrderPage({ params }: { params: Promise<{ number: string
           Return {r.number} · {String(r.status).replace(/_/g, " ")} · {taka(r.refund_total)}
           {r.refund_method === "store_credit" ? " to store credit" : ""}
         </p>
+      ))}
+      {invoices.map((inv: any) => (
+        <a key={inv.number} href={inv.url} className="block text-sm underline" target="_blank" rel="noreferrer">
+          Tax invoice {inv.number} (PDF)
+        </a>
       ))}
       {returnable && (
         <a href={`/orders/${order.number}/return`} className="block rounded-theme border border-border py-3 text-center">

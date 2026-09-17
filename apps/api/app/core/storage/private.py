@@ -30,6 +30,8 @@ class PrivateStorage(Protocol):
 
     async def head(self, key: str) -> int | None: ...
 
+    async def put(self, key: str, data: bytes, content_type: str) -> None: ...
+
 
 class LocalPrivateStorage:
     """Dev/test: signed tokens handled by /internal/private/{token}."""
@@ -76,6 +78,13 @@ class LocalPrivateStorage:
         p = self.path(key)
         return p.stat().st_size if p.exists() else None
 
+    async def put(self, key: str, data: bytes, content_type: str) -> None:
+        """Server-generated documents (tax invoices, credit notes) are written directly; buyer and
+        vendor uploads still go through a signed PUT so bytes never pass through the API."""
+        p = self.path(key)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+
 
 class S3PrivateStorage:
     def __init__(self, client, bucket: str):
@@ -112,3 +121,14 @@ class S3PrivateStorage:
         except Exception:  # noqa: BLE001
             return None
         return int(meta["ContentLength"])
+
+    async def put(self, key: str, data: bytes, content_type: str) -> None:
+        import asyncio
+
+        await asyncio.to_thread(
+            self.client.put_object,
+            Bucket=self.bucket,
+            Key=key,
+            Body=data,
+            ContentType=content_type,
+        )

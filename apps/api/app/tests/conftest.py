@@ -429,6 +429,26 @@ async def build_catalog(c, app, tw, key):
                 {"t": tw.id, "r": rid},
             )
             tw.catalog["refund"][name] = str(fid)
+    # A draft payout batch with one line: finance isolation targets (Phase 14).
+    async with app.state.platform_db.engine.begin() as conn:
+        batch_id = await conn.scalar(
+            sql(
+                """INSERT INTO payout_batches (tenant_id, period_end, created_by, line_count,
+                       gross_total, net_total)
+                   VALUES (:t, DATE '2026-01-03', 'seed', 1, 100, 100) RETURNING id"""
+            ),
+            {"t": tw.id},
+        )
+        line_id = await conn.scalar(
+            sql(
+                """INSERT INTO payout_lines (tenant_id, batch_id, vendor_id, period_end, gross, tds,
+                       net, method, account_last4)
+                   VALUES (:t, :b, :v, DATE '2026-01-03', 100, 0, 100, 'bkash', '1234') RETURNING id"""
+            ),
+            {"t": tw.id, "b": batch_id, "v": tw.vendors[f"{key}1"]},
+        )
+        tw.catalog["payout_batch"] = {"tenant": str(batch_id)}
+        tw.catalog["payout_line"] = {"tenant": str(line_id)}
 
 
 @pytest.fixture(scope="session")
