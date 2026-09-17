@@ -115,6 +115,14 @@ async def import_products(ctx: dict, *, tenant_id: str, job_id: str) -> dict:
         )
 
 
+@platform_job
+async def expire_unpaid_orders(ctx: dict) -> int:
+    from app.modules.checkout.service import expire_unpaid
+
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        return await expire_unpaid(session)
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -128,10 +136,18 @@ async def shutdown(ctx: dict) -> None:
 
 
 class WorkerSettings:
-    functions = [heartbeat, recheck_domains, billing_cycle, process_media, import_products]
+    functions = [
+        heartbeat,
+        recheck_domains,
+        billing_cycle,
+        process_media,
+        import_products,
+        expire_unpaid_orders,
+    ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
         cron(billing_cycle, hour={20}, minute=5),  # 02:05 Asia/Dhaka
+        cron(expire_unpaid_orders, second={0}),  # every minute
     ]
     on_startup = startup
     on_shutdown = shutdown

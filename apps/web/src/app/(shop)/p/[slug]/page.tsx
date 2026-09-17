@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getStore } from "@/lib/api";
 import { ProductImage } from "@/components/catalog/ProductImage";
+import { AddToCart } from "@/components/shop/AddToCart";
 import { apiFetch } from "@/lib/api";
 import { taka } from "@/lib/money";
 
@@ -73,6 +74,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             {first.compare_at_price && <s className="text-base text-muted">{taka(first.compare_at_price)}</s>}
           </p>
         )}
+        <AddToCart variants={p.variants} label="Add to cart" />
         <ul className="flex flex-wrap gap-2">
           {p.variants.map((v) => (
             <li key={v.id} className={`rounded-theme border border-border px-3 py-1 text-sm ${v.available ? "" : "opacity-40 line-through"}`}>

@@ -114,6 +114,8 @@ class TenantWorld:
     owner_staff_member_id: str = ""
     theme_version_id: str = ""
     invoice_id: str = ""
+    order_number: str = ""
+    tracking_token: str = ""
     document_id: str = ""
     catalog: dict = field(default_factory=dict)  # kind -> {vendor name or "tenant": id}
     payout_hold_id: str = ""
@@ -302,6 +304,82 @@ async def build_catalog(c, app, tw, key):
         tw.catalog["product_media"][name] = media.json()["id"]
         tw.catalog["question"][name] = q.json()["id"]
         tw.catalog["import_job"][name] = imp.json()["id"]
+    # --- checkout fixtures: shipping rate, campaign, coupon, one placed order per tenant -------------
+    await c.put(
+        "/api/v1/admin/shipping-rates",
+        headers=staff,
+        json={"zone": "inside_dhaka", "base_fee": "60", "per_extra_kg": "20", "free_over": "5000"},
+    )
+    await c.put(
+        "/api/v1/admin/shipping-rates",
+        headers=staff,
+        json={"zone": "outside_dhaka", "base_fee": "120", "per_extra_kg": "30"},
+    )
+    campaign = (
+        await c.post(
+            "/api/v1/admin/campaigns",
+            headers=staff,
+            json={
+                "slug": "eid-sale",
+                "name": "Eid sale",
+                "starts_at": "2026-01-01T00:00:00Z",
+                "ends_at": "2030-01-01T00:00:00Z",
+            },
+        )
+    ).json()
+    coupons = {}
+    for n in (1, 2):
+        coupons[f"{key}{n}"] = (
+            await c.post(
+                "/api/v1/vendor/coupons",
+                headers=tw.vendor_actors[f"{key}{n}"].headers(),
+                json={"code": f"SAVE{key}{n}", "kind": "percent", "value": "10"},
+            )
+        ).json()["id"]
+    buyer2 = await c.post(
+        "/api/v1/auth/register",
+        headers={"host": tw.host},
+        json={"email": f"shopper-{key.lower()}@example.com", "password": PASSWORD},
+    )
+    bh = {"authorization": f"Bearer {buyer2.json()['access_token']}", "host": tw.host}
+    c.cookies.clear()
+    for n in (1, 2):
+        await c.post(
+            "/api/v1/cart/items",
+            headers=bh,
+            json={"variant_id": tw.catalog["variant"][f"{key}{n}"], "qty": 1},
+        )
+    address = {
+        "recipient_name": "Test Buyer",
+        "phone": "01711111111",
+        "district_code": "dhaka",
+        "upazila": "Dhanmondi",
+        "address_line": "House 5, Road 7",
+        "is_default": True,
+    }
+    addr = await c.post("/api/v1/me/addresses", headers=bh, json=address)
+    quote = await c.post("/api/v1/cart/quote", headers=bh, json={"district_code": "dhaka"})
+    placed = await c.post(
+        "/api/v1/checkout/place",
+        headers={**bh, "idempotency-key": f"world-{key}-{uuid.uuid4().hex}"},
+        json={
+            "address_id": addr.json()["id"],
+            "payment_method": "bkash",
+            "expected_total": quote.json()["grand_total"],
+        },
+    )
+    assert placed.status_code == 201, placed.text
+    tw.catalog["campaign"] = {"tenant": campaign["id"]}
+    tw.catalog["coupon"] = coupons
+    tw.catalog["sub_order"] = {}
+    for n in (1, 2):
+        name = f"{key}{n}"
+        rows = (
+            await c.get("/api/v1/vendor/orders", headers=tw.vendor_actors[name].headers())
+        ).json()
+        tw.catalog["sub_order"][name] = rows[0]["id"]
+    tw.order_number = placed.json()["number"]
+    tw.tracking_token = placed.json()["tracking_token"]
 
 
 @pytest.fixture(scope="session")

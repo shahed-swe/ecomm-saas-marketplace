@@ -1,6 +1,10 @@
 from contextlib import asynccontextmanager
+from decimal import Decimal
 
 from fastapi import FastAPI
+from fastapi import encoders as encoders_module
+from fastapi.encoders import ENCODERS_BY_TYPE as _ENCODERS
+from fastapi.encoders import generate_encoders_by_class_tuples as _by_tuples
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import Settings, get_settings
@@ -20,6 +24,7 @@ from app.modules.catalog import search as catalog_search
 from app.modules.catalog import seo as catalog_seo
 from app.modules.catalog import taxonomy as catalog_taxonomy
 from app.modules.catalog.revalidate import RecordingRevalidator, WebRevalidator
+from app.modules.checkout import router as checkout
 from app.modules.domains.router import internal as internal_router
 from app.modules.domains.router import router as domains_router
 from app.modules.domains.service import real_dns_lookup
@@ -36,6 +41,11 @@ from app.modules.theme import vendor_store
 from app.modules.vendors import onboarding as vendor_onboarding
 from app.modules.vendors.router import admin_router as admin_vendors_router
 from app.modules.vendors.router import vendor_router
+
+# Money must never reach a client as a float (0.1 + 0.2 problems in JS). FastAPI's encoder maps
+# Decimal -> float by default; make it a string everywhere, for every route.
+_ENCODERS[Decimal] = str
+encoders_module.encoders_by_class_tuples = _by_tuples(_ENCODERS)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -122,6 +132,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         catalog_search.admin,
         catalog_buyer.router,
         catalog_seo.router,
+        checkout.buyer,
+        checkout.vendor,
+        checkout.admin,
         vendor_router,
         admin_vendors_router,
         domains_router,

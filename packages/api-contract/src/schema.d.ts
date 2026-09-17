@@ -72,6 +72,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/campaigns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Campaign */
+        post: operations["create_campaign_api_v1_admin_campaigns_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/campaigns/{campaign_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel Campaign */
+        post: operations["cancel_campaign_api_v1_admin_campaigns__campaign_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/catalog/brands": {
         parameters: {
             query?: never;
@@ -209,6 +243,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/checkout-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Checkout Settings */
+        patch: operations["checkout_settings_api_v1_admin_checkout_settings_patch"];
+        trace?: never;
+    };
     "/api/v1/admin/domains": {
         parameters: {
             query?: never;
@@ -287,6 +338,23 @@ export interface paths {
         };
         /** Onboarding */
         get: operations["onboarding_api_v1_admin_onboarding_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Orders */
+        get: operations["admin_orders_api_v1_admin_orders_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -381,6 +449,23 @@ export interface paths {
         patch: operations["patch_settings_api_v1_admin_settings_patch"];
         trace?: never;
     };
+    "/api/v1/admin/shipping-rates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Upsert Rate */
+        put: operations["upsert_rate_api_v1_admin_shipping_rates_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/staff": {
         parameters: {
             query?: never;
@@ -426,6 +511,23 @@ export interface paths {
         /** Admin Get Storefront */
         get: operations["admin_get_storefront_api_v1_admin_storefronts__storefront_id__get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/tax-rates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set Tax Rate */
+        put: operations["set_tax_rate_api_v1_admin_tax_rates_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -791,6 +893,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Cart */
+        get: operations["get_cart_api_v1_cart_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cart/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add To Cart */
+        post: operations["add_to_cart_api_v1_cart_items_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cart/items/{variant_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set Qty */
+        patch: operations["set_qty_api_v1_cart_items__variant_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/cart/quote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Quote */
+        post: operations["quote_api_v1_cart_quote_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/catalog/brands": {
         parameters: {
             query?: never;
@@ -940,6 +1110,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/checkout/place": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Place */
+        post: operations["place_api_v1_checkout_place_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/geo/districts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Districts */
+        get: operations["districts_api_v1_geo_districts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -949,6 +1153,75 @@ export interface paths {
         };
         /** Me */
         get: operations["me_api_v1_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/addresses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Addresses */
+        get: operations["list_addresses_api_v1_me_addresses_get"];
+        put?: never;
+        /** Add Address */
+        post: operations["add_address_api_v1_me_addresses_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/addresses/{address_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Address */
+        delete: operations["delete_address_api_v1_me_addresses__address_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Orders */
+        get: operations["my_orders_api_v1_me_orders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/orders/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Order */
+        get: operations["my_order_api_v1_me_orders__number__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1005,6 +1278,26 @@ export interface paths {
         post?: never;
         /** Remove Wishlist */
         delete: operations["remove_wishlist_api_v1_me_wishlist__product_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/track": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Track
+         * @description Guest-safe tracking link: order number + unguessable token; shows status only, no address or phone.
+         */
+        get: operations["track_api_v1_orders_track_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1169,6 +1462,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vendor/campaigns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Open Campaigns */
+        get: operations["open_campaigns_api_v1_vendor_campaigns_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/campaigns/{campaign_id}/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Join Campaign */
+        post: operations["join_campaign_api_v1_vendor_campaigns__campaign_id__products_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/coupons": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Coupons */
+        get: operations["my_coupons_api_v1_vendor_coupons_get"];
+        put?: never;
+        /** Create Coupon */
+        post: operations["create_coupon_api_v1_vendor_coupons_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/coupons/{coupon_id}/deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Deactivate Coupon */
+        post: operations["deactivate_coupon_api_v1_vendor_coupons__coupon_id__deactivate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vendor/documents": {
         parameters: {
             query?: never;
@@ -1316,6 +1678,40 @@ export interface paths {
         put?: never;
         /** Submit Onboarding */
         post: operations["submit_onboarding_api_v1_vendor_onboarding_submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor Orders */
+        get: operations["vendor_orders_api_v1_vendor_orders_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/orders/{sub_order_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor Order */
+        get: operations["vendor_order_api_v1_vendor_orders__sub_order_id__get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1848,6 +2244,30 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AddressIn */
+        AddressIn: {
+            /** Address Line */
+            address_line: string;
+            /** Area */
+            area?: string | null;
+            /** District Code */
+            district_code: string;
+            /**
+             * Is Default
+             * @default false
+             */
+            is_default: boolean;
+            /** Label */
+            label?: string | null;
+            /** Landmark */
+            landmark?: string | null;
+            /** Phone */
+            phone: string;
+            /** Recipient Name */
+            recipient_name: string;
+            /** Upazila */
+            upazila: string;
+        };
         /** AdminTheme */
         AdminTheme: {
             /** Contrast Issues */
@@ -2081,6 +2501,28 @@ export interface components {
             /** Slug */
             slug: string;
         };
+        /** CampaignIn */
+        CampaignIn: {
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /**
+             * Max Discount Percent
+             * @default 90
+             */
+            max_discount_percent: number | string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+        };
         /** CardOut */
         CardOut: {
             /** Blur Data */
@@ -2113,6 +2555,16 @@ export interface components {
             vendor_id: string;
             /** Vendor Name */
             vendor_name: string;
+        };
+        /** CartItemIn */
+        CartItemIn: {
+            /** Qty */
+            qty: number;
+            /**
+             * Variant Id
+             * Format: uuid
+             */
+            variant_id: string;
         };
         /** CategoryIn */
         CategoryIn: {
@@ -2177,6 +2629,25 @@ export interface components {
             /** Phase */
             phase: number;
         };
+        /** CheckoutSettingsIn */
+        CheckoutSettingsIn: {
+            /** Bin */
+            bin?: string | null;
+            /** Cod Blocked Districts */
+            cod_blocked_districts?: string[] | null;
+            /** Cod Enabled */
+            cod_enabled?: boolean | null;
+            /** Cod Max Order */
+            cod_max_order?: number | string | null;
+            /** Default Vat Rate */
+            default_vat_rate?: number | string | null;
+            /** Reservation Minutes */
+            reservation_minutes?: number | null;
+            /** Vat Pricing */
+            vat_pricing?: ("inclusive" | "exclusive") | null;
+            /** Vat Registered */
+            vat_registered?: boolean | null;
+        };
         /** CollectionLayout */
         CollectionLayout: {
             /**
@@ -2210,6 +2681,36 @@ export interface components {
             expires_at?: string | null;
             /** Rate */
             rate: number | string;
+        };
+        /** CouponIn */
+        CouponIn: {
+            /** Code */
+            code: string;
+            /** Ends At */
+            ends_at?: string | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "percent" | "fixed";
+            /** Max Discount */
+            max_discount?: number | string | null;
+            /**
+             * Min Subtotal
+             * @default 0
+             */
+            min_subtotal: number | string;
+            /**
+             * Per Buyer Limit
+             * @default 1
+             */
+            per_buyer_limit: number;
+            /** Starts At */
+            starts_at?: string | null;
+            /** Usage Limit */
+            usage_limit?: number | null;
+            /** Value */
+            value: number | string;
         };
         /** CustomPage */
         CustomPage: {
@@ -2500,6 +3001,18 @@ export interface components {
             total: string;
             /** Vat Amount */
             vat_amount: string;
+        };
+        /** JoinCampaignIn */
+        JoinCampaignIn: {
+            /** Campaign Price */
+            campaign_price: number | string;
+            /** Stock Cap */
+            stock_cap: number;
+            /**
+             * Variant Id
+             * Format: uuid
+             */
+            variant_id: string;
         };
         /** Layouts */
         Layouts: {
@@ -2841,6 +3354,25 @@ export interface components {
              */
             vendor_id: string;
         };
+        /** PlaceIn */
+        PlaceIn: {
+            address?: components["schemas"]["AddressIn"] | null;
+            /** Address Id */
+            address_id?: string | null;
+            /** Contact Email */
+            contact_email?: string | null;
+            /** Coupons */
+            coupons?: {
+                [key: string]: string;
+            };
+            /** Expected Total */
+            expected_total: number | string;
+            /**
+             * Payment Method
+             * @enum {string}
+             */
+            payment_method: "cod" | "bkash" | "sslcommerz";
+        };
         /** PlanOut */
         PlanOut: {
             /** Code */
@@ -3045,6 +3577,11 @@ export interface components {
             /** Version */
             version: number;
         };
+        /** QtyIn */
+        QtyIn: {
+            /** Qty */
+            qty: number;
+        };
         /** QuestionIn */
         QuestionIn: {
             /** Question */
@@ -3068,6 +3605,15 @@ export interface components {
             id: string;
             /** Question */
             question: string;
+        };
+        /** QuoteIn */
+        QuoteIn: {
+            /** Coupons */
+            coupons?: {
+                [key: string]: string;
+            };
+            /** District Code */
+            district_code?: string | null;
         };
         /** ReauthOut */
         ReauthOut: {
@@ -3298,6 +3844,36 @@ export interface components {
             /** Support Phone */
             support_phone?: string | null;
         };
+        /** ShippingRateIn */
+        ShippingRateIn: {
+            /** Base Fee */
+            base_fee: number | string;
+            /**
+             * Base Weight Grams
+             * @default 1000
+             */
+            base_weight_grams: number;
+            /**
+             * Free Funded By
+             * @default vendor
+             * @enum {string}
+             */
+            free_funded_by: "vendor" | "tenant";
+            /** Free Over */
+            free_over?: number | string | null;
+            /**
+             * Per Extra Kg
+             * @default 0
+             */
+            per_extra_kg: number | string;
+            /** Vendor Id */
+            vendor_id?: string | null;
+            /**
+             * Zone
+             * @enum {string}
+             */
+            zone: "inside_dhaka" | "dhaka_suburb" | "outside_dhaka";
+        };
         /** SignupIn */
         SignupIn: {
             /** Accept Agreement */
@@ -3509,6 +4085,16 @@ export interface components {
             synonyms: string[];
             /** Term */
             term: string;
+        };
+        /** TaxRateIn */
+        TaxRateIn: {
+            /**
+             * Category Id
+             * Format: uuid
+             */
+            category_id: string;
+            /** Rate */
+            rate: number | string;
         };
         /** Templates */
         Templates: {
@@ -4145,6 +4731,68 @@ export interface operations {
             };
         };
     };
+    create_campaign_api_v1_admin_campaigns_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CampaignIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_campaign_api_v1_admin_campaigns__campaign_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                campaign_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_brand_api_v1_admin_catalog_brands_post: {
         parameters: {
             query?: never;
@@ -4427,6 +5075,37 @@ export interface operations {
             };
         };
     };
+    checkout_settings_api_v1_admin_checkout_settings_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckoutSettingsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_domains_api_v1_admin_domains_get: {
         parameters: {
             query?: never;
@@ -4589,6 +5268,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["app__modules__settings__router__OnboardingOut"];
+                };
+            };
+        };
+    };
+    admin_orders_api_v1_admin_orders_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -4761,6 +5471,37 @@ export interface operations {
             };
         };
     };
+    upsert_rate_api_v1_admin_shipping_rates_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ShippingRateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_staff_api_v1_admin_staff_get: {
         parameters: {
             query?: never;
@@ -4868,6 +5609,37 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["StorefrontOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_tax_rate_api_v1_admin_tax_rates_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaxRateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -5563,6 +6335,125 @@ export interface operations {
             };
         };
     };
+    get_cart_api_v1_cart_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    add_to_cart_api_v1_cart_items_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CartItemIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_qty_api_v1_cart_items__variant_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                variant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QtyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    quote_api_v1_cart_quote_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     brands_api_v1_catalog_brands_get: {
         parameters: {
             query?: never;
@@ -5838,6 +6729,61 @@ export interface operations {
             };
         };
     };
+    place_api_v1_checkout_place_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "idempotency-key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlaceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    districts_api_v1_geo_districts_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     me_api_v1_me_get: {
         parameters: {
             query?: never;
@@ -5854,6 +6800,150 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    list_addresses_api_v1_me_addresses_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    add_address_api_v1_me_addresses_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddressIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_address_api_v1_me_addresses__address_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                address_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_orders_api_v1_me_orders_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_order_api_v1_me_orders__number__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -5977,6 +7067,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    track_api_v1_orders_track_get: {
+        parameters: {
+            query: {
+                number: string;
+                token: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
             };
             /** @description Validation Error */
             422: {
@@ -6241,6 +7363,143 @@ export interface operations {
             };
         };
     };
+    open_campaigns_api_v1_vendor_campaigns_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    join_campaign_api_v1_vendor_campaigns__campaign_id__products_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                campaign_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JoinCampaignIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_coupons_api_v1_vendor_coupons_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    create_coupon_api_v1_vendor_coupons_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CouponIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deactivate_coupon_api_v1_vendor_coupons__coupon_id__deactivate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                coupon_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     register_document_api_v1_vendor_documents_post: {
         parameters: {
             query?: never;
@@ -6491,6 +7750,69 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["app__modules__vendors__onboarding__OnboardingOut"];
+                };
+            };
+        };
+    };
+    vendor_orders_api_v1_vendor_orders_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vendor_order_api_v1_vendor_orders__sub_order_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sub_order_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

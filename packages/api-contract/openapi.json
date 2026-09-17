@@ -1,6 +1,88 @@
 {
   "components": {
     "schemas": {
+      "AddressIn": {
+        "properties": {
+          "address_line": {
+            "maxLength": 200,
+            "minLength": 5,
+            "title": "Address Line",
+            "type": "string"
+          },
+          "area": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "district_code": {
+            "pattern": "^[a-z-]{2,40}$",
+            "title": "District Code",
+            "type": "string"
+          },
+          "is_default": {
+            "default": false,
+            "title": "Is Default",
+            "type": "boolean"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "landmark": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Landmark"
+          },
+          "phone": {
+            "maxLength": 20,
+            "title": "Phone",
+            "type": "string"
+          },
+          "recipient_name": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Recipient Name",
+            "type": "string"
+          },
+          "upazila": {
+            "maxLength": 60,
+            "minLength": 2,
+            "title": "Upazila",
+            "type": "string"
+          }
+        },
+        "required": [
+          "recipient_name",
+          "phone",
+          "district_code",
+          "upazila",
+          "address_line"
+        ],
+        "title": "AddressIn",
+        "type": "object"
+      },
       "AdminTheme": {
         "properties": {
           "contrast_issues": {
@@ -598,6 +680,54 @@
         "title": "BrandOut",
         "type": "object"
       },
+      "CampaignIn": {
+        "properties": {
+          "ends_at": {
+            "format": "date-time",
+            "title": "Ends At",
+            "type": "string"
+          },
+          "max_discount_percent": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 90.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "90",
+            "title": "Max Discount Percent"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "pattern": "^[a-z0-9-]{2,60}$",
+            "title": "Slug",
+            "type": "string"
+          },
+          "starts_at": {
+            "format": "date-time",
+            "title": "Starts At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "starts_at",
+          "ends_at"
+        ],
+        "title": "CampaignIn",
+        "type": "object"
+      },
       "CardOut": {
         "properties": {
           "blur_data": {
@@ -699,6 +829,27 @@
           "blur_data"
         ],
         "title": "CardOut",
+        "type": "object"
+      },
+      "CartItemIn": {
+        "properties": {
+          "qty": {
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Qty",
+            "type": "integer"
+          },
+          "variant_id": {
+            "format": "uuid",
+            "title": "Variant Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "variant_id",
+          "qty"
+        ],
+        "title": "CartItemIn",
         "type": "object"
       },
       "CategoryIn": {
@@ -899,6 +1050,122 @@
         "title": "ChecklistItem",
         "type": "object"
       },
+      "CheckoutSettingsIn": {
+        "properties": {
+          "bin": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{9,13}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bin"
+          },
+          "cod_blocked_districts": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 64,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cod Blocked Districts"
+          },
+          "cod_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cod Enabled"
+          },
+          "cod_max_order": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cod Max Order"
+          },
+          "default_vat_rate": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Vat Rate"
+          },
+          "reservation_minutes": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 5.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reservation Minutes"
+          },
+          "vat_pricing": {
+            "anyOf": [
+              {
+                "enum": [
+                  "inclusive",
+                  "exclusive"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Pricing"
+          },
+          "vat_registered": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Registered"
+          }
+        },
+        "title": "CheckoutSettingsIn",
+        "type": "object"
+      },
       "CollectionLayout": {
         "additionalProperties": false,
         "properties": {
@@ -978,6 +1245,116 @@
           "rate"
         ],
         "title": "CommissionIn",
+        "type": "object"
+      },
+      "CouponIn": {
+        "properties": {
+          "code": {
+            "pattern": "^[A-Za-z0-9_-]{3,30}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "kind": {
+            "enum": [
+              "percent",
+              "fixed"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "max_discount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Discount"
+          },
+          "min_subtotal": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Min Subtotal"
+          },
+          "per_buyer_limit": {
+            "default": 1,
+            "exclusiveMinimum": 0.0,
+            "maximum": 100.0,
+            "title": "Per Buyer Limit",
+            "type": "integer"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          },
+          "usage_limit": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage Limit"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "code",
+          "kind",
+          "value"
+        ],
+        "title": "CouponIn",
         "type": "object"
       },
       "CustomPage": {
@@ -1687,6 +2064,41 @@
           "payment_reference"
         ],
         "title": "InvoiceOut",
+        "type": "object"
+      },
+      "JoinCampaignIn": {
+        "properties": {
+          "campaign_price": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Campaign Price"
+          },
+          "stock_cap": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 100000.0,
+            "title": "Stock Cap",
+            "type": "integer"
+          },
+          "variant_id": {
+            "format": "uuid",
+            "title": "Variant Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "variant_id",
+          "campaign_price",
+          "stock_cap"
+        ],
+        "title": "JoinCampaignIn",
         "type": "object"
       },
       "Layouts": {
@@ -2600,6 +3012,80 @@
         "title": "PdpOut",
         "type": "object"
       },
+      "PlaceIn": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AddressIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "address_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Id"
+          },
+          "contact_email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Email"
+          },
+          "coupons": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "maxProperties": 20,
+            "title": "Coupons",
+            "type": "object"
+          },
+          "expected_total": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Expected Total"
+          },
+          "payment_method": {
+            "enum": [
+              "cod",
+              "bkash",
+              "sslcommerz"
+            ],
+            "title": "Payment Method",
+            "type": "string"
+          }
+        },
+        "required": [
+          "payment_method",
+          "expected_total"
+        ],
+        "title": "PlaceIn",
+        "type": "object"
+      },
       "PlanOut": {
         "properties": {
           "code": {
@@ -3200,6 +3686,21 @@
         "title": "PublishedTheme",
         "type": "object"
       },
+      "QtyIn": {
+        "properties": {
+          "qty": {
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "title": "Qty",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "qty"
+        ],
+        "title": "QtyIn",
+        "type": "object"
+      },
       "QuestionIn": {
         "properties": {
           "question": {
@@ -3263,6 +3764,32 @@
           "created_at"
         ],
         "title": "QuestionOut",
+        "type": "object"
+      },
+      "QuoteIn": {
+        "properties": {
+          "coupons": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "maxProperties": 20,
+            "title": "Coupons",
+            "type": "object"
+          },
+          "district_code": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z-]{2,40}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District Code"
+          }
+        },
+        "title": "QuoteIn",
         "type": "object"
       },
       "ReauthOut": {
@@ -3921,6 +4448,95 @@
           }
         },
         "title": "SettingsPatch",
+        "type": "object"
+      },
+      "ShippingRateIn": {
+        "properties": {
+          "base_fee": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Base Fee"
+          },
+          "base_weight_grams": {
+            "default": 1000,
+            "exclusiveMinimum": 0.0,
+            "title": "Base Weight Grams",
+            "type": "integer"
+          },
+          "free_funded_by": {
+            "default": "vendor",
+            "enum": [
+              "vendor",
+              "tenant"
+            ],
+            "title": "Free Funded By",
+            "type": "string"
+          },
+          "free_over": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Free Over"
+          },
+          "per_extra_kg": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Per Extra Kg"
+          },
+          "vendor_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Id"
+          },
+          "zone": {
+            "enum": [
+              "inside_dhaka",
+              "dhaka_suburb",
+              "outside_dhaka"
+            ],
+            "title": "Zone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "zone",
+          "base_fee"
+        ],
+        "title": "ShippingRateIn",
         "type": "object"
       },
       "SignupIn": {
@@ -4647,6 +5263,35 @@
           "id"
         ],
         "title": "SynonymOut",
+        "type": "object"
+      },
+      "TaxRateIn": {
+        "properties": {
+          "category_id": {
+            "format": "uuid",
+            "title": "Category Id",
+            "type": "string"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Rate"
+          }
+        },
+        "required": [
+          "category_id",
+          "rate"
+        ],
+        "title": "TaxRateIn",
         "type": "object"
       },
       "Templates": {
@@ -6102,6 +6747,81 @@
         ]
       }
     },
+    "/api/v1/admin/campaigns": {
+      "post": {
+        "operationId": "create_campaign_api_v1_admin_campaigns_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Campaign",
+        "tags": [
+          "admin:orders"
+        ]
+      }
+    },
+    "/api/v1/admin/campaigns/{campaign_id}/cancel": {
+      "post": {
+        "operationId": "cancel_campaign_api_v1_admin_campaigns__campaign_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Campaign",
+        "tags": [
+          "admin:orders"
+        ]
+      }
+    },
     "/api/v1/admin/catalog/brands": {
       "post": {
         "operationId": "create_brand_api_v1_admin_catalog_brands_post",
@@ -6479,6 +7199,40 @@
         ]
       }
     },
+    "/api/v1/admin/checkout-settings": {
+      "patch": {
+        "operationId": "checkout_settings_api_v1_admin_checkout_settings_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutSettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Checkout Settings",
+        "tags": [
+          "admin:orders"
+        ]
+      }
+    },
     "/api/v1/admin/domains": {
       "get": {
         "operationId": "list_domains_api_v1_admin_domains_get",
@@ -6697,6 +7451,49 @@
         ]
       }
     },
+    "/api/v1/admin/orders": {
+      "get": {
+        "operationId": "admin_orders_api_v1_admin_orders_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Orders",
+        "tags": [
+          "admin:orders"
+        ]
+      }
+    },
     "/api/v1/admin/payout-holds/{hold_id}/release": {
       "post": {
         "operationId": "release_hold_api_v1_admin_payout_holds__hold_id__release_post",
@@ -6912,6 +7709,40 @@
         ]
       }
     },
+    "/api/v1/admin/shipping-rates": {
+      "put": {
+        "operationId": "upsert_rate_api_v1_admin_shipping_rates_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShippingRateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upsert Rate",
+        "tags": [
+          "admin:orders"
+        ]
+      }
+    },
     "/api/v1/admin/staff": {
       "get": {
         "operationId": "list_staff_api_v1_admin_staff_get",
@@ -7067,6 +7898,40 @@
         "summary": "Admin Get Storefront",
         "tags": [
           "admin:vendors"
+        ]
+      }
+    },
+    "/api/v1/admin/tax-rates": {
+      "put": {
+        "operationId": "set_tax_rate_api_v1_admin_tax_rates_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxRateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Tax Rate",
+        "tags": [
+          "admin:orders"
         ]
       }
     },
@@ -7965,6 +8830,149 @@
         ]
       }
     },
+    "/api/v1/cart": {
+      "get": {
+        "operationId": "get_cart_api_v1_cart_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Cart",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
+    "/api/v1/cart/items": {
+      "post": {
+        "operationId": "add_to_cart_api_v1_cart_items_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartItemIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add To Cart",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
+    "/api/v1/cart/items/{variant_id}": {
+      "patch": {
+        "operationId": "set_qty_api_v1_cart_items__variant_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "variant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Variant Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QtyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Qty",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
+    "/api/v1/cart/quote": {
+      "post": {
+        "operationId": "quote_api_v1_cart_quote_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuoteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Quote",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
     "/api/v1/catalog/brands": {
       "get": {
         "operationId": "brands_api_v1_catalog_brands_get",
@@ -8543,6 +9551,78 @@
         ]
       }
     },
+    "/api/v1/checkout/place": {
+      "post": {
+        "operationId": "place_api_v1_checkout_place_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": true,
+            "schema": {
+              "maxLength": 80,
+              "minLength": 16,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Place",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
+    "/api/v1/geo/districts": {
+      "get": {
+        "operationId": "districts_api_v1_geo_districts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Districts",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "operationId": "me_api_v1_me_get",
@@ -8561,6 +9641,181 @@
         "summary": "Me",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/me/addresses": {
+      "get": {
+        "operationId": "list_addresses_api_v1_me_addresses_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Addresses",
+        "tags": [
+          "checkout"
+        ]
+      },
+      "post": {
+        "operationId": "add_address_api_v1_me_addresses_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Address",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
+    "/api/v1/me/addresses/{address_id}": {
+      "delete": {
+        "operationId": "delete_address_api_v1_me_addresses__address_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Address Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Address",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
+    "/api/v1/me/orders": {
+      "get": {
+        "operationId": "my_orders_api_v1_me_orders_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Orders",
+        "tags": [
+          "checkout"
+        ]
+      }
+    },
+    "/api/v1/me/orders/{number}": {
+      "get": {
+        "operationId": "my_order_api_v1_me_orders__number__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Order",
+        "tags": [
+          "checkout"
         ]
       }
     },
@@ -8699,6 +9954,59 @@
         "summary": "Remove Wishlist",
         "tags": [
           "buyer"
+        ]
+      }
+    },
+    "/api/v1/orders/track": {
+      "get": {
+        "description": "Guest-safe tracking link: order number + unguessable token; shows status only, no address or phone.",
+        "operationId": "track_api_v1_orders_track_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "maxLength": 40,
+              "title": "Number",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 16,
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Track",
+        "tags": [
+          "checkout"
         ]
       }
     },
@@ -9096,6 +10404,168 @@
         ]
       }
     },
+    "/api/v1/vendor/campaigns": {
+      "get": {
+        "operationId": "open_campaigns_api_v1_vendor_campaigns_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Open Campaigns",
+        "tags": [
+          "vendor:orders"
+        ]
+      }
+    },
+    "/api/v1/vendor/campaigns/{campaign_id}/products": {
+      "post": {
+        "operationId": "join_campaign_api_v1_vendor_campaigns__campaign_id__products_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinCampaignIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Join Campaign",
+        "tags": [
+          "vendor:orders"
+        ]
+      }
+    },
+    "/api/v1/vendor/coupons": {
+      "get": {
+        "operationId": "my_coupons_api_v1_vendor_coupons_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Coupons",
+        "tags": [
+          "vendor:orders"
+        ]
+      },
+      "post": {
+        "operationId": "create_coupon_api_v1_vendor_coupons_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Coupon",
+        "tags": [
+          "vendor:orders"
+        ]
+      }
+    },
+    "/api/v1/vendor/coupons/{coupon_id}/deactivate": {
+      "post": {
+        "operationId": "deactivate_coupon_api_v1_vendor_coupons__coupon_id__deactivate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "coupon_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Coupon Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Deactivate Coupon",
+        "tags": [
+          "vendor:orders"
+        ]
+      }
+    },
     "/api/v1/vendor/documents": {
       "post": {
         "operationId": "register_document_api_v1_vendor_documents_post",
@@ -9404,6 +10874,107 @@
         "summary": "Submit Onboarding",
         "tags": [
           "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/orders": {
+      "get": {
+        "operationId": "vendor_orders_api_v1_vendor_orders_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 20,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Orders",
+        "tags": [
+          "vendor:orders"
+        ]
+      }
+    },
+    "/api/v1/vendor/orders/{sub_order_id}": {
+      "get": {
+        "operationId": "vendor_order_api_v1_vendor_orders__sub_order_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sub_order_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sub Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Order",
+        "tags": [
+          "vendor:orders"
         ]
       }
     },

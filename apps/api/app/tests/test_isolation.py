@@ -81,6 +81,21 @@ SCOPED_ROUTES = [
     ("POST", "/api/v1/admin/products/{id}/moderate", STAFF, "product", {"decision": "approve"}),
     ("POST", "/api/v1/admin/questions/{id}/hide", STAFF, "question", None),
     ("DELETE", "/api/v1/admin/catalog/synonyms/{id}", STAFF, "synonym", None),
+    # checkout (Phase 10)
+    ("GET", "/api/v1/vendor/orders/{id}", VENDOR, "sub_order", None),
+    ("POST", "/api/v1/vendor/coupons/{id}/deactivate", VENDOR, "coupon", None),
+    (
+        "POST",
+        "/api/v1/vendor/campaigns/{id}/products",
+        VENDOR,
+        "campaign",
+        {
+            "variant_id": "00000000-0000-7000-8000-000000000000",
+            "campaign_price": "1",
+            "stock_cap": 1,
+        },
+    ),
+    ("POST", "/api/v1/admin/campaigns/{id}/cancel", STAFF, "campaign", None),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
@@ -88,6 +103,11 @@ OWN_STATUS = {
     ("PATCH", "/api/v1/vendor/staff/{id}"): 409,
     ("POST", "/api/v1/vendor/products/{id}/variants"): 201,
     ("POST", "/api/v1/vendor/products/{id}/media"): 404,  # placeholder asset id does not exist
+    (
+        "POST",
+        "/api/v1/vendor/campaigns/{id}/products",
+    ): 404,  # placeholder variant id does not exist
+    ("POST", "/api/v1/vendor/coupons/{id}/deactivate"): 204,
     ("DELETE", "/api/v1/vendor/product-media/{id}"): 204,
 }
 

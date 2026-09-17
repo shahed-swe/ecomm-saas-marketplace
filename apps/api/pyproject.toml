@@ -60,3 +60,5 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.File", "a
 "app/modules/theme/storefront.py" = ["S608"]
 "app/modules/catalog/search.py" = ["S608"]
 "app/modules/catalog/buyer.py" = ["S608"]
+"app/modules/catalog/seo.py" = ["S608"]
+"app/modules/checkout/*.py" = ["S608"]
