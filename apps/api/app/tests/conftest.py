@@ -510,6 +510,14 @@ async def build_catalog(c, app, tw, key):
             {"t": tw.id, "n": f"TKT-W{key}"},
         )
         tw.catalog["ticket"] = {"tenant": str(ticket_id)}
+        export_id = await conn.scalar(
+            sql(
+                """INSERT INTO report_exports (tenant_id, kind, status, rows, object_key, requested_by)
+                   VALUES (:t, 'orders', 'ready', 0, :k, 'seed') RETURNING id"""
+            ),
+            {"t": tw.id, "k": f"t/{tw.id}/exports/orders/seed.csv"},
+        )
+        tw.catalog["report_export"] = {"tenant": str(export_id)}
 
 
 @pytest.fixture(scope="session")

@@ -38,6 +38,7 @@ from app.modules.notifications import router as notifications
 from app.modules.notifications.channels import ConsoleEmail, ConsolePush
 from app.modules.payments import router as payments
 from app.modules.platform.router import router as platform_router
+from app.modules.reporting import router as reporting
 from app.modules.returns import router as returns
 from app.modules.settings.router import router as settings_router
 from app.modules.store.router import router as store_router
@@ -164,6 +165,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         notifications.buyer,
         notifications.vendor,
         notifications.admin,
+        reporting.admin,
+        reporting.vendor,
+        reporting.platform,
         vendor_router,
         admin_vendors_router,
         domains_router,

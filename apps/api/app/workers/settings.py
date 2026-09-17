@@ -363,6 +363,32 @@ class WorkerAppState:
         self.email = ConsoleEmail()
 
 
+@platform_job
+async def rollup_metrics(ctx: dict) -> dict:
+    """Close yesterday's books for every tenant's dashboard, a little after midnight in Dhaka."""
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.reporting.service import rollup_range
+
+    written = 0
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenant_ids = [
+            str(r[0])
+            for r in (
+                await session.execute(
+                    text("SELECT id FROM tenants WHERE status IN ('trial','active') LIMIT 1000")
+                )
+            ).all()
+        ]
+    for tenant_id in tenant_ids:
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, tenant_id)
+            written += await rollup_range(session, tenant_id, days=3)
+    log.info("metrics_rolled_up", tenants=len(tenant_ids), rows=written)
+    return {"tenants": len(tenant_ids), "rows": written}
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -391,6 +417,7 @@ class WorkerSettings:
         payout_runs,
         trust_sweep,
         marketing_sweep,
+        rollup_metrics,
     ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
@@ -403,6 +430,7 @@ class WorkerSettings:
         cron(payout_runs, hour={22}, minute={15}),  # 04:15 Asia/Dhaka
         cron(trust_sweep, hour={1, 13}, minute={50}),
         cron(marketing_sweep, minute={25}),  # hourly
+        cron(rollup_metrics, hour={19}, minute={20}),  # 01:20 Asia/Dhaka
     ]
     on_startup = startup
     on_shutdown = shutdown

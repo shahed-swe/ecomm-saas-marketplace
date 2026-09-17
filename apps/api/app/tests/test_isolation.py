@@ -147,6 +147,8 @@ SCOPED_ROUTES = [
     ("GET", "/api/v1/admin/tickets/{id}", STAFF, "ticket", None),
     ("POST", "/api/v1/admin/tickets/{id}/messages", STAFF, "ticket", {"body": "Checking"}),
     ("POST", "/api/v1/admin/tickets/{id}/status", STAFF, "ticket", {"status": "closed"}),
+    # reporting (Phase 17)
+    ("GET", "/api/v1/admin/reports/exports/{id}/url", STAFF, "report_export", None),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
