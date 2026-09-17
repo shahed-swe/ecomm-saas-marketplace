@@ -1544,6 +1544,33 @@
         "title": "CourierIn",
         "type": "object"
       },
+      "CreditIn": {
+        "properties": {
+          "amount": {
+            "exclusiveMinimum": 0.0,
+            "title": "Amount",
+            "type": "number"
+          },
+          "note": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Note",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "amount",
+          "note"
+        ],
+        "title": "CreditIn",
+        "type": "object"
+      },
       "CustomPage": {
         "additionalProperties": false,
         "properties": {
@@ -1619,6 +1646,31 @@
           }
         },
         "title": "CycleIn",
+        "type": "object"
+      },
+      "DecisionIn": {
+        "properties": {
+          "approve": {
+            "title": "Approve",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "approve"
+        ],
+        "title": "DecisionIn",
         "type": "object"
       },
       "DocumentIn": {
@@ -2378,6 +2430,38 @@
           "password"
         ],
         "title": "LoginIn",
+        "type": "object"
+      },
+      "ManualRefundIn": {
+        "properties": {
+          "reference": {
+            "maxLength": 80,
+            "minLength": 3,
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference"
+        ],
+        "title": "ManualRefundIn",
+        "type": "object"
+      },
+      "MarkIn": {
+        "properties": {
+          "status": {
+            "enum": [
+              "picked_up",
+              "received"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "MarkIn",
         "type": "object"
       },
       "MarkPaidIn": {
@@ -3199,6 +3283,77 @@
         "title": "PdpOut",
         "type": "object"
       },
+      "PhotoIn": {
+        "properties": {
+          "content_type": {
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ],
+            "title": "Content Type",
+            "type": "string"
+          },
+          "storage_key": {
+            "maxLength": 300,
+            "title": "Storage Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "storage_key",
+          "content_type"
+        ],
+        "title": "PhotoIn",
+        "type": "object"
+      },
+      "PhotoUrlIn": {
+        "properties": {
+          "byte_size": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 6291456.0,
+            "title": "Byte Size",
+            "type": "integer"
+          },
+          "content_type": {
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ],
+            "title": "Content Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content_type",
+          "byte_size"
+        ],
+        "title": "PhotoUrlIn",
+        "type": "object"
+      },
+      "PickupIn": {
+        "properties": {
+          "courier": {
+            "anyOf": [
+              {
+                "enum": [
+                  "pathao",
+                  "steadfast",
+                  "redx"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Courier"
+          }
+        },
+        "title": "PickupIn",
+        "type": "object"
+      },
       "PlaceIn": {
         "properties": {
           "address": {
@@ -3264,6 +3419,11 @@
             ],
             "title": "Payment Method",
             "type": "string"
+          },
+          "use_store_credit": {
+            "default": false,
+            "title": "Use Store Credit",
+            "type": "boolean"
           }
         },
         "required": [
@@ -3890,6 +4050,50 @@
         "title": "PublishedTheme",
         "type": "object"
       },
+      "QcIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "results": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "enum": [
+                    "restock",
+                    "write_off",
+                    "reject"
+                  ],
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Results"
+          }
+        },
+        "required": [
+          "passed"
+        ],
+        "title": "QcIn",
+        "type": "object"
+      },
       "QtyIn": {
         "properties": {
           "qty": {
@@ -4130,6 +4334,113 @@
           "settings"
         ],
         "title": "ResolvedSection",
+        "type": "object"
+      },
+      "ReturnIn": {
+        "properties": {
+          "bank_account": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Account"
+          },
+          "bkash_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bkash Number"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReturnItemIn"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reason": {
+            "enum": [
+              "damaged",
+              "wrong_item",
+              "not_as_described",
+              "missing_parts",
+              "size_issue",
+              "changed_mind",
+              "other"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "refund_method": {
+            "default": "original",
+            "enum": [
+              "original",
+              "store_credit",
+              "bkash",
+              "bank"
+            ],
+            "title": "Refund Method",
+            "type": "string"
+          },
+          "sub_order_id": {
+            "format": "uuid",
+            "title": "Sub Order Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sub_order_id",
+          "reason",
+          "items"
+        ],
+        "title": "ReturnIn",
+        "type": "object"
+      },
+      "ReturnItemIn": {
+        "properties": {
+          "order_item_id": {
+            "format": "uuid",
+            "title": "Order Item Id",
+            "type": "string"
+          },
+          "qty": {
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Qty",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "order_item_id",
+          "qty"
+        ],
+        "title": "ReturnItemIn",
         "type": "object"
       },
       "ReviewDoc": {
@@ -7970,6 +8281,47 @@
         ]
       }
     },
+    "/api/v1/admin/credit-notes": {
+      "get": {
+        "operationId": "credit_notes_api_v1_admin_credit_notes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Credit Notes",
+        "tags": [
+          "admin:returns"
+        ]
+      }
+    },
     "/api/v1/admin/domains": {
       "get": {
         "operationId": "list_domains_api_v1_admin_domains_get",
@@ -8609,6 +8961,357 @@
         ]
       }
     },
+    "/api/v1/admin/refunds": {
+      "get": {
+        "operationId": "list_refunds_api_v1_admin_refunds_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Refunds",
+        "tags": [
+          "admin:returns"
+        ]
+      }
+    },
+    "/api/v1/admin/refunds/{refund_id}/complete": {
+      "post": {
+        "operationId": "complete_refund_api_v1_admin_refunds__refund_id__complete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "refund_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Refund Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualRefundIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete Refund",
+        "tags": [
+          "admin:returns"
+        ]
+      }
+    },
+    "/api/v1/admin/returns": {
+      "get": {
+        "operationId": "admin_returns_api_v1_admin_returns_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "escalated",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Escalated"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Returns",
+        "tags": [
+          "admin:returns"
+        ]
+      }
+    },
+    "/api/v1/admin/returns/{return_id}": {
+      "get": {
+        "operationId": "admin_return_api_v1_admin_returns__return_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Return",
+        "tags": [
+          "admin:returns"
+        ]
+      }
+    },
+    "/api/v1/admin/returns/{return_id}/cancel": {
+      "post": {
+        "operationId": "cancel_return_api_v1_admin_returns__return_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Return",
+        "tags": [
+          "admin:returns"
+        ]
+      }
+    },
+    "/api/v1/admin/returns/{return_id}/decision": {
+      "post": {
+        "description": "Tenant staff can overrule a vendor \u2014 that is what an override is for.",
+        "operationId": "admin_decision_api_v1_admin_returns__return_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Decision",
+        "tags": [
+          "admin:returns"
+        ]
+      }
+    },
+    "/api/v1/admin/returns/{return_id}/refund": {
+      "post": {
+        "operationId": "admin_refund_api_v1_admin_returns__return_id__refund_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Refund",
+        "tags": [
+          "admin:returns"
+        ]
+      }
+    },
     "/api/v1/admin/roles": {
       "get": {
         "operationId": "list_roles_api_v1_admin_roles_get",
@@ -9024,6 +9727,92 @@
         "summary": "Update Staff",
         "tags": [
           "admin:staff"
+        ]
+      }
+    },
+    "/api/v1/admin/store-credit": {
+      "get": {
+        "operationId": "customer_credit_api_v1_admin_store_credit_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "user_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Customer Credit",
+        "tags": [
+          "admin:returns"
+        ]
+      },
+      "post": {
+        "description": "Goodwill credit: always deliberate, always attributed, never silent.",
+        "operationId": "grant_credit_api_v1_admin_store_credit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreditIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Grant Credit",
+        "tags": [
+          "admin:returns"
         ]
       }
     },
@@ -11028,6 +11817,47 @@
         ]
       }
     },
+    "/api/v1/me/orders/{number}/return-window": {
+      "get": {
+        "description": "What can still be sent back, per shipment, and until when.",
+        "operationId": "return_window_api_v1_me_orders__number__return_window_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Return Window",
+        "tags": [
+          "returns"
+        ]
+      }
+    },
     "/api/v1/me/orders/{number}/tracking": {
       "get": {
         "operationId": "tracking_api_v1_me_orders__number__tracking_get",
@@ -11116,6 +11946,184 @@
         "summary": "Viewed",
         "tags": [
           "buyer"
+        ]
+      }
+    },
+    "/api/v1/me/returns": {
+      "get": {
+        "operationId": "my_returns_api_v1_me_returns_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Returns",
+        "tags": [
+          "returns"
+        ]
+      },
+      "post": {
+        "operationId": "request_return_api_v1_me_returns_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Request Return",
+        "tags": [
+          "returns"
+        ]
+      }
+    },
+    "/api/v1/me/returns/{return_id}/photo-url": {
+      "post": {
+        "description": "Evidence goes straight to the private bucket with a short-lived signed PUT \u2014 the API never\nhandles the bytes, and nothing about a return is ever served publicly.",
+        "operationId": "photo_upload_url_api_v1_me_returns__return_id__photo_url_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotoUrlIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Photo Upload Url",
+        "tags": [
+          "returns"
+        ]
+      }
+    },
+    "/api/v1/me/returns/{return_id}/photos": {
+      "post": {
+        "operationId": "register_photo_api_v1_me_returns__return_id__photos_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Register Photo",
+        "tags": [
+          "returns"
+        ]
+      }
+    },
+    "/api/v1/me/store-credit": {
+      "get": {
+        "operationId": "my_store_credit_api_v1_me_store_credit_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Store Credit",
+        "tags": [
+          "returns"
         ]
       }
     },
@@ -13099,6 +14107,308 @@
         "summary": "Reauth Verify",
         "tags": [
           "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/returns": {
+      "get": {
+        "operationId": "vendor_returns_api_v1_vendor_returns_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Returns",
+        "tags": [
+          "vendor:returns"
+        ]
+      }
+    },
+    "/api/v1/vendor/returns/{return_id}": {
+      "get": {
+        "operationId": "vendor_return_api_v1_vendor_returns__return_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Return",
+        "tags": [
+          "vendor:returns"
+        ]
+      }
+    },
+    "/api/v1/vendor/returns/{return_id}/decision": {
+      "post": {
+        "operationId": "vendor_decision_api_v1_vendor_returns__return_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Decision",
+        "tags": [
+          "vendor:returns"
+        ]
+      }
+    },
+    "/api/v1/vendor/returns/{return_id}/mark": {
+      "post": {
+        "operationId": "vendor_mark_api_v1_vendor_returns__return_id__mark_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Mark",
+        "tags": [
+          "vendor:returns"
+        ]
+      }
+    },
+    "/api/v1/vendor/returns/{return_id}/pickup": {
+      "post": {
+        "operationId": "vendor_pickup_api_v1_vendor_returns__return_id__pickup_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PickupIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Pickup",
+        "tags": [
+          "vendor:returns"
+        ]
+      }
+    },
+    "/api/v1/vendor/returns/{return_id}/qc": {
+      "post": {
+        "operationId": "vendor_qc_api_v1_vendor_returns__return_id__qc_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "return_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Return Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QcIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Qc",
+        "tags": [
+          "vendor:returns"
         ]
       }
     },

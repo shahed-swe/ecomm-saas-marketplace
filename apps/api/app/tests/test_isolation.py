@@ -103,6 +103,17 @@ SCOPED_ROUTES = [
     ("POST", "/api/v1/vendor/shipments/{id}/cancel", VENDOR, "shipment", None),
     ("GET", "/api/v1/admin/shipments/{id}", STAFF, "shipment", None),
     ("POST", "/api/v1/admin/shipments/{id}/resolve", STAFF, "shipment", {"note": "checked"}),
+    # returns and refunds (Phase 13)
+    ("GET", "/api/v1/vendor/returns/{id}", VENDOR, "return", None),
+    ("POST", "/api/v1/vendor/returns/{id}/decision", VENDOR, "return", {"approve": True}),
+    ("POST", "/api/v1/vendor/returns/{id}/pickup", VENDOR, "return", {}),
+    ("POST", "/api/v1/vendor/returns/{id}/mark", VENDOR, "return", {"status": "received"}),
+    ("POST", "/api/v1/vendor/returns/{id}/qc", VENDOR, "return", {"passed": True}),
+    ("GET", "/api/v1/admin/returns/{id}", STAFF, "return", None),
+    ("POST", "/api/v1/admin/returns/{id}/decision", STAFF, "return", {"approve": True}),
+    ("POST", "/api/v1/admin/returns/{id}/refund", STAFF, "return", None),
+    ("POST", "/api/v1/admin/returns/{id}/cancel", STAFF, "return", None),
+    ("POST", "/api/v1/admin/refunds/{id}/complete", STAFF, "refund", {"reference": "TRX-1"}),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
@@ -111,6 +122,11 @@ OWN_STATUS = {
     ("POST", "/api/v1/vendor/orders/{id}/ready"): 409,  # the world order is still unpaid
     ("POST", "/api/v1/vendor/orders/{id}/ship"): 409,
     ("POST", "/api/v1/vendor/shipments/{id}/cancel"): 409,  # no courier account configured
+    # the world's return is already refunded: every transition out of it is a conflict
+    ("POST", "/api/v1/vendor/returns/{id}/decision"): 409,
+    ("POST", "/api/v1/vendor/returns/{id}/pickup"): 409,
+    ("POST", "/api/v1/vendor/returns/{id}/mark"): 409,
+    ("POST", "/api/v1/vendor/returns/{id}/qc"): 409,
     ("POST", "/api/v1/vendor/products/{id}/variants"): 201,
     ("POST", "/api/v1/vendor/products/{id}/media"): 404,  # placeholder asset id does not exist
     (

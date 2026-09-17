@@ -102,15 +102,31 @@ async def _order_for_payment(db: AsyncSession, tenant_id: str, *, order_id=None,
 
 
 async def _paid_payment(db: AsyncSession, tenant_id: str, order_id) -> str | None:
+    """An existing *gateway* capture for this order. Store credit is tender, not a capture."""
     return (
         await db.execute(
             text(
                 "SELECT id FROM payments WHERE tenant_id = :t AND order_id = :o "
-                "AND status = ANY(CAST(:st AS text[]))"
+                "AND provider <> 'store_credit' AND status = ANY(CAST(:st AS text[]))"
             ),
             {"t": tenant_id, "o": order_id, "st": PAID_STATUSES},
         )
     ).scalar()
+
+
+async def amount_due(db: AsyncSession, tenant_id: str, order_id, grand_total) -> Decimal:
+    """What the buyer still owes: the order total minus every payment already standing on it
+    (store credit spent at checkout counts), net of anything refunded back."""
+    settled = (
+        await db.execute(
+            text(
+                """SELECT coalesce(sum(amount - refunded_amount), 0) FROM payments
+                   WHERE tenant_id = :t AND order_id = :o AND status = ANY(CAST(:st AS text[]))"""
+            ),
+            {"t": tenant_id, "o": order_id, "st": PAID_STATUSES},
+        )
+    ).scalar()
+    return money(Decimal(str(grand_total)) - Decimal(str(settled)))
 
 
 # ------------------------------------------------------------------------------------ starting
@@ -132,6 +148,9 @@ async def start_payment(
     if order["payment_method"] == "cod":
         raise PaymentError("This order is cash on delivery", code="not_prepaid")
     if await _paid_payment(db, tenant_id, order["id"]):
+        raise PaymentError("This order is already paid", code="already_paid")
+    due = await amount_due(db, tenant_id, order["id"], order["grand_total"])
+    if due <= 0:
         raise PaymentError("This order is already paid", code="already_paid")
     pending = (
         await db.execute(
@@ -164,7 +183,7 @@ async def start_payment(
     ).scalar()
     created = await gateway.create(
         credentials=account.credentials,
-        amount=order["grand_total"],
+        amount=due,
         order_number=order["number"],
         return_url=return_url,
         callback_url=callback_url,
@@ -180,7 +199,7 @@ async def start_payment(
                 "t": tenant_id,
                 "o": order["id"],
                 "p": account.provider,
-                "a": order["grand_total"],
+                "a": due,
                 "r": created.provider_ref,
                 "n": attempt,
             },
@@ -190,7 +209,7 @@ async def start_payment(
         "payment_id": str(payment_id),
         "provider": account.provider,
         "order_number": order["number"],
-        "amount": money(order["grand_total"]),
+        "amount": due,
         "redirect_url": created.redirect_url,
         "status": "pending",
     }
@@ -246,7 +265,7 @@ async def settle(
             "order_number": payment["number"],
             "settled": False,
         }
-    if verified.amount is None or money(verified.amount) != money(payment["grand_total"]):
+    if verified.amount is None or money(verified.amount) != money(payment["amount"]):
         await db.execute(
             text(
                 """UPDATE payments SET status = 'failed', failure_reason = 'amount_mismatch',
@@ -281,12 +300,18 @@ async def settle(
             "p": payment["id"],
         },
     )
-    confirmed = await confirm_paid_order(db, tenant_id, payment["order_id"], ref=order["number"])
+    due = await amount_due(db, tenant_id, payment["order_id"], order["grand_total"])
+    confirmed = 0
+    if due <= 0:
+        confirmed = await confirm_paid_order(
+            db, tenant_id, payment["order_id"], ref=order["number"]
+        )
     return {
         "status": "paid",
         "order_number": order["number"],
         "settled": True,
         "confirmed_sub_orders": confirmed,
+        "amount_due": due,
     }
 
 

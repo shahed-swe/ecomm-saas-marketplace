@@ -189,7 +189,12 @@ async def quote(body: QuoteIn, p: CurrentPrincipal, tenant: Tenant, db: TenantDB
         coupons=body.coupons,
         user_id=p.sub,
     )
-    return q.as_dict()
+    from app.modules.returns import credit as store_credit
+
+    return {
+        **q.as_dict(),
+        "store_credit_available": await store_credit.balance(db, tenant.id, p.sub),
+    }
 
 
 # ---------------------------------------------------------------------------------------- addresses
@@ -294,6 +299,7 @@ class PlaceIn(BaseModel):
     coupons: dict[str, str] = Field(default_factory=dict, max_length=20)
     expected_total: Decimal = Field(ge=0)
     contact_email: EmailStr | None = None
+    use_store_credit: bool = False
 
 
 @buyer.post("/checkout/place", status_code=201)
@@ -350,6 +356,10 @@ async def place(
         .mappings()
         .one()
     )
+    if body.use_store_credit and body.payment_method == "cod":
+        raise CheckoutError_(
+            "Store credit cannot be combined with cash on delivery", "credit_with_cod"
+        )
     if body.payment_method == "cod" and not phone["phone_verified_at"]:
         raise CheckoutError_(
             "Verify your mobile number to use cash on delivery", "phone_unverified"
@@ -369,6 +379,7 @@ async def place(
             coupons=body.coupons,
             expected_total=body.expected_total,
             idempotency_key=idempotency_key,
+            use_store_credit=body.use_store_credit,
         )
     except IntegrityError as exc:
         raise Conflict("Order could not be placed, please retry") from exc
@@ -442,7 +453,7 @@ async def my_order(number: str, p: CurrentPrincipal, tenant: Tenant, db: TenantD
         (
             await db.execute(
                 text(
-                    """SELECT i.sub_order_id, i.title_snapshot, i.sku_snapshot, i.options_snapshot, i.unit_price, i.qty,
+                    """SELECT i.id, i.sub_order_id, i.title_snapshot, i.sku_snapshot, i.options_snapshot, i.unit_price, i.qty,
                   i.discount_amount, i.line_total FROM order_items i JOIN sub_orders s ON s.id = i.sub_order_id
                   AND s.tenant_id = i.tenant_id WHERE s.order_id = :o AND i.tenant_id = :t ORDER BY i.title_snapshot"""
                 ),

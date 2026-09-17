@@ -35,6 +35,7 @@ from app.modules.identity import staff_router
 from app.modules.identity.sms import ConsoleSms
 from app.modules.payments import router as payments
 from app.modules.platform.router import router as platform_router
+from app.modules.returns import router as returns
 from app.modules.settings.router import router as settings_router
 from app.modules.store.router import router as store_router
 from app.modules.theme import router as theme
@@ -145,6 +146,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         fulfilment.admin,
         fulfilment.buyer,
         fulfilment.webhooks,
+        returns.buyer,
+        returns.vendor,
+        returns.admin,
         vendor_router,
         admin_vendors_router,
         domains_router,

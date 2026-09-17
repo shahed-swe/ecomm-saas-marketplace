@@ -191,6 +191,37 @@ async def courier_sweep(ctx: dict) -> dict:
     return totals
 
 
+@platform_job
+async def escalate_returns(ctx: dict) -> int:
+    """QC nobody did in time stops being the buyer's problem and becomes the tenant's."""
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.returns.service import escalate_overdue_qc
+
+    total = 0
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenant_ids = [
+            str(r[0])
+            for r in (
+                await session.execute(
+                    text(
+                        """SELECT DISTINCT tenant_id FROM return_requests
+                           WHERE status IN ('received','picked_up') AND NOT escalated
+                             AND qc_due_at IS NOT NULL AND qc_due_at < now() LIMIT 200"""
+                    )
+                )
+            ).all()
+        ]
+    for tenant_id in tenant_ids:
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, tenant_id)
+            total += await escalate_overdue_qc(session, tenant_id)
+    if total:
+        log.info("returns_escalated", count=total)
+    return total
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -213,6 +244,7 @@ class WorkerSettings:
         expire_unpaid_orders,
         reconcile_payments,
         courier_sweep,
+        escalate_returns,
     ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
@@ -220,6 +252,7 @@ class WorkerSettings:
         cron(expire_unpaid_orders, second={0}),  # every minute
         cron(reconcile_payments, minute={3, 18, 33, 48}),  # four sweeps an hour
         cron(courier_sweep, minute={8, 23, 38, 53}),
+        cron(escalate_returns, minute={40}),  # hourly
     ]
     on_startup = startup
     on_shutdown = shutdown

@@ -400,6 +400,35 @@ async def build_catalog(c, app, tw, key):
                 },
             )
             tw.catalog["shipment"][name] = str(sid)
+    # A finished return and a pending manual refund per vendor: isolation targets whose state is
+    # terminal, so the harness gets the same answer whatever order it runs in (Phase 13).
+    tw.catalog["return"] = {}
+    tw.catalog["refund"] = {}
+    async with app.state.platform_db.engine.begin() as conn:
+        for n in (1, 2):
+            name = f"{key}{n}"
+            rid = await conn.scalar(
+                sql(
+                    """INSERT INTO return_requests (tenant_id, vendor_id, order_id, sub_order_id, user_id,
+                           number, reason, status, shipping_payer, refund_method, refund_total)
+                       SELECT s.tenant_id, s.vendor_id, s.order_id, s.id, o.user_id, :num, 'damaged',
+                              'refunded', 'vendor', 'store_credit', 0
+                       FROM sub_orders s JOIN orders o ON o.id = s.order_id AND o.tenant_id = s.tenant_id
+                       WHERE s.tenant_id = :t AND s.id = :s RETURNING id"""
+                ),
+                {"num": f"RET-W{key}{n}", "t": tw.id, "s": tw.catalog["sub_order"][name]},
+            )
+            tw.catalog["return"][name] = str(rid)
+            fid = await conn.scalar(
+                sql(
+                    """INSERT INTO refunds (tenant_id, return_id, order_id, method, amount, status,
+                           requested_by)
+                       SELECT r.tenant_id, r.id, r.order_id, 'manual_bank', 100, 'pending', 'seed'
+                       FROM return_requests r WHERE r.tenant_id = :t AND r.id = :r RETURNING id"""
+                ),
+                {"t": tw.id, "r": rid},
+            )
+            tw.catalog["refund"][name] = str(fid)
 
 
 @pytest.fixture(scope="session")

@@ -6,7 +6,7 @@ import { taka } from "@/lib/money";
 
 type District = { code: string; name_en: string; division_name: string };
 type Quote = { groups: any[]; shipping_total: string; discount_total: string; vat_total: string; grand_total: string;
-  payment_methods: string[]; issues: { message: string }[] };
+  payment_methods: string[]; issues: { message: string }[]; store_credit_available?: string };
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -17,6 +17,7 @@ export default function CheckoutPage() {
   const [quote, setQuote] = useState<Quote | null>(null);
   const [method, setMethod] = useState("cod");
   const [error, setError] = useState("");
+  const [useCredit, setUseCredit] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -38,18 +39,22 @@ export default function CheckoutPage() {
     if (!quote) return;
     const f = new FormData(e.currentTarget);
     setBusy(true); setError("");
-    const body: Record<string, unknown> = { payment_method: method, expected_total: quote.grand_total };
+    const body: Record<string, unknown> = {
+      payment_method: method, expected_total: quote.grand_total,
+      use_store_credit: useCredit && method !== "cod",
+    };
     if (addressId) body.address_id = addressId;
     else body.address = {
       recipient_name: f.get("recipient_name"), phone: f.get("phone"), district_code: district,
       upazila: f.get("upazila"), address_line: f.get("address_line"),
     };
     try {
-      const r = await api<{ number: string }>("/checkout/place", {
+      const r = await api<{ number: string; amount_due: string }>("/checkout/place", {
         method: "POST", json: body, headers: { "idempotency-key": crypto.getRandomValues(new Uint8Array(16)).reduce((s, b) => s + b.toString(16).padStart(2, "0"), "") },
       });
-      // Prepaid orders go straight to the gateway; COD orders are already final.
-      router.push(method === "cod" ? `/orders/${r.number}` : `/orders/${r.number}/payment`);
+      // Prepaid orders go to the gateway, unless store credit already covered the whole total.
+      const settled = method === "cod" || Number(r.amount_due ?? 0) <= 0;
+      router.push(settled ? `/orders/${r.number}` : `/orders/${r.number}/payment`);
     } catch (err) {
       setError(err instanceof ApiError ? err.detail : "Could not place the order");
       if (err instanceof ApiError && err.status === 409) api<Quote>("/cart/quote", { method: "POST", json: { district_code: district } }).then(setQuote);
@@ -77,6 +82,12 @@ export default function CheckoutPage() {
             <input name="upazila" required placeholder="Upazila / Thana" className="w-full rounded-theme border border-border bg-bg p-2" />
             <input name="address_line" required placeholder="House, road, area" className="w-full rounded-theme border border-border bg-bg p-2" />
           </>
+        )}
+        {quote && Number(quote.store_credit_available ?? 0) > 0 && method !== "cod" && (
+          <label className="flex items-center gap-2 rounded-theme border border-border p-3 text-sm">
+            <input type="checkbox" checked={useCredit} onChange={(e) => setUseCredit(e.target.checked)} />
+            Use my store credit ({taka(quote.store_credit_available)})
+          </label>
         )}
         <fieldset className="space-y-1">
           <legend className="text-sm font-semibold">Payment</legend>

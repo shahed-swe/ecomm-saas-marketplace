@@ -365,6 +365,7 @@ async def place_order(
     coupons: dict[str, str],
     expected_total: Decimal,
     idempotency_key: str,
+    use_store_credit: bool = False,
 ) -> tuple[dict, str | None]:
     existing = (
         await db.execute(
@@ -556,10 +557,37 @@ async def place_order(
                 ),
                 {"t": tenant_id, "c": g.coupon.id, "u": user_id, "o": order_id, "a": g.discount},
             )
+    from app.modules.payments import service as payments
+
+    credit_applied = ZERO
+    if use_store_credit and prepaid:
+        # Store credit is tender: it is spent here and stands on the order as a payment.
+        from app.modules.returns import credit as store_credit
+
+        available = await store_credit.balance(db, tenant_id, user_id)
+        credit_applied = min(available, quote.grand_total)
+        if credit_applied > 0:
+            await store_credit.spend(
+                db,
+                tenant_id,
+                user_id,
+                credit_applied,
+                actor_id=user_id,
+                ref_type="order",
+                ref_id=order_id,
+            )
+            await db.execute(
+                text(
+                    """INSERT INTO payments (tenant_id, order_id, provider, amount, status, verified_at)
+                       VALUES (:t, :o, 'store_credit', :a, 'paid', now())"""
+                ),
+                {"t": tenant_id, "o": order_id, "a": credit_applied},
+            )
+            if credit_applied >= quote.grand_total:
+                # Fully covered: nothing to redirect to, so the order is confirmed right away.
+                await payments.confirm_paid_order(db, tenant_id, order_id, ref=number)
     if not prepaid:
         # COD owes money from placement: one receivable per shipment (ADR 0006).
-        from app.modules.payments import service as payments
-
         await payments.register_cod(db, tenant_id, order_id, amount=quote.grand_total)
     await db.execute(
         text(
@@ -568,7 +596,13 @@ async def place_order(
         ),
         {"t": tenant_id, "u": user_id},
     )
-    return {"id": str(order_id), "number": number, "replayed": False}, tracking_token
+    return {
+        "id": str(order_id),
+        "number": number,
+        "replayed": False,
+        "store_credit_applied": credit_applied,
+        "amount_due": money(quote.grand_total - credit_applied),
+    }, tracking_token
 
 
 async def release_order(
