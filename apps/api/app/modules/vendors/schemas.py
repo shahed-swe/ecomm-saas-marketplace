@@ -1,6 +1,6 @@
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class VendorOut(BaseModel):
@@ -15,6 +15,7 @@ class VendorOut(BaseModel):
 class VendorCreate(BaseModel):
     slug: str = Field(pattern=r"^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$")
     display_name: str = Field(min_length=2, max_length=120)
+    owner_email: EmailStr
 
 
 class StorefrontOut(BaseModel):

@@ -18,15 +18,25 @@ SCOPED_ROUTES = [
     ("GET", "/api/v1/admin/storefronts/{id}", STAFF, "storefront", None),
     ("POST", "/api/v1/admin/domains/{id}/verify", STAFF, "domain", None),
     ("POST", "/api/v1/admin/domains/{id}/primary", STAFF, "domain", None),
+    ("PATCH", "/api/v1/admin/staff/{id}", STAFF, "staff_member", {"status": "active"}),
+    ("PATCH", "/api/v1/vendor/staff/{id}", VENDOR, "vendor_user", {"status": "active"}),
 ]
+
+# Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
+OWN_STATUS = {("PATCH", "/api/v1/vendor/staff/{id}"): 409}
 
 
 def _resource(world_t, kind, name):
-    return (
-        {"storefront": world_t.storefronts, "vendor": world_t.vendors}[kind][name]
-        if kind != "domain"
-        else world_t.domain_id
-    )
+    if kind == "domain":
+        return world_t.domain_id
+    if kind == "staff_member":
+        return world_t.owner_staff_member_id
+    table = {
+        "storefront": world_t.storefronts,
+        "vendor": world_t.vendors,
+        "vendor_user": world_t.vendor_owner_memberships,
+    }[kind]
+    return table[name]
 
 
 @pytest.mark.parametrize("method,path,actor,kind,body", SCOPED_ROUTES)
@@ -61,7 +71,7 @@ async def test_own_resource_is_reachable(client, world, method, path, actor, kin
     r = await client.request(
         method, path.format(id=target), headers=A.vendor_actors["A1"].headers(), json=body
     )
-    assert r.status_code == 200, r.text
+    assert r.status_code == OWN_STATUS.get((method, path), 200), r.text
 
 
 @pytest.mark.parametrize("method,path,actor,kind,body", SCOPED_ROUTES)

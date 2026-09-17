@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
 
-from app.core.deps import CurrentVendor, Tenant, TenantDB, require_tenant_staff
+from app.core import audit
+from app.core.deps import CurrentVendor, Tenant, TenantDB, require_tenant_staff, require_vendor_role
+from app.modules.identity.models import User, VendorUser
 from app.core.errors import Conflict, NotFound
 from app.modules.platform.models import Tenant as TenantModel
 from app.modules.vendors.models import Vendor, VendorStorefront
@@ -35,14 +37,30 @@ async def get_storefront(storefront_id: str, p: CurrentVendor, tenant: Tenant, d
 
 @vendor_router.patch("/storefronts/{storefront_id}", response_model=StorefrontOut)
 async def update_storefront(
-    storefront_id: str, body: StorefrontUpdate, p: CurrentVendor, tenant: Tenant, db: TenantDB
+    storefront_id: str,
+    body: StorefrontUpdate,
+    request: Request,
+    tenant: Tenant,
+    db: TenantDB,
+    p=Depends(require_vendor_role("storefront.write")),
 ):
     sf = await StorefrontRepository(db, tenant.id, p.vid).get(storefront_id)
     if sf is None:
         raise NotFound("Not found")
-    for k, v in body.model_dump(exclude_unset=True).items():
+    changes = body.model_dump(exclude_unset=True)
+    for k, v in changes.items():
         setattr(sf, k, v)
     await db.flush()
+    await audit.record(
+        db,
+        tenant_id=tenant.id,
+        actor=p,
+        action="storefront.update",
+        entity="vendor_storefront",
+        entity_id=sf.id,
+        data=changes,
+        request=request,
+    )
     return sf
 
 
@@ -67,9 +85,10 @@ async def get_vendor(
 @admin_router.post("/vendors", response_model=VendorOut, status_code=201)
 async def create_vendor(
     body: VendorCreate,
+    request: Request,
     tenant: Tenant,
     db: TenantDB,
-    _=Depends(require_tenant_staff("vendors.write")),
+    actor=Depends(require_tenant_staff("vendors.write")),
 ):
     mode = (
         await db.execute(select(TenantModel.store_mode).where(TenantModel.id == tenant.id))
@@ -82,7 +101,25 @@ async def create_vendor(
     v = repo.add(Vendor(slug=body.slug, display_name=body.display_name, status="registered"))
     await db.flush()
     TenantStorefrontRepository(db, tenant.id).add(VendorStorefront(vendor_id=v.id))
+    owner = (
+        await db.execute(select(User).where(User.email == body.owner_email.lower()))
+    ).scalar_one_or_none()
+    if owner is None:
+        owner = User(tenant_id=repo.tenant_id, email=body.owner_email.lower())
+        db.add(owner)
+        await db.flush()
+    db.add(VendorUser(tenant_id=repo.tenant_id, vendor_id=v.id, user_id=owner.id, role="owner"))
     await db.flush()
+    await audit.record(
+        db,
+        tenant_id=tenant.id,
+        actor=actor,
+        action="vendor.create",
+        entity="vendor",
+        entity_id=v.id,
+        data={"slug": body.slug},
+        request=request,
+    )
     await db.refresh(v)
     return v
 

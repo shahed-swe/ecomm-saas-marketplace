@@ -19,6 +19,13 @@ class Settings(BaseSettings):
     edge_ips: list[str] = []
     jwt_secret: str = Field(default="change-me-in-env-change-me-in-env", min_length=32)
     jwt_access_ttl_seconds: int = 900
+    refresh_ttl_buyer_days: int = 30
+    refresh_ttl_staff_hours: int = 12
+    otp_secret: str = Field(default="change-me-otp-secret-change-me-otp", min_length=32)
+    otp_ttl_seconds: int = 300
+    otp_max_attempts: int = 5
+    otp_resend_seconds: int = 60
+    cookie_secure: bool = True
     cors_origins: list[str] = []
     db_pool_size: int = 10
     db_statement_timeout_ms: int = 5000

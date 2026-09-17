@@ -14,6 +14,9 @@ from app.modules.domains.router import internal as internal_router
 from app.modules.domains.router import router as domains_router
 from app.modules.domains.service import real_dns_lookup
 from app.modules.health.router import router as health_router
+from app.modules.identity import router as identity
+from app.modules.identity import staff_router
+from app.modules.identity.sms import ConsoleSms
 from app.modules.platform.router import router as platform_router
 from app.modules.store.router import router as store_router
 from app.modules.vendors.router import admin_router as admin_vendors_router
@@ -29,6 +32,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.settings = settings
         app.state.db = Database(settings)
         app.state.platform_db = Database(settings, platform=True)
+        app.state.sms = getattr(app.state, "sms", None) or ConsoleSms()
         app.state.dns_lookup = getattr(app.state, "dns_lookup", None) or real_dns_lookup
         app.state.redis = create_redis(settings)
         try:
@@ -57,6 +61,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     install_error_handlers(app)
     app.include_router(health_router)
     for r in (
+        identity.router,
+        identity.me_router,
+        identity.platform_auth,
+        staff_router.admin,
+        staff_router.vendor,
         store_router,
         vendor_router,
         admin_vendors_router,

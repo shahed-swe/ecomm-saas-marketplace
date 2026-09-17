@@ -6,6 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
 from app.core.errors import Conflict, NotFound
+from app.core.passwords import hash_password
+from app.modules.identity.models import StaffMember, User, VendorUser
+from app.modules.identity.service import seed_system_roles
 from app.modules.platform.models import Domain, Tenant, TenantSettings
 from app.modules.platform.schemas import RESERVED_SLUGS, TenantCreate, TenantPatch
 from app.modules.vendors.models import Vendor, VendorStorefront
@@ -44,9 +47,20 @@ async def create_tenant(db: AsyncSession, settings: Settings, body: TenantCreate
     db.add(house)
     await db.flush()
     db.add(VendorStorefront(tenant_id=tenant.id, vendor_id=house.id))
+    roles = await seed_system_roles(db, tenant.id)
+    owner = User(
+        tenant_id=tenant.id,
+        email=body.owner_email.lower(),
+        full_name=body.owner_name,
+        password_hash=hash_password(body.owner_password) if body.owner_password else None,
+    )
+    db.add(owner)
+    await db.flush()
+    db.add(StaffMember(tenant_id=tenant.id, user_id=owner.id, role_id=roles["owner"]))
+    db.add(VendorUser(tenant_id=tenant.id, vendor_id=house.id, user_id=owner.id, role="owner"))
     await db.flush()
     await db.refresh(tenant)
-    return tenant, host, house.id
+    return tenant, host, house.id, owner.id
 
 
 async def patch_tenant(db: AsyncSession, tenant_id: str, body: TenantPatch) -> Tenant:

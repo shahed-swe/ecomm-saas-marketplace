@@ -1,7 +1,7 @@
 import uuid
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 SLUG = r"^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$"
 RESERVED_SLUGS = frozenset(
@@ -14,6 +14,9 @@ class TenantCreate(BaseModel):
     name: str = Field(min_length=2, max_length=120)
     store_mode: Literal["single", "multi"] = "single"
     default_locale: Literal["bn", "en"] = "bn"
+    owner_email: EmailStr
+    owner_password: str | None = Field(default=None, min_length=10, max_length=200)
+    owner_name: str | None = Field(default=None, max_length=120)
 
 
 class TenantOut(BaseModel):
@@ -30,6 +33,7 @@ class TenantOut(BaseModel):
 class TenantCreated(TenantOut):
     primary_host: str
     house_vendor_id: uuid.UUID
+    owner_user_id: uuid.UUID
 
 
 class TenantPatch(BaseModel):

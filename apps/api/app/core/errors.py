@@ -57,6 +57,11 @@ def _problem(request: Request, status: int, code: str, detail: str, **extra) -> 
     return JSONResponse(body, status_code=status, media_type="application/problem+json")
 
 
+def problem_response(request: Request, exc: AppError) -> JSONResponse:
+    """Return (not raise) a problem so the request transaction still commits."""
+    return _problem(request, exc.status, exc.code, exc.detail)
+
+
 def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppError)
     async def _app_error(request: Request, exc: AppError):

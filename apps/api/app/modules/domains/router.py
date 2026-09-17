@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, text, update
 from sqlalchemy.exc import IntegrityError
 
+from app.core import audit
 from app.core.deps import Tenant, TenantDB, require_tenant_staff
 from app.core.errors import Conflict, NotFound
 from app.core.repository import TenantScopedRepository
@@ -57,7 +58,7 @@ async def add_domain(
     request: Request,
     tenant: Tenant,
     db: TenantDB,
-    _=Depends(require_tenant_staff("settings.write")),
+    actor=Depends(require_tenant_staff("settings.write")),
 ):
     settings = request.app.state.settings
     host = normalise_host(body.host)
@@ -71,6 +72,16 @@ async def add_domain(
     except IntegrityError as exc:
         raise Conflict("Domain unavailable") from exc  # never reveals which store holds it
     await db.refresh(d)
+    await audit.record(
+        db,
+        tenant_id=tenant.id,
+        actor=actor,
+        action="domain.add",
+        entity="domain",
+        entity_id=d.id,
+        data={"host": host},
+        request=request,
+    )
     return DomainWithInstructions(
         **_out(d).model_dump(), dns=service.instructions(host, d.verification_token, root)
     )

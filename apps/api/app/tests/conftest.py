@@ -65,7 +65,10 @@ def settings(database_name) -> Settings:
 
 @pytest.fixture(scope="session")
 async def app(settings):
+    from app.modules.identity.sms import FakeSms
+
     application = create_app(settings)
+    application.state.sms = FakeSms()
     async with application.router.lifespan_context(application):
         yield application
 
@@ -99,6 +102,8 @@ class TenantWorld:
     vendors: dict = field(default_factory=dict)  # name -> vendor id
     storefronts: dict = field(default_factory=dict)  # name -> storefront id
     vendor_actors: dict = field(default_factory=dict)
+    vendor_owner_memberships: dict = field(default_factory=dict)  # name -> vendor_users.id
+    owner_staff_member_id: str = ""
     domain_id: str = ""
 
 
@@ -108,6 +113,51 @@ def platform_headers(settings):
     return {"authorization": f"Bearer {tok}"}
 
 
+PASSWORD = "correct-horse-battery"
+
+
+async def set_password(app, email: str, tenant_id: str):
+    from sqlalchemy import text as sql
+
+    from app.core.passwords import hash_password
+
+    async with app.state.platform_db.engine.begin() as conn:
+        await conn.execute(
+            sql("UPDATE users SET password_hash=:h WHERE tenant_id=:t AND email=:e"),
+            {"h": hash_password(PASSWORD), "t": tenant_id, "e": email},
+        )
+
+
+async def login(c, host: str, email: str, surface: str, vendor_id: str | None = None) -> str:
+    r = await c.post(
+        "/api/v1/auth/login",
+        headers={"host": host},
+        json={"email": email, "password": PASSWORD, "surface": surface, "vendor_id": vendor_id},
+    )
+    assert r.status_code == 200, r.text
+    return r.json()["access_token"]
+
+
+async def make_tenant(c, app, platform_headers, *, slug: str, name: str, store_mode="single"):
+    owner = f"owner@{slug}.example.com"
+    r = await c.post(
+        "/platform/v1/tenants",
+        headers=platform_headers,
+        json={
+            "slug": slug,
+            "name": name,
+            "store_mode": store_mode,
+            "owner_email": owner,
+            "owner_password": PASSWORD,
+        },
+    )
+    assert r.status_code == 201, r.text
+    body = r.json()
+    body["owner_email"] = owner
+    body["staff_token"] = await login(c, body["primary_host"], owner, "staff")
+    return body
+
+
 @pytest.fixture(scope="session")
 async def world(app, settings, platform_headers):
     from sqlalchemy import text as sql
@@ -115,50 +165,37 @@ async def world(app, settings, platform_headers):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         out = {}
         for key, slug in (("A", "alpha"), ("B", "bravo")):
-            r = await c.post(
-                "/platform/v1/tenants",
-                headers=platform_headers,
-                json={
-                    "slug": f"{slug}{uuid.uuid4().hex[:6]}",
-                    "name": f"Store {key}",
-                    "store_mode": "multi",
-                },
-            )
-            assert r.status_code == 201, r.text
-            body = r.json()
-            staff_tok = create_access_token(
-                settings,
-                Principal(
-                    sub=f"staff-{key}", kind="tenant_staff", tid=body["id"], roles=("owner",)
-                ),
+            body = await make_tenant(
+                c,
+                app,
+                platform_headers,
+                slug=f"{slug}{uuid.uuid4().hex[:6]}",
+                name=f"Store {key}",
+                store_mode="multi",
             )
             tw = TenantWorld(
                 id=body["id"],
                 host=body["primary_host"],
-                staff=Actor(staff_tok, body["primary_host"]),
+                staff=Actor(body["staff_token"], body["primary_host"]),
             )
             for n in (1, 2):
                 name = f"{key}{n}"
+                email = f"{name.lower()}@vendors.example.com"
                 r = await c.post(
                     "/api/v1/admin/vendors",
                     headers=tw.staff.headers(),
-                    json={"slug": f"v-{name.lower()}", "display_name": f"Vendor {name}"},
+                    json={
+                        "slug": f"v-{name.lower()}",
+                        "display_name": f"Vendor {name}",
+                        "owner_email": email,
+                    },
                 )
                 assert r.status_code == 201, r.text
                 vid = r.json()["id"]
                 tw.vendors[name] = vid
+                await set_password(app, email, tw.id)
                 tw.vendor_actors[name] = Actor(
-                    create_access_token(
-                        settings,
-                        Principal(
-                            sub=f"u-{name}",
-                            kind="vendor_staff",
-                            tid=tw.id,
-                            vid=vid,
-                            roles=("owner",),
-                        ),
-                    ),
-                    tw.host,
+                    await login(c, tw.host, email, "vendor", vid), tw.host
                 )
             r = await c.post(
                 "/api/v1/admin/domains",
@@ -171,8 +208,23 @@ async def world(app, settings, platform_headers):
         eng = app.state.platform_db.engine
         async with eng.connect() as conn:
             rows = (await conn.execute(sql("SELECT id, vendor_id FROM vendor_storefronts"))).all()
+            vus = (
+                await conn.execute(sql("SELECT id, vendor_id FROM vendor_users WHERE role='owner'"))
+            ).all()
+            members = (
+                await conn.execute(
+                    sql(
+                        "SELECT m.id, m.tenant_id FROM staff_members m JOIN staff_roles r ON r.id = m.role_id "
+                        "WHERE r.key = 'owner'"
+                    )
+                )
+            ).all()
         by_vendor = {str(v): str(i) for i, v in rows}
+        vu_by_vendor = {str(v): str(i) for i, v in vus}
+        member_by_tenant = {str(t): str(i) for i, t in members}
         for tw in out.values():
             for name, vid in tw.vendors.items():
                 tw.storefronts[name] = by_vendor[vid]
+                tw.vendor_owner_memberships[name] = vu_by_vendor[vid]
+            tw.owner_staff_member_id = member_by_tenant[tw.id]
         return out

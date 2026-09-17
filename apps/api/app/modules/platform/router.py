@@ -12,10 +12,15 @@ router = APIRouter(prefix="/platform/v1", tags=["platform"])
 
 @router.post("/tenants", response_model=TenantCreated, status_code=201)
 async def create_tenant(body: TenantCreate, request: Request, _: PlatformAdmin, db: PlatformDB):
-    tenant, host, house_id = await service.create_tenant(db, request.app.state.settings, body)
+    tenant, host, house_id, owner_id = await service.create_tenant(
+        db, request.app.state.settings, body
+    )
     await invalidate_host(request.app.state.redis, host)
     return TenantCreated(
-        **TenantOut.model_validate(tenant).model_dump(), primary_host=host, house_vendor_id=house_id
+        **TenantOut.model_validate(tenant).model_dump(),
+        primary_host=host,
+        house_vendor_id=house_id,
+        owner_user_id=owner_id,
     )
 
 
