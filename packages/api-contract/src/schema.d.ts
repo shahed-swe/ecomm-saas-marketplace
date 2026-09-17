@@ -4,6 +4,40 @@
  */
 
 export interface paths {
+    "/api/v1/admin/account-deletions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Deletion Queue */
+        get: operations["deletion_queue_api_v1_admin_account_deletions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/account-deletions/{request_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete Deletion */
+        post: operations["complete_deletion_api_v1_admin_account_deletions__request_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/analytics-destinations": {
         parameters: {
             query?: never;
@@ -15,6 +49,41 @@ export interface paths {
         get: operations["list_destinations_api_v1_admin_analytics_destinations_get"];
         /** Put Destination */
         put: operations["put_destination_api_v1_admin_analytics_destinations_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/app-config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get App Config */
+        get: operations["get_app_config_api_v1_admin_app_config_get"];
+        /** Put App Config */
+        put: operations["put_app_config_api_v1_admin_app_config_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/app-releases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put Release */
+        put: operations["put_release_api_v1_admin_app_releases_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1789,6 +1858,84 @@ export interface paths {
         put?: never;
         /** Transition Vendor */
         post: operations["transition_vendor_api_v1_admin_vendors__vendor_id__transition_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/app/account/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Deletion Status */
+        get: operations["deletion_status_api_v1_app_account_delete_get"];
+        put?: never;
+        /**
+         * Request Deletion
+         * @description Required by both stores. Open orders and unspent credit hold it up — with a reason given.
+         */
+        post: operations["request_deletion_api_v1_app_account_delete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/app/account/delete/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel Deletion */
+        post: operations["cancel_deletion_api_v1_app_account_delete_cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/app/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * App Config
+         * @description Everything the app needs on launch, in one call, with the update gate answered.
+         */
+        get: operations["app_config_api_v1_app_config_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/app/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * App Home
+         * @description The same server-driven sections the web home renders — one source, two clients.
+         */
+        get: operations["app_home_api_v1_app_home_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4254,6 +4401,36 @@ export interface components {
             /** Answer */
             answer: string;
         };
+        /** AppConfigIn */
+        AppConfigIn: {
+            /**
+             * App
+             * @default buyer
+             * @enum {string}
+             */
+            app: "buyer" | "vendor";
+            /** App Name */
+            app_name?: string | null;
+            /** Bundle Id */
+            bundle_id?: string | null;
+            /** Crash Dsn */
+            crash_dsn?: string | null;
+            /** Features */
+            features?: {
+                [key: string]: unknown;
+            };
+            /** Icon Url */
+            icon_url?: string | null;
+            /**
+             * Maintenance
+             * @default false
+             */
+            maintenance: boolean;
+            /** Maintenance Message */
+            maintenance_message?: string | null;
+            /** Splash Url */
+            splash_url?: string | null;
+        };
         /** AssetOut */
         AssetOut: {
             /** Blur Data */
@@ -4776,6 +4953,11 @@ export interface components {
             approve: boolean;
             /** Note */
             note?: string | null;
+        };
+        /** DeletionIn */
+        DeletionIn: {
+            /** Reason */
+            reason?: string | null;
         };
         /** DestinationIn */
         DestinationIn: {
@@ -5823,6 +6005,28 @@ export interface components {
             full_name?: string | null;
             /** Password */
             password: string;
+        };
+        /** ReleaseIn */
+        ReleaseIn: {
+            /**
+             * App
+             * @default buyer
+             * @enum {string}
+             */
+            app: "buyer" | "vendor";
+            /** Force Message */
+            force_message?: string | null;
+            /** Latest Version */
+            latest_version: string;
+            /** Min Supported Version */
+            min_supported_version: string;
+            /**
+             * Platform
+             * @enum {string}
+             */
+            platform: "ios" | "android";
+            /** Store Url */
+            store_url?: string | null;
         };
         /** ReplyIn */
         ReplyIn: {
@@ -7053,6 +7257,55 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    deletion_queue_api_v1_admin_account_deletions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    complete_deletion_api_v1_admin_account_deletions__request_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                request_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_destinations_api_v1_admin_analytics_destinations_get: {
         parameters: {
             query?: never;
@@ -7083,6 +7336,92 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["DestinationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_app_config_api_v1_admin_app_config_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    put_app_config_api_v1_admin_app_config_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppConfigIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_release_api_v1_admin_app_releases_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReleaseIn"];
             };
         };
         responses: {
@@ -10675,6 +11014,132 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deletion_status_api_v1_app_account_delete_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    request_deletion_api_v1_app_account_delete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeletionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_deletion_api_v1_app_account_delete_cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    app_config_api_v1_app_config_get: {
+        parameters: {
+            query?: {
+                app?: "buyer" | "vendor";
+                platform?: ("ios" | "android") | null;
+                version?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    app_home_api_v1_app_home_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };

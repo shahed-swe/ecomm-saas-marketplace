@@ -176,6 +176,101 @@
         "title": "AnswerIn",
         "type": "object"
       },
+      "AppConfigIn": {
+        "properties": {
+          "app": {
+            "default": "buyer",
+            "enum": [
+              "buyer",
+              "vendor"
+            ],
+            "title": "App",
+            "type": "string"
+          },
+          "app_name": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Name"
+          },
+          "bundle_id": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bundle Id"
+          },
+          "crash_dsn": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crash Dsn"
+          },
+          "features": {
+            "additionalProperties": true,
+            "title": "Features",
+            "type": "object"
+          },
+          "icon_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon Url"
+          },
+          "maintenance": {
+            "default": false,
+            "title": "Maintenance",
+            "type": "boolean"
+          },
+          "maintenance_message": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maintenance Message"
+          },
+          "splash_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Splash Url"
+          }
+        },
+        "title": "AppConfigIn",
+        "type": "object"
+      },
       "AssetOut": {
         "properties": {
           "blur_data": {
@@ -1674,6 +1769,24 @@
           "approve"
         ],
         "title": "DecisionIn",
+        "type": "object"
+      },
+      "DeletionIn": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "DeletionIn",
         "type": "object"
       },
       "DestinationIn": {
@@ -4451,6 +4564,68 @@
           "password"
         ],
         "title": "RegisterIn",
+        "type": "object"
+      },
+      "ReleaseIn": {
+        "properties": {
+          "app": {
+            "default": "buyer",
+            "enum": [
+              "buyer",
+              "vendor"
+            ],
+            "title": "App",
+            "type": "string"
+          },
+          "force_message": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Force Message"
+          },
+          "latest_version": {
+            "pattern": "^\\d+(\\.\\d+){0,3}$",
+            "title": "Latest Version",
+            "type": "string"
+          },
+          "min_supported_version": {
+            "pattern": "^\\d+(\\.\\d+){0,3}$",
+            "title": "Min Supported Version",
+            "type": "string"
+          },
+          "platform": {
+            "enum": [
+              "ios",
+              "android"
+            ],
+            "title": "Platform",
+            "type": "string"
+          },
+          "store_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Url"
+          }
+        },
+        "required": [
+          "platform",
+          "latest_version",
+          "min_supported_version"
+        ],
+        "title": "ReleaseIn",
         "type": "object"
       },
       "ReplyIn": {
@@ -7814,6 +7989,61 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/admin/account-deletions": {
+      "get": {
+        "operationId": "deletion_queue_api_v1_admin_account_deletions_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Deletion Queue",
+        "tags": [
+          "admin:mobile"
+        ]
+      }
+    },
+    "/api/v1/admin/account-deletions/{request_id}/complete": {
+      "post": {
+        "operationId": "complete_deletion_api_v1_admin_account_deletions__request_id__complete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete Deletion",
+        "tags": [
+          "admin:mobile"
+        ]
+      }
+    },
     "/api/v1/admin/analytics-destinations": {
       "get": {
         "operationId": "list_destinations_api_v1_admin_analytics_destinations_get",
@@ -7867,6 +8097,101 @@
         "summary": "Put Destination",
         "tags": [
           "admin:notifications"
+        ]
+      }
+    },
+    "/api/v1/admin/app-config": {
+      "get": {
+        "operationId": "get_app_config_api_v1_admin_app_config_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get App Config",
+        "tags": [
+          "admin:mobile"
+        ]
+      },
+      "put": {
+        "operationId": "put_app_config_api_v1_admin_app_config_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppConfigIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put App Config",
+        "tags": [
+          "admin:mobile"
+        ]
+      }
+    },
+    "/api/v1/admin/app-releases": {
+      "put": {
+        "operationId": "put_release_api_v1_admin_app_releases_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Release",
+        "tags": [
+          "admin:mobile"
         ]
       }
     },
@@ -12901,6 +13226,184 @@
         "summary": "Transition Vendor",
         "tags": [
           "admin:vendor-review"
+        ]
+      }
+    },
+    "/api/v1/app/account/delete": {
+      "get": {
+        "operationId": "deletion_status_api_v1_app_account_delete_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Deletion Status",
+        "tags": [
+          "mobile"
+        ]
+      },
+      "post": {
+        "description": "Required by both stores. Open orders and unspent credit hold it up \u2014 with a reason given.",
+        "operationId": "request_deletion_api_v1_app_account_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Request Deletion",
+        "tags": [
+          "mobile"
+        ]
+      }
+    },
+    "/api/v1/app/account/delete/cancel": {
+      "post": {
+        "operationId": "cancel_deletion_api_v1_app_account_delete_cancel_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Cancel Deletion",
+        "tags": [
+          "mobile"
+        ]
+      }
+    },
+    "/api/v1/app/config": {
+      "get": {
+        "description": "Everything the app needs on launch, in one call, with the update gate answered.",
+        "operationId": "app_config_api_v1_app_config_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "app",
+            "required": false,
+            "schema": {
+              "default": "buyer",
+              "enum": [
+                "buyer",
+                "vendor"
+              ],
+              "title": "App",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "platform",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ios",
+                    "android"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Platform"
+            }
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "App Config",
+        "tags": [
+          "mobile"
+        ]
+      }
+    },
+    "/api/v1/app/home": {
+      "get": {
+        "description": "The same server-driven sections the web home renders \u2014 one source, two clients.",
+        "operationId": "app_home_api_v1_app_home_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "App Home",
+        "tags": [
+          "mobile"
         ]
       }
     },

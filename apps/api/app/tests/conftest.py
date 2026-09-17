@@ -518,6 +518,16 @@ async def build_catalog(c, app, tw, key):
             {"t": tw.id, "k": f"t/{tw.id}/exports/orders/seed.csv"},
         )
         tw.catalog["report_export"] = {"tenant": str(export_id)}
+        deletion_id = await conn.scalar(
+            sql(
+                """INSERT INTO account_deletion_requests (tenant_id, user_id, scheduled_for)
+                   SELECT :t, u.id, now() + interval '14 days' FROM users u
+                   WHERE u.tenant_id = :t AND u.status = 'active' ORDER BY u.created_at LIMIT 1
+                   RETURNING id"""
+            ),
+            {"t": tw.id},
+        )
+        tw.catalog["deletion_request"] = {"tenant": str(deletion_id)}
 
 
 @pytest.fixture(scope="session")

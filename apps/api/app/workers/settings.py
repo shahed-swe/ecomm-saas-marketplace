@@ -389,6 +389,36 @@ async def rollup_metrics(ctx: dict) -> dict:
     return {"tenants": len(tenant_ids), "rows": written}
 
 
+@platform_job
+async def account_deletions(ctx: dict) -> int:
+    """Deletion requests past their grace period are carried out, once, with an audit entry."""
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.mobile.service import run_due_deletions
+
+    done = 0
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenant_ids = [
+            str(r[0])
+            for r in (
+                await session.execute(
+                    text(
+                        """SELECT DISTINCT tenant_id FROM account_deletion_requests
+                           WHERE status = 'pending' AND scheduled_for <= now() LIMIT 200"""
+                    )
+                )
+            ).all()
+        ]
+    for tenant_id in tenant_ids:
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, tenant_id)
+            done += await run_due_deletions(session, tenant_id)
+    if done:
+        log.info("accounts_anonymised", count=done)
+    return done
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -418,6 +448,7 @@ class WorkerSettings:
         trust_sweep,
         marketing_sweep,
         rollup_metrics,
+        account_deletions,
     ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
@@ -431,6 +462,7 @@ class WorkerSettings:
         cron(trust_sweep, hour={1, 13}, minute={50}),
         cron(marketing_sweep, minute={25}),  # hourly
         cron(rollup_metrics, hour={19}, minute={20}),  # 01:20 Asia/Dhaka
+        cron(account_deletions, hour={20}, minute={40}),  # 02:40 Asia/Dhaka
     ]
     on_startup = startup
     on_shutdown = shutdown

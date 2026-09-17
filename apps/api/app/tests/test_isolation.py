@@ -149,6 +149,14 @@ SCOPED_ROUTES = [
     ("POST", "/api/v1/admin/tickets/{id}/status", STAFF, "ticket", {"status": "closed"}),
     # reporting (Phase 17)
     ("GET", "/api/v1/admin/reports/exports/{id}/url", STAFF, "report_export", None),
+    # mobile (Phase 18)
+    (
+        "POST",
+        "/api/v1/admin/account-deletions/{id}/complete",
+        STAFF,
+        "deletion_request",
+        None,
+    ),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
