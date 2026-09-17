@@ -11,6 +11,7 @@ from app.modules.identity.models import StaffMember, User, VendorUser
 from app.modules.identity.service import seed_system_roles
 from app.modules.platform.models import Domain, Tenant, TenantSettings
 from app.modules.platform.schemas import RESERVED_SLUGS, TenantCreate, TenantPatch
+from app.modules.theme.service import ensure_theme
 from app.modules.vendors.models import Vendor, VendorStorefront
 
 
@@ -59,6 +60,7 @@ async def create_tenant(db: AsyncSession, settings: Settings, body: TenantCreate
     db.add(StaffMember(tenant_id=tenant.id, user_id=owner.id, role_id=roles["owner"]))
     db.add(VendorUser(tenant_id=tenant.id, vendor_id=house.id, user_id=owner.id, role="owner"))
     await db.flush()
+    await ensure_theme(db, str(tenant.id), actor="platform")
     await db.refresh(tenant)
     return tenant, host, house.id, owner.id
 

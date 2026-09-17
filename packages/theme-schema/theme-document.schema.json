@@ -1,0 +1,238 @@
+{
+  "$defs": {
+    "Brand": {
+      "additionalProperties": false,
+      "properties": {
+        "favicon_url": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favicon Url"
+        },
+        "logo_dark_url": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Logo Dark Url"
+        },
+        "logo_height": {
+          "default": 40,
+          "maximum": 120,
+          "minimum": 16,
+          "title": "Logo Height",
+          "type": "integer"
+        },
+        "logo_url": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Logo Url"
+        }
+      },
+      "title": "Brand",
+      "type": "object"
+    },
+    "Palette": {
+      "additionalProperties": false,
+      "properties": {
+        "accent": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Accent",
+          "type": "string"
+        },
+        "bg": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Bg",
+          "type": "string"
+        },
+        "border": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Border",
+          "type": "string"
+        },
+        "danger": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Danger",
+          "type": "string"
+        },
+        "fg": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Fg",
+          "type": "string"
+        },
+        "muted": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Muted",
+          "type": "string"
+        },
+        "primary": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Primary",
+          "type": "string"
+        },
+        "primary-fg": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Primary-Fg",
+          "type": "string"
+        },
+        "secondary": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Secondary",
+          "type": "string"
+        },
+        "success": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Success",
+          "type": "string"
+        },
+        "surface": {
+          "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+          "title": "Surface",
+          "type": "string"
+        }
+      },
+      "required": [
+        "primary",
+        "primary-fg",
+        "secondary",
+        "accent",
+        "bg",
+        "surface",
+        "fg",
+        "muted",
+        "border",
+        "danger",
+        "success"
+      ],
+      "title": "Palette",
+      "type": "object"
+    },
+    "Tokens": {
+      "additionalProperties": false,
+      "properties": {
+        "button_style": {
+          "default": "solid",
+          "enum": [
+            "solid",
+            "outline",
+            "pill"
+          ],
+          "title": "Button Style",
+          "type": "string"
+        },
+        "colors": {
+          "$ref": "#/$defs/Palette"
+        },
+        "dark": {
+          "$ref": "#/$defs/Palette"
+        },
+        "density": {
+          "default": "comfortable",
+          "enum": [
+            "compact",
+            "comfortable"
+          ],
+          "title": "Density",
+          "type": "string"
+        },
+        "font_body": {
+          "default": "inter-hind-siliguri",
+          "enum": [
+            "inter-hind-siliguri",
+            "poppins-noto-sans-bengali",
+            "lora-noto-serif-bengali",
+            "roboto-baloo-da-2",
+            "system"
+          ],
+          "title": "Font Body",
+          "type": "string"
+        },
+        "font_heading": {
+          "default": "inter-hind-siliguri",
+          "enum": [
+            "inter-hind-siliguri",
+            "poppins-noto-sans-bengali",
+            "lora-noto-serif-bengali",
+            "roboto-baloo-da-2",
+            "system"
+          ],
+          "title": "Font Heading",
+          "type": "string"
+        },
+        "radius": {
+          "default": "0.5rem",
+          "enum": [
+            "0rem",
+            "0.25rem",
+            "0.5rem",
+            "0.75rem",
+            "1rem",
+            "9999px"
+          ],
+          "title": "Radius",
+          "type": "string"
+        }
+      },
+      "required": [
+        "colors",
+        "dark"
+      ],
+      "title": "Tokens",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Phase 4 scope: tokens + brand. Phase 8 adds layouts, templates, pages, custom_css.",
+  "properties": {
+    "brand": {
+      "$ref": "#/$defs/Brand",
+      "default": {
+        "favicon_url": null,
+        "logo_dark_url": null,
+        "logo_height": 40,
+        "logo_url": null
+      }
+    },
+    "preset": {
+      "pattern": "^[a-z][a-z0-9-]{1,40}$",
+      "title": "Preset",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "tokens": {
+      "$ref": "#/$defs/Tokens"
+    }
+  },
+  "required": [
+    "preset",
+    "tokens"
+  ],
+  "title": "ThemeDocument",
+  "type": "object"
+}

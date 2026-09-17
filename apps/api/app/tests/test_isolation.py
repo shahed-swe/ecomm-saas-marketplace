@@ -20,6 +20,7 @@ SCOPED_ROUTES = [
     ("POST", "/api/v1/admin/domains/{id}/primary", STAFF, "domain", None),
     ("PATCH", "/api/v1/admin/staff/{id}", STAFF, "staff_member", {"status": "active"}),
     ("PATCH", "/api/v1/vendor/staff/{id}", VENDOR, "vendor_user", {"status": "active"}),
+    ("POST", "/api/v1/admin/theme/versions/{id}/restore", STAFF, "theme_version", None),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
@@ -31,6 +32,8 @@ def _resource(world_t, kind, name):
         return world_t.domain_id
     if kind == "staff_member":
         return world_t.owner_staff_member_id
+    if kind == "theme_version":
+        return world_t.theme_version_id
     table = {
         "storefront": world_t.storefronts,
         "vendor": world_t.vendors,
@@ -95,19 +98,19 @@ async def test_vendor_token_cannot_use_staff_routes(client, world):
     assert r.status_code == 403
 
 
-def test_every_scoped_route_is_covered(app):
+async def test_every_scoped_route_is_covered(app):
+    """Walks the OpenAPI schema (FastAPI wraps included routers, so app.routes is not flat)."""
+    import re
+
+    paths = app.openapi()["paths"]
+    assert len(paths) > 10  # guard against silently iterating nothing
     covered = {(m, p) for m, p, *_ in SCOPED_ROUTES}
     missing = []
-    for route in app.routes:
-        path = getattr(route, "path", "")
-        if not (path.startswith("/api/v1/vendor") or path.startswith("/api/v1/admin")):
+    for path, ops in paths.items():
+        if not path.startswith(("/api/v1/vendor", "/api/v1/admin")) or "{" not in path:
             continue
-        if "{" not in path:
-            continue
-        for method in getattr(route, "methods", ()):
-            if (
-                method,
-                path.replace(path[path.index("{") : path.index("}") + 1], "{id}"),
-            ) not in covered:
-                missing.append(f"{method} {path}")
+        template = re.sub(r"\{[^}]+\}", "{id}", path)
+        for method in ops:
+            if (method.upper(), template) not in covered:
+                missing.append(f"{method.upper()} {path}")
     assert not missing, f"scoped routes without isolation tests: {missing}"

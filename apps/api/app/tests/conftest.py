@@ -104,6 +104,7 @@ class TenantWorld:
     vendor_actors: dict = field(default_factory=dict)
     vendor_owner_memberships: dict = field(default_factory=dict)  # name -> vendor_users.id
     owner_staff_member_id: str = ""
+    theme_version_id: str = ""
     domain_id: str = ""
 
 
@@ -204,6 +205,8 @@ async def world(app, settings, platform_headers):
             )
             assert r.status_code == 201, r.text
             tw.domain_id = r.json()["id"]
+            versions = await c.get("/api/v1/admin/theme/versions", headers=tw.staff.headers())
+            tw.theme_version_id = versions.json()[0]["id"]
             out[key] = tw
         eng = app.state.platform_db.engine
         async with eng.connect() as conn:

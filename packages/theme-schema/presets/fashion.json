@@ -1,0 +1,43 @@
+{
+  "brand": {
+    "favicon_url": null,
+    "logo_dark_url": null,
+    "logo_height": 40,
+    "logo_url": null
+  },
+  "preset": "fashion",
+  "schema_version": 1,
+  "tokens": {
+    "button_style": "outline",
+    "colors": {
+      "accent": "190 24 93",
+      "bg": "255 255 255",
+      "border": "244 228 236",
+      "danger": "185 28 28",
+      "fg": "24 24 27",
+      "muted": "113 113 122",
+      "primary": "136 19 55",
+      "primary-fg": "255 255 255",
+      "secondary": "30 27 75",
+      "success": "21 128 61",
+      "surface": "253 242 248"
+    },
+    "dark": {
+      "accent": "251 113 133",
+      "bg": "2 6 23",
+      "border": "30 41 59",
+      "danger": "248 113 113",
+      "fg": "241 245 249",
+      "muted": "148 163 184",
+      "primary": "244 114 182",
+      "primary-fg": "24 24 27",
+      "secondary": "165 180 252",
+      "success": "74 222 128",
+      "surface": "15 23 42"
+    },
+    "density": "comfortable",
+    "font_body": "lora-noto-serif-bengali",
+    "font_heading": "lora-noto-serif-bengali",
+    "radius": "0rem"
+  }
+}

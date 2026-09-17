@@ -1,0 +1,43 @@
+{
+  "brand": {
+    "favicon_url": null,
+    "logo_dark_url": null,
+    "logo_height": 40,
+    "logo_url": null
+  },
+  "preset": "bazaar",
+  "schema_version": 1,
+  "tokens": {
+    "button_style": "pill",
+    "colors": {
+      "accent": "202 138 4",
+      "bg": "255 251 245",
+      "border": "231 229 228",
+      "danger": "185 28 28",
+      "fg": "28 25 23",
+      "muted": "120 113 108",
+      "primary": "194 65 12",
+      "primary-fg": "255 255 255",
+      "secondary": "22 101 52",
+      "success": "21 128 61",
+      "surface": "255 247 237"
+    },
+    "dark": {
+      "accent": "250 204 21",
+      "bg": "2 6 23",
+      "border": "30 41 59",
+      "danger": "248 113 113",
+      "fg": "241 245 249",
+      "muted": "148 163 184",
+      "primary": "251 146 60",
+      "primary-fg": "28 25 23",
+      "secondary": "74 222 128",
+      "success": "74 222 128",
+      "surface": "15 23 42"
+    },
+    "density": "compact",
+    "font_body": "poppins-noto-sans-bengali",
+    "font_heading": "poppins-noto-sans-bengali",
+    "radius": "0.75rem"
+  }
+}

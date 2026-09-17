@@ -19,6 +19,9 @@ dependencies = [
   "prometheus-client>=0.26.0",
   "dnspython>=2.8.0",
   "pyotp>=2.10.0",
+  "pillow>=12.3.0",
+  "boto3>=1.43.96",
+  "python-multipart>=0.0.32",
 ]
 
 [dependency-groups]
@@ -44,7 +47,7 @@ select = ["E", "F", "I", "B", "UP", "ASYNC", "S"]
 ignore = ["S101", "S105", "S106", "UP046", "E501"]
 
 [tool.ruff.lint.flake8-bugbear]
-extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "app.core.deps.require_tenant_staff", "app.core.deps.require_vendor_role"]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.File", "app.core.deps.require_tenant_staff", "app.core.deps.require_vendor_role"]
 
 [tool.ruff.lint.per-file-ignores]
 "app/tests/**" = ["S608", "ASYNC221", "E501"]

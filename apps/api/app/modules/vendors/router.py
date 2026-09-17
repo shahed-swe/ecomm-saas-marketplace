@@ -3,8 +3,8 @@ from sqlalchemy import select
 
 from app.core import audit
 from app.core.deps import CurrentVendor, Tenant, TenantDB, require_tenant_staff, require_vendor_role
-from app.modules.identity.models import User, VendorUser
 from app.core.errors import Conflict, NotFound
+from app.modules.identity.models import User, VendorUser
 from app.modules.platform.models import Tenant as TenantModel
 from app.modules.vendors.models import Vendor, VendorStorefront
 from app.modules.vendors.repository import (

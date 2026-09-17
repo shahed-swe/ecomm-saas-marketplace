@@ -1,6 +1,50 @@
 {
   "components": {
     "schemas": {
+      "AdminTheme": {
+        "properties": {
+          "contrast_issues": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Contrast Issues",
+            "type": "array"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/ThemeDocument"
+          },
+          "draft_updated_at": {
+            "format": "date-time",
+            "title": "Draft Updated At",
+            "type": "string"
+          },
+          "published_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published Version"
+          },
+          "unpublished_changes": {
+            "title": "Unpublished Changes",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "draft",
+          "draft_updated_at",
+          "published_version",
+          "unpublished_changes",
+          "contrast_issues"
+        ],
+        "title": "AdminTheme",
+        "type": "object"
+      },
       "AuditOut": {
         "properties": {
           "action": {
@@ -70,6 +114,93 @@
           "created_at"
         ],
         "title": "AuditOut",
+        "type": "object"
+      },
+      "Body_upload_brand_image_api_v1_admin_theme_images_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_brand_image_api_v1_admin_theme_images_post",
+        "type": "object"
+      },
+      "Brand": {
+        "additionalProperties": false,
+        "properties": {
+          "favicon_url": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Favicon Url"
+          },
+          "logo_dark_url": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Dark Url"
+          },
+          "logo_height": {
+            "default": 40,
+            "maximum": 120.0,
+            "minimum": 16.0,
+            "title": "Logo Height",
+            "type": "integer"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          }
+        },
+        "title": "Brand",
+        "type": "object"
+      },
+      "ChecklistItem": {
+        "properties": {
+          "done": {
+            "title": "Done",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "phase": {
+            "title": "Phase",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "done",
+          "phase"
+        ],
+        "title": "ChecklistItem",
         "type": "object"
       },
       "DomainIn": {
@@ -288,6 +419,27 @@
         "title": "MeOut",
         "type": "object"
       },
+      "OnboardingOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "ready_to_launch": {
+            "title": "Ready To Launch",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items",
+          "ready_to_launch"
+        ],
+        "title": "OnboardingOut",
+        "type": "object"
+      },
       "OtpAccepted": {
         "properties": {
           "status": {
@@ -351,6 +503,81 @@
         "title": "OtpVerifyIn",
         "type": "object"
       },
+      "Palette": {
+        "additionalProperties": false,
+        "properties": {
+          "accent": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Accent",
+            "type": "string"
+          },
+          "bg": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Bg",
+            "type": "string"
+          },
+          "border": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Border",
+            "type": "string"
+          },
+          "danger": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Danger",
+            "type": "string"
+          },
+          "fg": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Fg",
+            "type": "string"
+          },
+          "muted": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Muted",
+            "type": "string"
+          },
+          "primary": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Primary",
+            "type": "string"
+          },
+          "primary-fg": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Primary-Fg",
+            "type": "string"
+          },
+          "secondary": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Secondary",
+            "type": "string"
+          },
+          "success": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Success",
+            "type": "string"
+          },
+          "surface": {
+            "pattern": "^(25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d) (25[0-5]|2[0-4]\\d|1?\\d?\\d)$",
+            "title": "Surface",
+            "type": "string"
+          }
+        },
+        "required": [
+          "primary",
+          "primary-fg",
+          "secondary",
+          "accent",
+          "bg",
+          "surface",
+          "fg",
+          "muted",
+          "border",
+          "danger",
+          "success"
+        ],
+        "title": "Palette",
+        "type": "object"
+      },
       "PlatformLoginIn": {
         "properties": {
           "email": {
@@ -376,6 +603,100 @@
           "totp"
         ],
         "title": "PlatformLoginIn",
+        "type": "object"
+      },
+      "PresetIn": {
+        "properties": {
+          "preset": {
+            "pattern": "^[a-z][a-z0-9-]{1,40}$",
+            "title": "Preset",
+            "type": "string"
+          }
+        },
+        "required": [
+          "preset"
+        ],
+        "title": "PresetIn",
+        "type": "object"
+      },
+      "PresetOut": {
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/ThemeDocument"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "document"
+        ],
+        "title": "PresetOut",
+        "type": "object"
+      },
+      "PreviewOut": {
+        "properties": {
+          "expires_in": {
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "expires_in"
+        ],
+        "title": "PreviewOut",
+        "type": "object"
+      },
+      "PublishIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "PublishIn",
+        "type": "object"
+      },
+      "PublishedTheme": {
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/ThemeDocument"
+          },
+          "preview": {
+            "default": false,
+            "title": "Preview",
+            "type": "boolean"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "document"
+        ],
+        "title": "PublishedTheme",
         "type": "object"
       },
       "RefreshIn": {
@@ -463,6 +784,121 @@
           "is_system"
         ],
         "title": "RoleOut",
+        "type": "object"
+      },
+      "SettingsOut": {
+        "properties": {
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "default_locale": {
+            "title": "Default Locale",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "store_mode": {
+            "title": "Store Mode",
+            "type": "string"
+          },
+          "support_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Support Email"
+          },
+          "support_phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Support Phone"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "store_mode",
+          "default_locale",
+          "support_email",
+          "support_phone",
+          "timezone",
+          "currency"
+        ],
+        "title": "SettingsOut",
+        "type": "object"
+      },
+      "SettingsPatch": {
+        "properties": {
+          "default_locale": {
+            "anyOf": [
+              {
+                "enum": [
+                  "bn",
+                  "en"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Locale"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "support_email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Support Email"
+          },
+          "support_phone": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Support Phone"
+          }
+        },
+        "title": "SettingsPatch",
         "type": "object"
       },
       "StaffInviteIn": {
@@ -982,6 +1418,38 @@
         "title": "TenantPatch",
         "type": "object"
       },
+      "ThemeDocument": {
+        "additionalProperties": false,
+        "description": "Phase 4 scope: tokens + brand. Phase 8 adds layouts, templates, pages, custom_css.",
+        "properties": {
+          "brand": {
+            "$ref": "#/components/schemas/Brand",
+            "default": {
+              "logo_height": 40
+            }
+          },
+          "preset": {
+            "pattern": "^[a-z][a-z0-9-]{1,40}$",
+            "title": "Preset",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "tokens": {
+            "$ref": "#/components/schemas/Tokens"
+          }
+        },
+        "required": [
+          "preset",
+          "tokens"
+        ],
+        "title": "ThemeDocument",
+        "type": "object"
+      },
       "TokenOut": {
         "properties": {
           "access_token": {
@@ -1019,6 +1487,107 @@
           "kind"
         ],
         "title": "TokenOut",
+        "type": "object"
+      },
+      "Tokens": {
+        "additionalProperties": false,
+        "properties": {
+          "button_style": {
+            "default": "solid",
+            "enum": [
+              "solid",
+              "outline",
+              "pill"
+            ],
+            "title": "Button Style",
+            "type": "string"
+          },
+          "colors": {
+            "$ref": "#/components/schemas/Palette"
+          },
+          "dark": {
+            "$ref": "#/components/schemas/Palette"
+          },
+          "density": {
+            "default": "comfortable",
+            "enum": [
+              "compact",
+              "comfortable"
+            ],
+            "title": "Density",
+            "type": "string"
+          },
+          "font_body": {
+            "default": "inter-hind-siliguri",
+            "enum": [
+              "inter-hind-siliguri",
+              "poppins-noto-sans-bengali",
+              "lora-noto-serif-bengali",
+              "roboto-baloo-da-2",
+              "system"
+            ],
+            "title": "Font Body",
+            "type": "string"
+          },
+          "font_heading": {
+            "default": "inter-hind-siliguri",
+            "enum": [
+              "inter-hind-siliguri",
+              "poppins-noto-sans-bengali",
+              "lora-noto-serif-bengali",
+              "roboto-baloo-da-2",
+              "system"
+            ],
+            "title": "Font Heading",
+            "type": "string"
+          },
+          "radius": {
+            "default": "0.5rem",
+            "enum": [
+              "0rem",
+              "0.25rem",
+              "0.5rem",
+              "0.75rem",
+              "1rem",
+              "9999px"
+            ],
+            "title": "Radius",
+            "type": "string"
+          }
+        },
+        "required": [
+          "colors",
+          "dark"
+        ],
+        "title": "Tokens",
+        "type": "object"
+      },
+      "UploadOut": {
+        "properties": {
+          "fallback_url": {
+            "title": "Fallback Url",
+            "type": "string"
+          },
+          "height": {
+            "title": "Height",
+            "type": "integer"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "width": {
+            "title": "Width",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "url",
+          "fallback_url",
+          "width",
+          "height"
+        ],
+        "title": "UploadOut",
         "type": "object"
       },
       "ValidationError": {
@@ -1238,6 +1807,52 @@
           }
         },
         "title": "VendorStaffPatch",
+        "type": "object"
+      },
+      "VersionOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "title": "Created By",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_published": {
+            "title": "Is Published",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "note",
+          "created_by",
+          "created_at",
+          "is_published"
+        ],
+        "title": "VersionOut",
         "type": "object"
       }
     }
@@ -1496,6 +2111,27 @@
         ]
       }
     },
+    "/api/v1/admin/onboarding": {
+      "get": {
+        "operationId": "onboarding_api_v1_admin_onboarding_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Onboarding",
+        "tags": [
+          "admin:settings"
+        ]
+      }
+    },
     "/api/v1/admin/roles": {
       "get": {
         "operationId": "list_roles_api_v1_admin_roles_get",
@@ -1518,6 +2154,66 @@
         "summary": "List Roles",
         "tags": [
           "admin:staff"
+        ]
+      }
+    },
+    "/api/v1/admin/settings": {
+      "get": {
+        "operationId": "get_settings_api_v1_admin_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Settings",
+        "tags": [
+          "admin:settings"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_settings_api_v1_admin_settings_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Settings",
+        "tags": [
+          "admin:settings"
         ]
       }
     },
@@ -1676,6 +2372,303 @@
         "summary": "Admin Get Storefront",
         "tags": [
           "admin:vendors"
+        ]
+      }
+    },
+    "/api/v1/admin/theme": {
+      "get": {
+        "operationId": "admin_theme_api_v1_admin_theme_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminTheme"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Admin Theme",
+        "tags": [
+          "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/theme/draft": {
+      "put": {
+        "operationId": "put_draft_api_v1_admin_theme_draft_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThemeDocument"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDocument"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Draft",
+        "tags": [
+          "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/theme/images": {
+      "post": {
+        "operationId": "upload_brand_image_api_v1_admin_theme_images_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_brand_image_api_v1_admin_theme_images_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Brand Image",
+        "tags": [
+          "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/theme/preset": {
+      "post": {
+        "operationId": "use_preset_api_v1_admin_theme_preset_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresetIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDocument"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Use Preset",
+        "tags": [
+          "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/theme/preview-token": {
+      "post": {
+        "operationId": "preview_token_api_v1_admin_theme_preview_token_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Preview Token",
+        "tags": [
+          "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/theme/publish": {
+      "post": {
+        "operationId": "publish_api_v1_admin_theme_publish_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publish",
+        "tags": [
+          "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/theme/versions": {
+      "get": {
+        "operationId": "versions_api_v1_admin_theme_versions_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VersionOut"
+                  },
+                  "title": "Response Versions Api V1 Admin Theme Versions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Versions",
+        "tags": [
+          "admin:theme"
+        ]
+      }
+    },
+    "/api/v1/admin/theme/versions/{version_id}/restore": {
+      "post": {
+        "operationId": "restore_api_v1_admin_theme_versions__version_id__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "title": "Version Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Restore",
+        "tags": [
+          "admin:theme"
         ]
       }
     },
@@ -2078,6 +3071,81 @@
         "summary": "Store Info",
         "tags": [
           "store"
+        ]
+      }
+    },
+    "/api/v1/theme": {
+      "get": {
+        "operationId": "get_theme_api_v1_theme_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "preview",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Preview"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublishedTheme"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Theme",
+        "tags": [
+          "theme"
+        ]
+      }
+    },
+    "/api/v1/theme/presets": {
+      "get": {
+        "operationId": "presets_api_v1_theme_presets_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PresetOut"
+                  },
+                  "title": "Response Presets Api V1 Theme Presets Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Presets",
+        "tags": [
+          "theme"
         ]
       }
     },

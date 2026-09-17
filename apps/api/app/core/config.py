@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     otp_max_attempts: int = 5
     otp_resend_seconds: int = 60
     cookie_secure: bool = True
+    s3_endpoint: str | None = None
+    s3_public_bucket: str = "public-media"
+    s3_access_key: str = ""
+    s3_secret_key: str = ""
+    local_media_root: str = "var/media"
     cors_origins: list[str] = []
     db_pool_size: int = 10
     db_statement_timeout_ms: int = 5000

@@ -28,3 +28,12 @@ export async function getStore(): Promise<StoreInfo | null> {
     return null;
   }
 }
+
+export async function getPublishedTheme(): Promise<import("./theme").PublishedTheme | null> {
+  try {
+    const r = await apiFetch("/api/v1/theme");
+    return r.ok ? await r.json() : null;
+  } catch {
+    return null;
+  }
+}
