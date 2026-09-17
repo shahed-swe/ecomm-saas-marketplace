@@ -1,6 +1,40 @@
 {
   "components": {
     "schemas": {
+      "AccountIn": {
+        "properties": {
+          "credentials": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Credentials",
+            "type": "object"
+          },
+          "mode": {
+            "default": "sandbox",
+            "enum": [
+              "sandbox",
+              "live"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "bkash",
+              "sslcommerz"
+            ],
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "credentials"
+        ],
+        "title": "AccountIn",
+        "type": "object"
+      },
       "AddressIn": {
         "properties": {
           "address_line": {
@@ -3646,6 +3680,23 @@
         "title": "ProfilePatch",
         "type": "object"
       },
+      "ProviderIn": {
+        "properties": {
+          "provider": {
+            "enum": [
+              "bkash",
+              "sslcommerz"
+            ],
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider"
+        ],
+        "title": "ProviderIn",
+        "type": "object"
+      },
       "PublishIn": {
         "properties": {
           "note": {
@@ -4812,6 +4863,21 @@
           }
         },
         "title": "StaffPatch",
+        "type": "object"
+      },
+      "StartIn": {
+        "properties": {
+          "order_number": {
+            "maxLength": 40,
+            "minLength": 3,
+            "title": "Order Number",
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_number"
+        ],
+        "title": "StartIn",
         "type": "object"
       },
       "StockIn": {
@@ -7233,6 +7299,80 @@
         ]
       }
     },
+    "/api/v1/admin/cod-receivables": {
+      "get": {
+        "operationId": "admin_cod_api_v1_admin_cod_receivables_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "vendor_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Vendor Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Cod",
+        "tags": [
+          "admin:payments"
+        ]
+      }
+    },
     "/api/v1/admin/domains": {
       "get": {
         "operationId": "list_domains_api_v1_admin_domains_get",
@@ -7491,6 +7631,254 @@
         "summary": "Admin Orders",
         "tags": [
           "admin:orders"
+        ]
+      }
+    },
+    "/api/v1/admin/payment-accounts": {
+      "get": {
+        "operationId": "list_accounts_api_v1_admin_payment_accounts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Accounts",
+        "tags": [
+          "admin:payments"
+        ]
+      },
+      "put": {
+        "operationId": "put_account_api_v1_admin_payment_accounts_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Account",
+        "tags": [
+          "admin:payments"
+        ]
+      }
+    },
+    "/api/v1/admin/payment-accounts/disable": {
+      "post": {
+        "operationId": "disable_account_api_v1_admin_payment_accounts_disable_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disable Account",
+        "tags": [
+          "admin:payments"
+        ]
+      }
+    },
+    "/api/v1/admin/payment-accounts/health": {
+      "post": {
+        "operationId": "check_health_api_v1_admin_payment_accounts_health_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Health",
+        "tags": [
+          "admin:payments"
+        ]
+      }
+    },
+    "/api/v1/admin/payments": {
+      "get": {
+        "operationId": "list_payments_api_v1_admin_payments_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_number",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Order Number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Payments",
+        "tags": [
+          "admin:payments"
+        ]
+      }
+    },
+    "/api/v1/admin/payments/reconciliation": {
+      "get": {
+        "operationId": "reconciliation_api_v1_admin_payments_reconciliation_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reconciliation",
+        "tags": [
+          "admin:payments"
         ]
       }
     },
@@ -9819,6 +10207,47 @@
         ]
       }
     },
+    "/api/v1/me/orders/{number}/payment": {
+      "get": {
+        "description": "The return page comes back with nothing but the order number; this is how it finds its attempt.",
+        "operationId": "latest_payment_api_v1_me_orders__number__payment_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Latest Payment",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
     "/api/v1/me/recently-viewed": {
       "get": {
         "operationId": "recently_viewed_api_v1_me_recently_viewed_get",
@@ -10007,6 +10436,128 @@
         "summary": "Track",
         "tags": [
           "checkout"
+        ]
+      }
+    },
+    "/api/v1/payments/start": {
+      "post": {
+        "operationId": "start_api_v1_payments_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/payments/{payment_id}": {
+      "get": {
+        "operationId": "payment_status_api_v1_payments__payment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Payment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Payment Status",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/v1/payments/{payment_id}/confirm": {
+      "post": {
+        "description": "Called by the return page. The provider's answer decides, not the query string it carried.",
+        "operationId": "confirm_api_v1_payments__payment_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Payment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirm",
+        "tags": [
+          "payments"
         ]
       }
     },
@@ -10471,6 +11022,63 @@
         "summary": "Join Campaign",
         "tags": [
           "vendor:orders"
+        ]
+      }
+    },
+    "/api/v1/vendor/cod-receivables": {
+      "get": {
+        "operationId": "vendor_cod_api_v1_vendor_cod_receivables_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Cod",
+        "tags": [
+          "vendor:payments"
         ]
       }
     },

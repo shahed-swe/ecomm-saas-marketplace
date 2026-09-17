@@ -13,3 +13,4 @@
 | 8 page-builder | ✅ done | 20-section registry, layouts/menus/custom pages, storefront resolver (≤6 queries), CSS sandbox, vendor store builder, drag-and-drop builder UI + browser E2E; 176 api tests |
 | 9 discovery-search-seo-i18n | ✅ done | FTS + Banglish/Bangla expansion + typo correction, facets, RLS-safe fast search (p95 < 200 ms @ 20k/100), wishlist, recently viewed, sitemap/robots/JSON-LD, en/bn web; 184 api tests |
 | 10 cart-checkout-promotions-tax | ✅ done | grouped cart + quote, order tree with deterministic locks, coupons/campaigns/free shipping, VAT, COD rules, idempotent placement, expiry job, cart+checkout UI; 213 api tests |
+| 11 payments-tenant-gateways | ✅ done | tenant-owned bKash/SSLCommerz accounts (encrypted, health-checked), verify-first settlement, idempotent webhooks by tenant public id, stock consumed on payment, COD receivables, reconciliation sweep, payment return page; 224 api tests |

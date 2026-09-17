@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     local_media_root: str = "var/media"
     local_private_root: str = "var/private"
     web_revalidate_url: str | None = None
+    # Public base URL of this API on the platform host: where providers and couriers call back.
+    public_api_url: str | None = None
     s3_private_bucket: str = "private-kyc"
     # Envelope key for PII at rest (Vault transit in production). 32 url-safe base64 bytes.
     data_encryption_key: str = "dGVzdC1rZXktdGVzdC1rZXktdGVzdC1rZXktMDEyMzQ="

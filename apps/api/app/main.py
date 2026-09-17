@@ -32,6 +32,7 @@ from app.modules.health.router import router as health_router
 from app.modules.identity import router as identity
 from app.modules.identity import staff_router
 from app.modules.identity.sms import ConsoleSms
+from app.modules.payments import router as payments
 from app.modules.platform.router import router as platform_router
 from app.modules.settings.router import router as settings_router
 from app.modules.store.router import router as store_router
@@ -135,6 +136,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         checkout.buyer,
         checkout.vendor,
         checkout.admin,
+        payments.buyer,
+        payments.vendor,
+        payments.admin,
+        payments.webhooks,
         vendor_router,
         admin_vendors_router,
         domains_router,

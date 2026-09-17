@@ -21,6 +21,14 @@ export default function OrderPage({ params }: { params: Promise<{ number: string
         </div>
       ))}
       <p className="text-lg font-semibold">Total {taka(order.grand_total)}</p>
+      {order.status === "pending_payment" && order.payment_method !== "cod" && (
+        <a href={`/orders/${order.number}/payment`} className="block rounded-theme bg-primary py-3 text-center text-primary-fg">
+          Pay now
+        </a>
+      )}
+      {order.payment_method === "cod" && (
+        <p className="text-sm text-muted">Cash on delivery — pay the courier {taka(order.grand_total)} when your parcel arrives.</p>
+      )}
     </main>
   );
 }

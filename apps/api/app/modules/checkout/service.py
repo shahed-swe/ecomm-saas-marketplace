@@ -556,6 +556,11 @@ async def place_order(
                 ),
                 {"t": tenant_id, "c": g.coupon.id, "u": user_id, "o": order_id, "a": g.discount},
             )
+    if not prepaid:
+        # COD owes money from placement: one receivable per shipment (ADR 0006).
+        from app.modules.payments import service as payments
+
+        await payments.register_cod(db, tenant_id, order_id, amount=quote.grand_total)
     await db.execute(
         text(
             "DELETE FROM cart_items WHERE tenant_id = :t AND cart_id IN "
@@ -566,15 +571,18 @@ async def place_order(
     return {"id": str(order_id), "number": number, "replayed": False}, tracking_token
 
 
-async def release_order(db: AsyncSession, tenant_id: str, order_id, reason: str) -> int:
-    """Cancel unpaid sub-orders of an order and release their reservations, coupons and campaign stock."""
+async def release_order(
+    db: AsyncSession, tenant_id: str, order_id, reason: str, *, statuses=("pending_payment",)
+) -> int:
+    """Cancel open sub-orders of an order and release their reservations, coupons and campaign stock."""
     subs = (
         await db.execute(
             text(
                 """UPDATE sub_orders SET status = 'cancelled', cancelled_at = now(), cancel_reason = :r, updated_at = now()
-           WHERE tenant_id = :t AND order_id = :o AND status = 'pending_payment' RETURNING id, coupon_id"""
+           WHERE tenant_id = :t AND order_id = :o AND status = ANY(CAST(:st AS text[]))
+           RETURNING id, coupon_id"""
             ),
-            {"t": tenant_id, "o": order_id, "r": reason},
+            {"t": tenant_id, "o": order_id, "r": reason, "st": list(statuses)},
         )
     ).all()
     if not subs:
@@ -605,6 +613,9 @@ async def release_order(db: AsyncSession, tenant_id: str, order_id, reason: str)
         ),
         {"t": tenant_id, "s": ids},
     )
+    from app.modules.payments import service as payments
+
+    await payments.cancel_cod_receivables(db, tenant_id, ids)
     for s in subs:
         if s.coupon_id:
             await db.execute(

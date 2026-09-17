@@ -48,7 +48,8 @@ export default function CheckoutPage() {
       const r = await api<{ number: string }>("/checkout/place", {
         method: "POST", json: body, headers: { "idempotency-key": crypto.getRandomValues(new Uint8Array(16)).reduce((s, b) => s + b.toString(16).padStart(2, "0"), "") },
       });
-      router.push(`/orders/${r.number}`);
+      // Prepaid orders go straight to the gateway; COD orders are already final.
+      router.push(method === "cod" ? `/orders/${r.number}` : `/orders/${r.number}/payment`);
     } catch (err) {
       setError(err instanceof ApiError ? err.detail : "Could not place the order");
       if (err instanceof ApiError && err.status === 409) api<Quote>("/cart/quote", { method: "POST", json: { district_code: district } }).then(setQuote);

@@ -123,6 +123,40 @@ async def expire_unpaid_orders(ctx: dict) -> int:
         return await expire_unpaid(session)
 
 
+@platform_job
+async def reconcile_payments(ctx: dict) -> dict:
+    """Every tenant with stale gateway attempts is asked the provider what really happened."""
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.payments.service import reconcile_pending
+
+    settings = get_settings()
+    totals = {"tenants": 0, "checked": 0, "paid": 0, "closed": 0, "unresolved": 0}
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenant_ids = [
+            str(r[0])
+            for r in (
+                await session.execute(
+                    text(
+                        """SELECT DISTINCT tenant_id FROM payments
+                           WHERE status = 'pending' AND provider <> 'cod' AND provider_ref IS NOT NULL
+                             AND updated_at < now() - interval '10 minutes' LIMIT 200"""
+                    )
+                )
+            ).all()
+        ]
+    for tenant_id in tenant_ids:
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, tenant_id)
+            result = await reconcile_pending(session, settings, tenant_id=tenant_id)
+        totals["tenants"] += 1
+        for k in ("checked", "paid", "closed", "unresolved"):
+            totals[k] += result[k]
+    log.info("payments_reconciled", **totals)
+    return totals
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -143,11 +177,13 @@ class WorkerSettings:
         process_media,
         import_products,
         expire_unpaid_orders,
+        reconcile_payments,
     ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
         cron(billing_cycle, hour={20}, minute=5),  # 02:05 Asia/Dhaka
         cron(expire_unpaid_orders, second={0}),  # every minute
+        cron(reconcile_payments, minute={3, 18, 33, 48}),  # four sweeps an hour
     ]
     on_startup = startup
     on_shutdown = shutdown
