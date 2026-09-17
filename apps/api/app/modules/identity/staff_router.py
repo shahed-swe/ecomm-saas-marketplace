@@ -14,6 +14,7 @@ from app.core.deps import Tenant, TenantDB, require_tenant_staff, require_vendor
 from app.core.errors import Conflict, NotFound
 from app.core.phone import normalize_bd_phone
 from app.core.security import Principal
+from app.modules.billing.service import require_quota
 from app.modules.identity.models import StaffMember, StaffRole, User, VendorUser
 
 admin = APIRouter(prefix="/api/v1/admin", tags=["admin:staff"])
@@ -122,6 +123,13 @@ async def invite_staff(
         raise NotFound("Role not found")
     if role.key == "owner":
         raise Conflict("Ownership is transferred, not invited")
+    used = (
+        await db.execute(
+            text("SELECT count(*) FROM staff_members WHERE tenant_id = :t AND status = 'active'"),
+            {"t": tenant.id},
+        )
+    ).scalar()
+    await require_quota(db, tenant.id, "staff", used)
     user = await _find_or_create_user(db, tenant.id, body.email, body.phone, body.full_name)
     m = StaffMember(tenant_id=uuid.UUID(tenant.id), user_id=user.id, role_id=role.id)
     db.add(m)

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, Request
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from app.core import audit
 from app.core.deps import CurrentVendor, Tenant, TenantDB, require_tenant_staff, require_vendor_role
 from app.core.errors import Conflict, NotFound
+from app.modules.billing.service import require_quota
 from app.modules.identity.models import User, VendorUser
 from app.modules.platform.models import Tenant as TenantModel
 from app.modules.vendors.models import Vendor, VendorStorefront
@@ -95,6 +96,16 @@ async def create_vendor(
     ).scalar_one()
     if mode != "multi":
         raise Conflict("Enable multi-vendor mode to add vendors")
+    used = (
+        await db.execute(
+            text(
+                "SELECT count(*) FROM vendors WHERE tenant_id = :t AND NOT is_house "
+                "AND status NOT IN ('closed','rejected')"
+            ),
+            {"t": tenant.id},
+        )
+    ).scalar()
+    await require_quota(db, tenant.id, "vendors", used)
     repo = VendorRepository(db, tenant.id)
     if await repo.slug_taken(body.slug):
         raise Conflict("Slug unavailable")  # never mentions who holds it

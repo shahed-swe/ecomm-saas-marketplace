@@ -11,6 +11,7 @@ from app.core.deps import Tenant, TenantDB, require_tenant_staff
 from app.core.errors import Conflict, NotFound
 from app.core.repository import TenantScopedRepository
 from app.core.tenancy import invalidate_host, normalise_host
+from app.modules.billing.service import require_quota
 from app.modules.domains import service
 from app.modules.platform.models import Domain
 
@@ -65,6 +66,13 @@ async def add_domain(
     root = settings.platform_root_domain
     if host == root or host.endswith("." + root) or "." not in host or re.match(r"^[\d.]+$", host):
         raise Conflict("Use a domain you own")
+    used = (
+        await db.execute(
+            text("SELECT count(*) FROM domains WHERE tenant_id = :t AND kind = 'custom'"),
+            {"t": tenant.id},
+        )
+    ).scalar()
+    await require_quota(db, tenant.id, "custom_domains", used)
     d = DomainRepository(db, tenant.id).add(Domain(host=host, kind="custom", status="pending"))
     try:
         async with db.begin_nested():

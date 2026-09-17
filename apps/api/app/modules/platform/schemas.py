@@ -15,6 +15,7 @@ class TenantCreate(BaseModel):
     store_mode: Literal["single", "multi"] = "single"
     default_locale: Literal["bn", "en"] = "bn"
     owner_email: EmailStr
+    plan_code: str = Field(default="starter", pattern=r"^[a-z][a-z0-9_]{1,30}$")
     owner_password: str | None = Field(default=None, min_length=10, max_length=200)
     owner_name: str | None = Field(default=None, max_length=120)
 

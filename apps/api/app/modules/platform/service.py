@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import Settings
 from app.core.errors import Conflict, NotFound
 from app.core.passwords import hash_password
+from app.modules.billing.service import require_feature, start_subscription
 from app.modules.identity.models import StaffMember, User, VendorUser
 from app.modules.identity.service import seed_system_roles
 from app.modules.platform.models import Domain, Tenant, TenantSettings
@@ -61,6 +62,9 @@ async def create_tenant(db: AsyncSession, settings: Settings, body: TenantCreate
     db.add(VendorUser(tenant_id=tenant.id, vendor_id=house.id, user_id=owner.id, role="owner"))
     await db.flush()
     await ensure_theme(db, str(tenant.id), actor="platform")
+    await start_subscription(db, tenant.id, body.plan_code)
+    if body.store_mode == "multi":
+        await require_feature(db, str(tenant.id), "multi_vendor")
     await db.refresh(tenant)
     return tenant, host, house.id, owner.id
 
@@ -70,6 +74,8 @@ async def patch_tenant(db: AsyncSession, tenant_id: str, body: TenantPatch) -> T
     if tenant is None:
         raise NotFound("Not found")
     data = body.model_dump(exclude_unset=True)
+    if data.get("store_mode") == "multi" and tenant.store_mode != "multi":
+        await require_feature(db, str(tenant.id), "multi_vendor")
     if data.get("store_mode") == "single" and tenant.store_mode == "multi":
         others = await db.scalar(
             select(func.count())

@@ -70,6 +70,7 @@ async def app(settings):
     application = create_app(settings)
     application.state.sms = FakeSms()
     async with application.router.lifespan_context(application):
+        await application.state.redis.flushdb()  # rate-limit counters must not leak between runs
         yield application
 
 
@@ -105,6 +106,7 @@ class TenantWorld:
     vendor_owner_memberships: dict = field(default_factory=dict)  # name -> vendor_users.id
     owner_staff_member_id: str = ""
     theme_version_id: str = ""
+    invoice_id: str = ""
     domain_id: str = ""
 
 
@@ -150,6 +152,7 @@ async def make_tenant(c, app, platform_headers, *, slug: str, name: str, store_m
             "store_mode": store_mode,
             "owner_email": owner,
             "owner_password": PASSWORD,
+            "plan_code": "growth" if store_mode == "multi" else "starter",
         },
     )
     assert r.status_code == 201, r.text
@@ -207,6 +210,20 @@ async def world(app, settings, platform_headers):
             tw.domain_id = r.json()["id"]
             versions = await c.get("/api/v1/admin/theme/versions", headers=tw.staff.headers())
             tw.theme_version_id = versions.json()[0]["id"]
+            async with app.state.platform_db.sessionmaker() as ps, ps.begin():
+                from datetime import date, timedelta
+
+                from app.modules.billing.service import generate_invoice
+
+                await ps.execute(
+                    sql(
+                        "UPDATE tenant_subscriptions SET status='active', "
+                        "current_period_start=:s, current_period_end=:e WHERE tenant_id=:t"
+                    ),
+                    {"s": date.today() - timedelta(days=31), "e": date.today(), "t": tw.id},
+                )
+                inv = await generate_invoice(ps, tw.id)
+                tw.invoice_id = str(inv["id"])
             out[key] = tw
         eng = app.state.platform_db.engine
         async with eng.connect() as conn:

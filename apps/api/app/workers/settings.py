@@ -69,6 +69,14 @@ async def recheck_domains(ctx: dict) -> list[str]:
         )
 
 
+@platform_job
+async def billing_cycle(ctx: dict) -> dict:
+    from app.modules.billing.service import run_billing_cycle
+
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        return await run_billing_cycle(session)
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -82,8 +90,11 @@ async def shutdown(ctx: dict) -> None:
 
 
 class WorkerSettings:
-    functions = [heartbeat, recheck_domains]
-    cron_jobs = [cron(recheck_domains, hour={0, 6, 12, 18}, minute=17)]
+    functions = [heartbeat, recheck_domains, billing_cycle]
+    cron_jobs = [
+        cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
+        cron(billing_cycle, hour={20}, minute=5),  # 02:05 Asia/Dhaka
+    ]
     on_startup = startup
     on_shutdown = shutdown
     redis_settings = RedisSettings.from_dsn(get_settings().redis_url)

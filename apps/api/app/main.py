@@ -11,6 +11,7 @@ from app.core.metrics import MetricsMiddleware, metrics_endpoint
 from app.core.middleware import RequestContextMiddleware
 from app.core.redis import create_redis
 from app.core.storage import build_storage
+from app.modules.billing import router as billing
 from app.modules.domains.router import internal as internal_router
 from app.modules.domains.router import router as domains_router
 from app.modules.domains.service import real_dns_lookup
@@ -74,6 +75,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         theme.public,
         theme.admin,
         settings_router,
+        billing.admin,
+        billing.platform,
         vendor_router,
         admin_vendors_router,
         domains_router,

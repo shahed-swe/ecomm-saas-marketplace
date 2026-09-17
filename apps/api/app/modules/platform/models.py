@@ -20,7 +20,6 @@ class Tenant(Base):
     name: Mapped[str] = mapped_column(String)
     status: Mapped[str] = mapped_column(String, server_default="trial")
     store_mode: Mapped[str] = mapped_column(String, server_default="single")
-    plan_code: Mapped[str | None] = mapped_column(String)
     default_locale: Mapped[str] = mapped_column(String, server_default="bn")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("now()")

@@ -116,6 +116,41 @@
         "title": "AuditOut",
         "type": "object"
       },
+      "BillingOverview": {
+        "properties": {
+          "limits": {
+            "additionalProperties": true,
+            "title": "Limits",
+            "type": "object"
+          },
+          "open_invoices": {
+            "title": "Open Invoices",
+            "type": "integer"
+          },
+          "plan_code": {
+            "title": "Plan Code",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "usage": {
+            "additionalProperties": true,
+            "title": "Usage",
+            "type": "object"
+          }
+        },
+        "required": [
+          "plan_code",
+          "status",
+          "limits",
+          "usage",
+          "open_invoices"
+        ],
+        "title": "BillingOverview",
+        "type": "object"
+      },
       "Body_upload_brand_image_api_v1_admin_theme_images_post": {
         "properties": {
           "file": {
@@ -201,6 +236,39 @@
           "phase"
         ],
         "title": "ChecklistItem",
+        "type": "object"
+      },
+      "CycleIn": {
+        "properties": {
+          "today": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Today"
+          },
+          "vat_rate": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Vat Rate"
+          }
+        },
+        "title": "CycleIn",
         "type": "object"
       },
       "DomainIn": {
@@ -303,6 +371,134 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "InvoiceLineOut": {
+        "properties": {
+          "amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "unit_amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Unit Amount",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "description",
+          "quantity",
+          "unit_amount",
+          "amount"
+        ],
+        "title": "InvoiceLineOut",
+        "type": "object"
+      },
+      "InvoiceOut": {
+        "properties": {
+          "due_date": {
+            "format": "date",
+            "title": "Due Date",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lines": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/InvoiceLineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "payment_method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Method"
+          },
+          "payment_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Reference"
+          },
+          "period_end": {
+            "format": "date",
+            "title": "Period End",
+            "type": "string"
+          },
+          "period_start": {
+            "format": "date",
+            "title": "Period Start",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "subtotal": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Subtotal",
+            "type": "string"
+          },
+          "total": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total",
+            "type": "string"
+          },
+          "vat_amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Vat Amount",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "period_start",
+          "period_end",
+          "status",
+          "subtotal",
+          "vat_amount",
+          "total",
+          "due_date",
+          "payment_method",
+          "payment_reference"
+        ],
+        "title": "InvoiceOut",
+        "type": "object"
+      },
       "LoginIn": {
         "properties": {
           "email": {
@@ -343,6 +539,32 @@
           "password"
         ],
         "title": "LoginIn",
+        "type": "object"
+      },
+      "MarkPaidIn": {
+        "properties": {
+          "method": {
+            "enum": [
+              "bank",
+              "bkash",
+              "sslcommerz",
+              "manual"
+            ],
+            "title": "Method",
+            "type": "string"
+          },
+          "reference": {
+            "maxLength": 120,
+            "minLength": 3,
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "method",
+          "reference"
+        ],
+        "title": "MarkPaidIn",
         "type": "object"
       },
       "MeOut": {
@@ -576,6 +798,59 @@
           "success"
         ],
         "title": "Palette",
+        "type": "object"
+      },
+      "PlanOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "gmv_fee_rate": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Gmv Fee Rate",
+            "type": "string"
+          },
+          "limits": {
+            "additionalProperties": true,
+            "title": "Limits",
+            "type": "object"
+          },
+          "monthly_price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Monthly Price",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "setup_fee": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Setup Fee",
+            "type": "string"
+          },
+          "trial_days": {
+            "title": "Trial Days",
+            "type": "integer"
+          },
+          "yearly_price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Yearly Price",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "monthly_price",
+          "yearly_price",
+          "gmv_fee_rate",
+          "setup_fee",
+          "trial_days",
+          "limits"
+        ],
+        "title": "PlanOut",
         "type": "object"
       },
       "PlatformLoginIn": {
@@ -1191,6 +1466,72 @@
         "title": "StorefrontUpdate",
         "type": "object"
       },
+      "SubscriptionPatch": {
+        "properties": {
+          "gmv_fee_rate_override": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gmv Fee Rate Override"
+          },
+          "interval": {
+            "anyOf": [
+              {
+                "enum": [
+                  "monthly",
+                  "yearly"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval"
+          },
+          "plan_code": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9_]{1,30}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Code"
+          },
+          "price_override": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Override"
+          }
+        },
+        "title": "SubscriptionPatch",
+        "type": "object"
+      },
       "TenantCreate": {
         "properties": {
           "default_locale": {
@@ -1237,6 +1578,12 @@
               }
             ],
             "title": "Owner Password"
+          },
+          "plan_code": {
+            "default": "starter",
+            "pattern": "^[a-z][a-z0-9_]{1,30}$",
+            "title": "Plan Code",
+            "type": "string"
           },
           "slug": {
             "pattern": "^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$",
@@ -1960,6 +2307,94 @@
         "summary": "Audit Log",
         "tags": [
           "admin:staff"
+        ]
+      }
+    },
+    "/api/v1/admin/billing": {
+      "get": {
+        "operationId": "overview_api_v1_admin_billing_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingOverview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Overview",
+        "tags": [
+          "admin:billing"
+        ]
+      }
+    },
+    "/api/v1/admin/billing/invoices": {
+      "get": {
+        "operationId": "my_invoices_api_v1_admin_billing_invoices_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceOut"
+                  },
+                  "title": "Response My Invoices Api V1 Admin Billing Invoices Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Invoices",
+        "tags": [
+          "admin:billing"
+        ]
+      }
+    },
+    "/api/v1/admin/billing/invoices/{invoice_id}": {
+      "get": {
+        "operationId": "my_invoice_api_v1_admin_billing_invoices__invoice_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "invoice_id",
+            "required": true,
+            "schema": {
+              "title": "Invoice Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Invoice",
+        "tags": [
+          "admin:billing"
         ]
       }
     },
@@ -3443,6 +3878,121 @@
         ]
       }
     },
+    "/platform/v1/billing/run-cycle": {
+      "post": {
+        "operationId": "run_cycle_platform_v1_billing_run_cycle_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CycleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Cycle",
+        "tags": [
+          "platform:billing"
+        ]
+      }
+    },
+    "/platform/v1/invoices/{invoice_id}/mark-paid": {
+      "post": {
+        "operationId": "mark_paid_platform_v1_invoices__invoice_id__mark_paid_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "invoice_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Invoice Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkPaidIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mark Paid",
+        "tags": [
+          "platform:billing"
+        ]
+      }
+    },
+    "/platform/v1/plans": {
+      "get": {
+        "operationId": "plans_platform_v1_plans_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlanOut"
+                  },
+                  "title": "Response Plans Platform V1 Plans Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Plans",
+        "tags": [
+          "platform:billing"
+        ]
+      }
+    },
     "/platform/v1/tenants": {
       "get": {
         "operationId": "list_tenants_platform_v1_tenants_get",
@@ -3556,6 +4106,102 @@
         "summary": "Patch Tenant",
         "tags": [
           "platform"
+        ]
+      }
+    },
+    "/platform/v1/tenants/{tenant_id}/invoices": {
+      "get": {
+        "operationId": "tenant_invoices_platform_v1_tenants__tenant_id__invoices_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenant_id",
+            "required": true,
+            "schema": {
+              "title": "Tenant Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceOut"
+                  },
+                  "title": "Response Tenant Invoices Platform V1 Tenants  Tenant Id  Invoices Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Tenant Invoices",
+        "tags": [
+          "platform:billing"
+        ]
+      }
+    },
+    "/platform/v1/tenants/{tenant_id}/subscription": {
+      "patch": {
+        "operationId": "patch_subscription_platform_v1_tenants__tenant_id__subscription_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenant_id",
+            "required": true,
+            "schema": {
+              "title": "Tenant Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Subscription",
+        "tags": [
+          "platform:billing"
         ]
       }
     },

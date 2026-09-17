@@ -21,6 +21,7 @@ SCOPED_ROUTES = [
     ("PATCH", "/api/v1/admin/staff/{id}", STAFF, "staff_member", {"status": "active"}),
     ("PATCH", "/api/v1/vendor/staff/{id}", VENDOR, "vendor_user", {"status": "active"}),
     ("POST", "/api/v1/admin/theme/versions/{id}/restore", STAFF, "theme_version", None),
+    ("GET", "/api/v1/admin/billing/invoices/{id}", STAFF, "invoice", None),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
@@ -34,6 +35,8 @@ def _resource(world_t, kind, name):
         return world_t.owner_staff_member_id
     if kind == "theme_version":
         return world_t.theme_version_id
+    if kind == "invoice":
+        return world_t.invoice_id
     table = {
         "storefront": world_t.storefronts,
         "vendor": world_t.vendors,

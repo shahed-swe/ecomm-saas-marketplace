@@ -8,7 +8,7 @@ from fastapi import Depends, Request
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.errors import Forbidden, NotFound, Unauthorized
+from app.core.errors import AppError, Forbidden, NotFound, Unauthorized
 from app.core.permissions import VENDOR_ROLE_PERMISSIONS, has_permission
 from app.core.security import Principal, decode_access_token
 from app.core.tenancy import TenantContext, request_host, resolve_tenant, scope_session
@@ -23,8 +23,26 @@ async def current_tenant(request: Request) -> TenantContext:
 Tenant = Annotated[TenantContext, Depends(current_tenant)]
 
 
+class StoreLocked(AppError):
+    status = 423
+    code = "store_suspended"
+
+
+_SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
+_SUSPENDED_WRITE_ALLOW = ("/api/v1/auth/", "/api/v1/admin/billing")
+
+
 async def tenant_db(request: Request, tenant: Tenant) -> AsyncIterator[AsyncSession]:
-    """Session with app.tenant_id set for the whole request transaction."""
+    """Session with app.tenant_id set for the whole request transaction.
+
+    A suspended tenant is read-only (architecture §12): writes get 423 except sign-in and billing.
+    In-flight order fulfilment is handled by workers, which do not pass through this dependency."""
+    if (
+        tenant.status == "suspended"
+        and request.method not in _SAFE_METHODS
+        and not request.url.path.startswith(_SUSPENDED_WRITE_ALLOW)
+    ):
+        raise StoreLocked("This store is suspended. Settle open invoices to restore access.")
     async with request.app.state.db.sessionmaker() as session:
         async with session.begin():
             await scope_session(session, tenant.id)
