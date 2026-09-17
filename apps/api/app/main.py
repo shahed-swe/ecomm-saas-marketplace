@@ -35,6 +35,7 @@ from app.modules.identity import staff_router
 from app.modules.identity.sms import ConsoleSms
 from app.modules.ledger import router as ledger
 from app.modules.mobile import router as mobile
+from app.modules.mobile.platform_router import router as mobile_platform
 from app.modules.notifications import router as notifications
 from app.modules.notifications.channels import ConsoleEmail, ConsolePush
 from app.modules.payments import router as payments
@@ -171,6 +172,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         reporting.platform,
         mobile.app_router,
         mobile.admin,
+        mobile_platform,
         vendor_router,
         admin_vendors_router,
         domains_router,

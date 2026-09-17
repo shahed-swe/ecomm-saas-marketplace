@@ -1,0 +1,159 @@
+# White-label app builds.
+#
+# One codebase, many stores: the workflow claims queued builds from the platform API, resolves the
+# *names* of secrets the manifest gives it against this runner's own secret store, builds, signs,
+# uploads to that tenant's own store account, and reports back so the tenant can see what happened
+# without anyone reading these logs.
+#
+# Copy to .github/workflows/ when the deploy token has the `workflow` scope.
+name: mobile-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: How many queued builds to take in this run
+        default: "3"
+  schedule:
+    - cron: "*/30 * * * *"
+
+concurrency:
+  group: mobile-release
+  cancel-in-progress: false
+
+env:
+  PLATFORM_API: ${{ secrets.PLATFORM_API_URL }}
+  PLATFORM_TOKEN: ${{ secrets.PLATFORM_ADMIN_TOKEN }}
+
+jobs:
+  claim:
+    runs-on: ubuntu-latest
+    outputs:
+      builds: ${{ steps.claim.outputs.builds }}
+    steps:
+      - id: claim
+        name: Claim queued builds
+        run: |
+          set -euo pipefail
+          payload=$(jq -nc --arg r "gha-${GITHUB_RUN_ID}" --argjson l "${{ inputs.limit || 3 }}" \
+            '{runner: $r, limit: $l}')
+          builds=$(curl -fsS -X POST "$PLATFORM_API/platform/v1/app-builds/claim" \
+            -H "authorization: Bearer $PLATFORM_TOKEN" \
+            -H 'content-type: application/json' -d "$payload")
+          echo "builds=$(echo "$builds" | jq -c '.')" >> "$GITHUB_OUTPUT"
+          echo "Claimed $(echo "$builds" | jq 'length') build(s)."
+
+  build:
+    needs: claim
+    if: needs.claim.outputs.builds != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        build: ${{ fromJson(needs.claim.outputs.builds) }}
+    # iOS needs macOS; Android is cheaper on Linux.
+    runs-on: ${{ matrix.build.platform == 'ios' && 'macos-14' || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.x"
+          cache: true
+
+      - name: Analyze and test (the gate before anything is signed)
+        run: |
+          flutter pub get -C packages/core
+          flutter pub get -C apps/${{ matrix.build.manifest.app }}_app
+          flutter analyze packages/core apps/${{ matrix.build.manifest.app }}_app
+          flutter test apps/${{ matrix.build.manifest.app }}_app
+
+      - name: Brand this build
+        env:
+          MANIFEST: ${{ toJson(matrix.build.manifest) }}
+        run: |
+          set -euo pipefail
+          # Icon and splash are generated from the tenant's published brand colours and logo,
+          # so the store listing matches the shop without anyone exporting PNGs by hand.
+          python3 infra/scripts/brand_app.py \
+            --manifest <(printf '%s' "$MANIFEST") \
+            --app apps/${{ matrix.build.manifest.app }}_app
+
+      - name: Restore signing material
+        env:
+          ANDROID_KEYSTORE: ${{ secrets[matrix.build.manifest.secrets.android_signing] }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets[format('{0}_PASSWORD', matrix.build.manifest.secrets.android_signing)] }}
+          IOS_SIGNING: ${{ secrets[matrix.build.manifest.secrets.ios_signing] }}
+          FIREBASE_ANDROID: ${{ secrets[matrix.build.manifest.secrets.firebase_android] }}
+          FIREBASE_IOS: ${{ secrets[matrix.build.manifest.secrets.firebase_ios] }}
+        run: |
+          set -euo pipefail
+          app=apps/${{ matrix.build.manifest.app }}_app
+          if [ "${{ matrix.build.platform }}" = "android" ]; then
+            printf '%s' "$ANDROID_KEYSTORE" | base64 -d > "$app/android/upload.jks"
+            printf 'storeFile=upload.jks\nstorePassword=%s\nkeyAlias=upload\nkeyPassword=%s\n' \
+              "$ANDROID_KEYSTORE_PASSWORD" "$ANDROID_KEYSTORE_PASSWORD" > "$app/android/key.properties"
+            printf '%s' "$FIREBASE_ANDROID" | base64 -d > "$app/android/app/google-services.json"
+          else
+            printf '%s' "$FIREBASE_IOS" | base64 -d > "$app/ios/Runner/GoogleService-Info.plist"
+            printf '%s' "$IOS_SIGNING" | base64 -d > /tmp/asc_key.p8
+          fi
+
+      - name: Build
+        id: artifact
+        run: |
+          set -euo pipefail
+          app=apps/${{ matrix.build.manifest.app }}_app
+          defines=(
+            --dart-define=API_BASE_URL=${{ secrets.PUBLIC_API_URL }}
+            --dart-define=TENANT_HOST=${{ matrix.build.manifest.host }}
+            --dart-define=APP_NAME="${{ matrix.build.manifest.app_name }}"
+          )
+          if [ "${{ matrix.build.platform }}" = "android" ]; then
+            defines+=(--dart-define=BUNDLE_ID=${{ matrix.build.manifest.android_package }})
+            flutter build appbundle -C "$app" \
+              --build-name=${{ matrix.build.version }} \
+              --build-number=${{ matrix.build.build_number }} "${defines[@]}"
+            echo "path=$app/build/app/outputs/bundle/release/app-release.aab" >> "$GITHUB_OUTPUT"
+          else
+            defines+=(--dart-define=BUNDLE_ID=${{ matrix.build.manifest.ios_bundle_id }})
+            flutter build ipa -C "$app" \
+              --build-name=${{ matrix.build.version }} \
+              --build-number=${{ matrix.build.build_number }} \
+              --export-options-plist=infra/ci/ios-export-options.plist "${defines[@]}"
+            echo "path=$(ls "$app"/build/ios/ipa/*.ipa | head -1)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report the build
+        if: always() && steps.artifact.outcome != 'skipped'
+        run: |
+          status=${{ job.status == 'success' && 'succeeded' || 'failed' }}
+          curl -fsS -X POST \
+            "$PLATFORM_API/platform/v1/app-builds/${{ matrix.build.build_id }}/report" \
+            -H "authorization: Bearer $PLATFORM_TOKEN" -H 'content-type: application/json' \
+            -d "$(jq -nc --arg s "$status" --arg e "${{ job.status }}" \
+                  '{status: $s} + (if $s == "failed" then {error: ("job " + $e)} else {} end)')"
+
+      - name: Upload to the tenant's own store account
+        if: success()
+        env:
+          PLAY_SERVICE_ACCOUNT: ${{ secrets[format('{0}_PLAY', matrix.build.manifest.secrets.android_signing)] }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          if [ "${{ matrix.build.platform }}" = "android" ]; then
+            printf '%s' "$PLAY_SERVICE_ACCOUNT" | base64 -d > /tmp/play.json
+            python3 infra/scripts/play_upload.py \
+              --service-account /tmp/play.json \
+              --package ${{ matrix.build.manifest.android_package }} \
+              --track ${{ matrix.build.manifest.play_track }} \
+              --aab "${{ steps.artifact.outputs.path }}"
+          else
+            xcrun altool --upload-app -f "${{ steps.artifact.outputs.path }}" -t ios \
+              --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+          fi
+          curl -fsS -X POST \
+            "$PLATFORM_API/platform/v1/app-builds/${{ matrix.build.build_id }}/report" \
+            -H "authorization: Bearer $PLATFORM_TOKEN" -H 'content-type: application/json' \
+            -d "$(jq -nc --arg t "${{ matrix.build.manifest.play_track }}" \
+                  '{status: "uploaded", store_status: ("submitted to " + $t)}')"

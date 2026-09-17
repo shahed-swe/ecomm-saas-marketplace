@@ -915,6 +915,38 @@
         "title": "BrandOut",
         "type": "object"
       },
+      "BuildIn": {
+        "properties": {
+          "app": {
+            "default": "buyer",
+            "enum": [
+              "buyer",
+              "vendor"
+            ],
+            "title": "App",
+            "type": "string"
+          },
+          "platform": {
+            "enum": [
+              "ios",
+              "android"
+            ],
+            "title": "Platform",
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^\\d+(\\.\\d+){0,3}$",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "platform",
+          "version"
+        ],
+        "title": "BuildIn",
+        "type": "object"
+      },
       "CardOut": {
         "properties": {
           "blur_data": {
@@ -1351,6 +1383,28 @@
           }
         },
         "title": "CheckoutSettingsIn",
+        "type": "object"
+      },
+      "ClaimIn": {
+        "properties": {
+          "limit": {
+            "default": 1,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "runner": {
+            "maxLength": 120,
+            "minLength": 3,
+            "title": "Runner",
+            "type": "string"
+          }
+        },
+        "required": [
+          "runner"
+        ],
+        "title": "ClaimIn",
         "type": "object"
       },
       "CollectionLayout": {
@@ -4643,6 +4697,62 @@
         "title": "ReplyIn",
         "type": "object"
       },
+      "ReportIn": {
+        "properties": {
+          "artifact_url": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artifact Url"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "status": {
+            "enum": [
+              "building",
+              "succeeded",
+              "failed",
+              "uploaded",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "store_status": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Status"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "ReportIn",
+        "type": "object"
+      },
       "ResolvedSection": {
         "properties": {
           "data": {
@@ -5969,6 +6079,132 @@
           "products"
         ],
         "title": "StorePageOut",
+        "type": "object"
+      },
+      "StoreProfileIn": {
+        "properties": {
+          "android_package": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9_]*(\\.[a-z0-9_]+)+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Android Package"
+          },
+          "android_signing_ref": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Android Signing Ref"
+          },
+          "app": {
+            "default": "buyer",
+            "enum": [
+              "buyer",
+              "vendor"
+            ],
+            "title": "App",
+            "type": "string"
+          },
+          "asc_app_id": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asc App Id"
+          },
+          "firebase_android_ref": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firebase Android Ref"
+          },
+          "firebase_ios_ref": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firebase Ios Ref"
+          },
+          "ios_bundle_id": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Za-z0-9.\\-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ios Bundle Id"
+          },
+          "ios_signing_ref": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ios Signing Ref"
+          },
+          "play_track": {
+            "default": "internal",
+            "enum": [
+              "internal",
+              "alpha",
+              "beta",
+              "production"
+            ],
+            "title": "Play Track",
+            "type": "string"
+          },
+          "status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "ready",
+              "live",
+              "paused"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "store_listing": {
+            "additionalProperties": true,
+            "title": "Store Listing",
+            "type": "object"
+          }
+        },
+        "title": "StoreProfileIn",
         "type": "object"
       },
       "StoreThemeIn": {
@@ -8100,6 +8336,84 @@
         ]
       }
     },
+    "/api/v1/admin/app-builds": {
+      "get": {
+        "operationId": "list_builds_api_v1_admin_app_builds_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Builds",
+        "tags": [
+          "admin:mobile"
+        ]
+      },
+      "post": {
+        "operationId": "request_build_api_v1_admin_app_builds_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Request Build",
+        "tags": [
+          "admin:mobile"
+        ]
+      }
+    },
     "/api/v1/admin/app-config": {
       "get": {
         "operationId": "get_app_config_api_v1_admin_app_config_get",
@@ -8190,6 +8504,46 @@
           }
         },
         "summary": "Put Release",
+        "tags": [
+          "admin:mobile"
+        ]
+      }
+    },
+    "/api/v1/admin/app-store-profile": {
+      "put": {
+        "description": "Store identity and the **names** of the CI secrets \u2014 never a key, never a password.",
+        "operationId": "put_store_profile_api_v1_admin_app_store_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Store Profile",
         "tags": [
           "admin:mobile"
         ]
@@ -19262,6 +19616,154 @@
         ]
       }
     },
+    "/platform/v1/app-builds": {
+      "get": {
+        "operationId": "queue_platform_v1_app_builds_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Queue",
+        "tags": [
+          "platform:builds"
+        ]
+      }
+    },
+    "/platform/v1/app-builds/claim": {
+      "post": {
+        "description": "One runner claims the next queued build(s); two runners never get the same one.",
+        "operationId": "claim_platform_v1_app_builds_claim_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Claim",
+        "tags": [
+          "platform:builds"
+        ]
+      }
+    },
+    "/platform/v1/app-builds/{build_id}/report": {
+      "post": {
+        "operationId": "report_platform_v1_app_builds__build_id__report_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "build_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Build Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Report",
+        "tags": [
+          "platform:builds"
+        ]
+      }
+    },
     "/platform/v1/auth/login": {
       "post": {
         "operationId": "platform_login_platform_v1_auth_login_post",
@@ -19573,6 +20075,61 @@
         "summary": "Patch Tenant",
         "tags": [
           "platform"
+        ]
+      }
+    },
+    "/platform/v1/tenants/{tenant_id}/app-manifest": {
+      "get": {
+        "operationId": "manifest_platform_v1_tenants__tenant_id__app_manifest_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Tenant Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "app",
+            "required": false,
+            "schema": {
+              "default": "buyer",
+              "enum": [
+                "buyer",
+                "vendor"
+              ],
+              "title": "App",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Manifest",
+        "tags": [
+          "platform:builds"
         ]
       }
     },

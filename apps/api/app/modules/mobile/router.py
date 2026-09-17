@@ -433,3 +433,122 @@ async def complete_deletion(
         request=request,
     )
     return Response(status_code=204)
+
+
+# ---------------------------------------------------------------------- white-label build pipeline
+class StoreProfileIn(BaseModel):
+    app: Literal["buyer", "vendor"] = "buyer"
+    android_package: str | None = Field(default=None, pattern=r"^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$")
+    ios_bundle_id: str | None = Field(default=None, pattern=r"^[A-Za-z0-9.\-]+$")
+    play_track: Literal["internal", "alpha", "beta", "production"] = "internal"
+    asc_app_id: str | None = Field(default=None, max_length=40)
+    android_signing_ref: str | None = Field(default=None, max_length=120)
+    ios_signing_ref: str | None = Field(default=None, max_length=120)
+    firebase_android_ref: str | None = Field(default=None, max_length=120)
+    firebase_ios_ref: str | None = Field(default=None, max_length=120)
+    store_listing: dict = Field(default_factory=dict)
+    status: Literal["draft", "ready", "live", "paused"] = "draft"
+
+
+class BuildIn(BaseModel):
+    app: Literal["buyer", "vendor"] = "buyer"
+    platform: Literal["ios", "android"]
+    version: str = Field(pattern=r"^\d+(\.\d+){0,3}$")
+
+
+@admin.put("/app-store-profile")
+async def put_store_profile(
+    body: StoreProfileIn, request: Request, p: SettingsWrite, tenant: Tenant, db: TenantDB
+):
+    """Store identity and the **names** of the CI secrets — never a key, never a password."""
+    await db.execute(
+        text(
+            """INSERT INTO app_store_profiles (tenant_id, app, android_package, ios_bundle_id,
+                   play_track, asc_app_id, android_signing_ref, ios_signing_ref,
+                   firebase_android_ref, firebase_ios_ref, store_listing, status, updated_by)
+               VALUES (:t, :a, :ap, :ib, :tr, :asc, :asr, :isr, :far, :fir, CAST(:sl AS jsonb), :st, :by)
+               ON CONFLICT (tenant_id, app) DO UPDATE
+               SET android_package = EXCLUDED.android_package, ios_bundle_id = EXCLUDED.ios_bundle_id,
+                   play_track = EXCLUDED.play_track, asc_app_id = EXCLUDED.asc_app_id,
+                   android_signing_ref = EXCLUDED.android_signing_ref,
+                   ios_signing_ref = EXCLUDED.ios_signing_ref,
+                   firebase_android_ref = EXCLUDED.firebase_android_ref,
+                   firebase_ios_ref = EXCLUDED.firebase_ios_ref,
+                   store_listing = EXCLUDED.store_listing, status = EXCLUDED.status,
+                   updated_by = EXCLUDED.updated_by, updated_at = now()"""
+        ),
+        {
+            "t": tenant.id,
+            "a": body.app,
+            "ap": body.android_package,
+            "ib": body.ios_bundle_id,
+            "tr": body.play_track,
+            "asc": body.asc_app_id,
+            "asr": body.android_signing_ref,
+            "isr": body.ios_signing_ref,
+            "far": body.firebase_android_ref,
+            "fir": body.firebase_ios_ref,
+            "sl": __import__("json").dumps(body.store_listing),
+            "st": body.status,
+            "by": p.sub,
+        },
+    )
+    await audit.record(
+        db,
+        tenant_id=tenant.id,
+        actor=p,
+        action="app_store_profile.set",
+        entity="app_store_profile",
+        entity_id=body.app,
+        data={"app": body.app, "status": body.status},
+        request=request,
+    )
+    from app.modules.mobile import builds
+
+    return await builds.manifest(db, tenant.id, app=body.app)
+
+
+@admin.post("/app-builds", status_code=202)
+async def request_build(
+    body: BuildIn, request: Request, p: SettingsWrite, tenant: Tenant, db: TenantDB
+):
+    from app.modules.mobile import builds
+
+    out = await builds.request_build(
+        db,
+        tenant.id,
+        app=body.app,
+        platform=body.platform,
+        version=body.version,
+        actor_id=p.sub,
+    )
+    await audit.record(
+        db,
+        tenant_id=tenant.id,
+        actor=p,
+        action="app_build.request",
+        entity="app_build",
+        entity_id=out["id"],
+        data={k: str(v) for k, v in out.items()},
+        request=request,
+    )
+    return out
+
+
+@admin.get("/app-builds")
+async def list_builds(p: SettingsWrite, tenant: Tenant, db: TenantDB, limit: int = 25):
+    rows = (
+        (
+            await db.execute(
+                text(
+                    """SELECT id, app, platform, version, build_number, status, store_status, error,
+                              artifact_url, created_at, finished_at
+                       FROM app_builds WHERE tenant_id = :t ORDER BY created_at DESC LIMIT :l"""
+                ),
+                {"t": tenant.id, "l": min(limit, 100)},
+            )
+        )
+        .mappings()
+        .all()
+    )
+    return [dict(r) for r in rows]

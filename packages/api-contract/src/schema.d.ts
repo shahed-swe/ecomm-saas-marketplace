@@ -56,6 +56,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/app-builds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Builds */
+        get: operations["list_builds_api_v1_admin_app_builds_get"];
+        put?: never;
+        /** Request Build */
+        post: operations["request_build_api_v1_admin_app_builds_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/app-config": {
         parameters: {
             query?: never;
@@ -84,6 +102,26 @@ export interface paths {
         get?: never;
         /** Put Release */
         put: operations["put_release_api_v1_admin_app_releases_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/app-store-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Store Profile
+         * @description Store identity and the **names** of the CI secrets — never a key, never a password.
+         */
+        put: operations["put_store_profile_api_v1_admin_app_store_profile_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -4156,6 +4194,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/platform/v1/app-builds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Queue */
+        get: operations["queue_platform_v1_app_builds_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/platform/v1/app-builds/claim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Claim
+         * @description One runner claims the next queued build(s); two runners never get the same one.
+         */
+        post: operations["claim_platform_v1_app_builds_claim_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/platform/v1/app-builds/{build_id}/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Report */
+        post: operations["report_platform_v1_app_builds__build_id__report_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/platform/v1/auth/login": {
         parameters: {
             query?: never;
@@ -4277,6 +4369,23 @@ export interface paths {
         head?: never;
         /** Patch Tenant */
         patch: operations["patch_tenant_platform_v1_tenants__tenant_id__patch"];
+        trace?: never;
+    };
+    "/platform/v1/tenants/{tenant_id}/app-manifest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Manifest */
+        get: operations["manifest_platform_v1_tenants__tenant_id__app_manifest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/platform/v1/tenants/{tenant_id}/invoices": {
@@ -4670,6 +4779,22 @@ export interface components {
             /** Slug */
             slug: string;
         };
+        /** BuildIn */
+        BuildIn: {
+            /**
+             * App
+             * @default buyer
+             * @enum {string}
+             */
+            app: "buyer" | "vendor";
+            /**
+             * Platform
+             * @enum {string}
+             */
+            platform: "ios" | "android";
+            /** Version */
+            version: string;
+        };
         /** CardOut */
         CardOut: {
             /** Blur Data */
@@ -4794,6 +4919,16 @@ export interface components {
             vat_pricing?: ("inclusive" | "exclusive") | null;
             /** Vat Registered */
             vat_registered?: boolean | null;
+        };
+        /** ClaimIn */
+        ClaimIn: {
+            /**
+             * Limit
+             * @default 1
+             */
+            limit: number;
+            /** Runner */
+            runner: string;
         };
         /** CollectionLayout */
         CollectionLayout: {
@@ -6033,6 +6168,20 @@ export interface components {
             /** Reply */
             reply: string;
         };
+        /** ReportIn */
+        ReportIn: {
+            /** Artifact Url */
+            artifact_url?: string | null;
+            /** Error */
+            error?: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "building" | "succeeded" | "failed" | "uploaded" | "rejected";
+            /** Store Status */
+            store_status?: string | null;
+        };
         /** ResolvedSection */
         ResolvedSection: {
             /** Data */
@@ -6478,6 +6627,45 @@ export interface components {
             sections: components["schemas"]["ResolvedSection"][];
             /** Vendor */
             vendor: {
+                [key: string]: unknown;
+            };
+        };
+        /** StoreProfileIn */
+        StoreProfileIn: {
+            /** Android Package */
+            android_package?: string | null;
+            /** Android Signing Ref */
+            android_signing_ref?: string | null;
+            /**
+             * App
+             * @default buyer
+             * @enum {string}
+             */
+            app: "buyer" | "vendor";
+            /** Asc App Id */
+            asc_app_id?: string | null;
+            /** Firebase Android Ref */
+            firebase_android_ref?: string | null;
+            /** Firebase Ios Ref */
+            firebase_ios_ref?: string | null;
+            /** Ios Bundle Id */
+            ios_bundle_id?: string | null;
+            /** Ios Signing Ref */
+            ios_signing_ref?: string | null;
+            /**
+             * Play Track
+             * @default internal
+             * @enum {string}
+             */
+            play_track: "internal" | "alpha" | "beta" | "production";
+            /**
+             * Status
+             * @default draft
+             * @enum {string}
+             */
+            status: "draft" | "ready" | "live" | "paused";
+            /** Store Listing */
+            store_listing?: {
                 [key: string]: unknown;
             };
         };
@@ -7359,6 +7547,70 @@ export interface operations {
             };
         };
     };
+    list_builds_api_v1_admin_app_builds_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_build_api_v1_admin_app_builds_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BuildIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_app_config_api_v1_admin_app_config_get: {
         parameters: {
             query?: never;
@@ -7422,6 +7674,39 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["ReleaseIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_store_profile_api_v1_admin_app_store_profile_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StoreProfileIn"];
             };
         };
         responses: {
@@ -15365,6 +15650,106 @@ export interface operations {
             };
         };
     };
+    queue_platform_v1_app_builds_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    claim_platform_v1_app_builds_claim_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClaimIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    report_platform_v1_app_builds__build_id__report_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                build_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     platform_login_platform_v1_auth_login_post: {
         parameters: {
             query?: never;
@@ -15592,6 +15977,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TenantOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    manifest_platform_v1_tenants__tenant_id__app_manifest_get: {
+        parameters: {
+            query?: {
+                app?: "buyer" | "vendor";
+            };
+            header?: never;
+            path: {
+                tenant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
