@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { getPublishedTheme, getStore } from "@/lib/api";
 import { t } from "@/lib/i18n";
+import { getMessages } from "@/lib/locale";
 import { themeToCss } from "@/lib/theme";
 
 // Storefront shell: tenant tokens become CSS variables before first paint; header/footer come from the
@@ -10,13 +11,13 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
   const [theme, store, h] = await Promise.all([getPublishedTheme(), getStore(), headers()]);
   const doc = theme?.document as any;
   const brand = doc?.brand;
-  const locale = (store?.default_locale ?? "bn") as "bn" | "en";
+  const { locale, m } = await getMessages();
   const header = doc?.layouts?.header ?? { menu: [], logo_position: "left" };
   const footer = doc?.layouts?.footer ?? { columns: [] };
   const path = h.get("x-invoke-path") ?? h.get("next-url") ?? "";
   const sensitive = /^\/(checkout|account\/security|payment)/.test(path);
   return (
-    <div data-surface="shop" className="min-h-screen bg-bg text-fg">
+    <div data-surface="shop" lang={locale} className="min-h-screen bg-bg text-fg">
       {theme && <style id="tenant-theme" dangerouslySetInnerHTML={{ __html: themeToCss(theme.document) }} />}
       {doc?.custom_css && !sensitive && <link rel="stylesheet" href="/api/v1/storefront/custom.css" />}
       <div data-tenant-css="">
@@ -28,6 +29,11 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
                 <img src={brand.logo_url} alt={store?.name ?? "Store"} style={{ height: brand.logo_height ?? 40 }} />
               ) : <span className="font-heading text-xl font-semibold">{store?.name}</span>}
             </Link>
+            <form action="/search" className="flex-1" role="search">
+              <input name="q" type="search" placeholder={m("search_placeholder")} aria-label={m("search")}
+                     className="w-full rounded-theme border border-border bg-bg px-3 py-2 text-sm" />
+            </form>
+            <form action="/api/locale" method="post"><button name="hl" value={locale === "bn" ? "en" : "bn"} className="text-sm">{m("language")}</button></form>
             <nav className="hidden gap-4 md:flex">
               {header.menu.map((m: any, i: number) => <Link key={i} href={m.href} className="text-sm">{t(m.label, locale)}</Link>)}
             </nav>

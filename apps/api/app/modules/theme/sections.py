@@ -7,7 +7,7 @@ resolver fetches data through scoped queries with a fixed budget.
 
 import re
 import uuid
-from typing import Annotated, Literal, Union
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 
@@ -477,6 +477,3 @@ class CustomPage(BaseModel):
 
 def new_section_id() -> str:
     return uuid.uuid4().hex[:12]
-
-
-Union  # re-export guard for type checkers

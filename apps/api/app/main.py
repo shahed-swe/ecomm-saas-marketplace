@@ -12,9 +12,12 @@ from app.core.middleware import RequestContextMiddleware
 from app.core.redis import create_redis
 from app.core.storage import build_private_storage, build_storage
 from app.modules.billing import router as billing
+from app.modules.catalog import buyer as catalog_buyer
 from app.modules.catalog import imports as catalog_imports
 from app.modules.catalog import media as catalog_media
 from app.modules.catalog import products as catalog_products
+from app.modules.catalog import search as catalog_search
+from app.modules.catalog import seo as catalog_seo
 from app.modules.catalog import taxonomy as catalog_taxonomy
 from app.modules.catalog.revalidate import RecordingRevalidator, WebRevalidator
 from app.modules.domains.router import internal as internal_router
@@ -115,6 +118,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         catalog_products.public,
         catalog_media.router,
         catalog_imports.router,
+        catalog_search.router,
+        catalog_search.admin,
+        catalog_buyer.router,
+        catalog_seo.router,
         vendor_router,
         admin_vendors_router,
         domains_router,

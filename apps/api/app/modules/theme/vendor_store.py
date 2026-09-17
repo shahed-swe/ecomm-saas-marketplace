@@ -3,7 +3,6 @@
 Vendors pick an accent colour (contrast-checked against the tenant's live palette), a banner, and
 up to 10 `vendor_allowed` sections. Everything else about the storefront stays the tenant's."""
 
-import json
 from datetime import datetime
 from typing import Annotated
 
@@ -191,6 +190,3 @@ async def store_page(slug: str, tenant: Tenant, db: TenantDB, limit: int = Query
             {k: (str(x) if k in ("id", "vendor_id") else x) for k, x in r.items()} for r in rows
         ],
     )
-
-
-json  # noqa: B018

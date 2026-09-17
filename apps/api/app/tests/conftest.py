@@ -219,7 +219,15 @@ async def build_catalog(c, app, tw, key):
             "/api/v1/admin/catalog/brands", headers=staff, json={"slug": "aarong", "name": "Aarong"}
         )
     ).json()
+    syn = (
+        await c.post(
+            "/api/v1/admin/catalog/synonyms",
+            headers=staff,
+            json={"term": "kameez", "synonyms": ["kurti"]},
+        )
+    ).json()
     tw.catalog = {
+        "synonym": {"tenant": syn["id"]},
         "category": {"tenant": cat["id"]},
         "attribute": {"tenant": attr["id"]},
         "brand": {"tenant": brand["id"]},

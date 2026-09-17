@@ -11,3 +11,4 @@
 | 6 vendor-onboarding-management | ✅ done | signup + invites, KYC to private bucket, state machine + review, commission overrides, encrypted payout method with re-auth + 72h hold; 102 api tests |
 | 7 catalog-media-taxonomy | ✅ done | taxonomy + attributes, brands, products/variants, stock ledger, AVIF/WebP pipeline, moderation, CSV import, Q&A, storefront grid + PDP; 163 api tests |
 | 8 page-builder | ✅ done | 20-section registry, layouts/menus/custom pages, storefront resolver (≤6 queries), CSS sandbox, vendor store builder, drag-and-drop builder UI + browser E2E; 176 api tests |
+| 9 discovery-search-seo-i18n | ✅ done | FTS + Banglish/Bangla expansion + typo correction, facets, RLS-safe fast search (p95 < 200 ms @ 20k/100), wishlist, recently viewed, sitemap/robots/JSON-LD, en/bn web; 184 api tests |

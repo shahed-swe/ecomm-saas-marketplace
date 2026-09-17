@@ -1,0 +1,6 @@
+{"search": "খুঁজুন", "search_placeholder": "পণ্য, ব্র্যান্ড, দোকান খুঁজুন", "results": "{n}টি ফলাফল",
+ "did_you_mean": "যে ফলাফল দেখানো হচ্ছে", "no_results": "আপনার খোঁজার সাথে কোনো পণ্য মেলেনি।", "filters": "ফিল্টার",
+ "categories": "ক্যাটাগরি", "brands": "ব্র্যান্ড", "stores": "দোকান", "price": "দাম", "in_stock": "শুধু স্টকে আছে",
+ "sort": "সাজান", "relevance": "সবচেয়ে মানানসই", "newest": "নতুন", "price_asc": "দাম: কম থেকে বেশি",
+ "price_desc": "দাম: বেশি থেকে কম", "apply": "প্রয়োগ করুন", "sold_by": "বিক্রেতা", "ships_from": "পাঠানো হয়",
+ "out_of_stock": "স্টকে নেই", "load_more": "আরও দেখুন", "language": "English"}

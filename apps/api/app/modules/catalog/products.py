@@ -163,6 +163,9 @@ class ProductOut(BaseModel):
 
 # -------------------------------------------------------------------------------------------- helpers
 async def _refresh_rollups(db, tenant_id: str, product_id) -> None:
+    from app.modules.catalog.search import index_terms
+
+    await index_terms(db, tenant_id, product_id)
     await db.execute(
         text(
             """UPDATE products p SET min_price = r.mn, max_price = r.mx, in_stock = r.stock, updated_at = now(),

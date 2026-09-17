@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getStore } from "@/lib/api";
 import { ProductImage } from "@/components/catalog/ProductImage";
 import { apiFetch } from "@/lib/api";
 import { taka } from "@/lib/money";
@@ -11,14 +13,50 @@ type Pdp = {
   category: { slug: string; name_en: string };
 };
 
+async function load(slug: string): Promise<Pdp | null> {
+  const r = await apiFetch(`/api/v1/catalog/products/${encodeURIComponent(slug)}`, { tags: ["products", `product:${slug}`] });
+  return r.ok ? r.json() : null;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const [p, store] = await Promise.all([load(slug), getStore()]);
+  if (!p) return {};
+  const image = p.media[0]?.renditions?.jpeg ? Object.values(p.media[0].renditions.jpeg)[0] : undefined;
+  const canonical = store?.primary_host ? `https://${store.primary_host}/p/${p.slug}` : undefined;
+  return {
+    title: p.title_en, description: p.description.slice(0, 160),
+    alternates: { canonical },
+    openGraph: { title: p.title_en, description: p.description.slice(0, 160), images: image ? [image] : [], type: "website" },
+  };
+}
+
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const r = await apiFetch(`/api/v1/catalog/products/${encodeURIComponent(slug)}`, { tags: ["products", `product:${slug}`] });
-  if (!r.ok) notFound();
-  const p = (await r.json()) as Pdp;
+  const p = await load(slug);
+  if (!p) notFound();
   const first = p.variants[0];
+  const store = await getStore();
+  const origin = store?.primary_host ? `https://${store.primary_host}` : "";
+  const prices = p.variants.map((v) => Number(v.price));
+  const jsonLd = {
+    "@context": "https://schema.org", "@type": "Product", name: p.title_en, sku: first?.sku,
+    description: p.description.slice(0, 500),
+    image: p.media.map((m) => Object.values(m.renditions.jpeg ?? {})[0]).filter(Boolean).map((u) => origin + u),
+    offers: { "@type": "AggregateOffer", priceCurrency: "BDT", lowPrice: Math.min(...prices), highPrice: Math.max(...prices),
+      offerCount: p.variants.length,
+      availability: p.variants.some((v) => v.available > 0) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      seller: { "@type": "Organization", name: p.vendor.is_house ? store?.name : p.vendor.display_name } },
+  };
+  const crumbs = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: p.category.name_en, item: `${origin}/c/${p.category.slug}` },
+    { "@type": "ListItem", position: 2, name: p.title_en, item: `${origin}/p/${p.slug}` }] };
+  // JSON.stringify output escaped so a product title can never close the script tag
+  const ld = (o: unknown) => JSON.stringify(o).replace(/</g, "\\u003c");
   return (
     <main className="mx-auto grid max-w-6xl gap-8 p-4 md:grid-cols-2">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ld(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ld(crumbs) }} />
       <div className="space-y-3">
         {p.media.slice(0, 1).map((m) => (
           <ProductImage key={m.id} renditions={m.renditions} blur={m.blur_data} alt={m.alt_text ?? p.title_en}

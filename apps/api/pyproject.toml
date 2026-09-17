@@ -39,6 +39,7 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 asyncio_default_test_loop_scope = "session"
 testpaths = ["app/tests"]
+markers = ["perf: performance budget tests (seed large data)"]
 
 [tool.ruff]
 line-length = 100
@@ -56,3 +57,6 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.File", "a
 "migrations/**" = ["E501", "S608"]
 # SQL fragments interpolated here are module constants (VISIBLE), never user input.
 "app/modules/catalog/products.py" = ["S608"]
+"app/modules/theme/storefront.py" = ["S608"]
+"app/modules/catalog/search.py" = ["S608"]
+"app/modules/catalog/buyer.py" = ["S608"]

@@ -29,7 +29,13 @@ SCOPED_ROUTES = [
     ("POST", "/api/v1/admin/payout-holds/{id}/release", STAFF, "payout_hold", None),
     # catalog (Phase 7)
     ("GET", "/api/v1/vendor/products/{id}", VENDOR, "product", None),
-    ("PATCH", "/api/v1/vendor/products/{id}", VENDOR, "product", {"title_en": "Renamed kurti"}),
+    (
+        "PATCH",
+        "/api/v1/vendor/products/{id}",
+        VENDOR,
+        "product",
+        {"title_en": "Cotton Kurti A1 renamed"},
+    ),
     (
         "POST",
         "/api/v1/vendor/products/{id}/variants",
@@ -74,6 +80,7 @@ SCOPED_ROUTES = [
     ),
     ("POST", "/api/v1/admin/products/{id}/moderate", STAFF, "product", {"decision": "approve"}),
     ("POST", "/api/v1/admin/questions/{id}/hide", STAFF, "question", None),
+    ("DELETE", "/api/v1/admin/catalog/synonyms/{id}", STAFF, "synonym", None),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).

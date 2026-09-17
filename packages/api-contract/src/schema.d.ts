@@ -174,6 +174,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/catalog/synonyms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Synonyms */
+        get: operations["list_synonyms_api_v1_admin_catalog_synonyms_get"];
+        put?: never;
+        /** Add Synonym */
+        post: operations["add_synonym_api_v1_admin_catalog_synonyms_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/synonyms/{synonym_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Synonym */
+        delete: operations["delete_synonym_api_v1_admin_catalog_synonyms__synonym_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/domains": {
         parameters: {
             query?: never;
@@ -868,6 +903,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search */
+        get: operations["search_api_v1_catalog_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/suggest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Suggest
+         * @description Type-ahead: up to 8 product titles + matching categories, one query.
+         */
+        get: operations["suggest_api_v1_catalog_suggest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -877,6 +949,76 @@ export interface paths {
         };
         /** Me */
         get: operations["me_api_v1_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/recently-viewed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recently Viewed */
+        get: operations["recently_viewed_api_v1_me_recently_viewed_get"];
+        put?: never;
+        /** Viewed */
+        post: operations["viewed_api_v1_me_recently_viewed_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/wishlist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Wishlist */
+        get: operations["wishlist_api_v1_me_wishlist_get"];
+        put?: never;
+        /** Add Wishlist */
+        post: operations["add_wishlist_api_v1_me_wishlist_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/wishlist/{product_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove Wishlist */
+        delete: operations["remove_wishlist_api_v1_me_wishlist__product_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/seo/sitemap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sitemap */
+        get: operations["sitemap_api_v1_seo_sitemap_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2183,6 +2325,22 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** Entry */
+        Entry: {
+            /** Lastmod */
+            lastmod?: string | null;
+            /** Path */
+            path: string;
+        };
+        /** Facet */
+        Facet: {
+            /** Count */
+            count: number;
+            /** Label */
+            label: string;
+            /** Value */
+            value: string;
+        };
         /** Footer */
         Footer: {
             /** Columns */
@@ -2854,6 +3012,14 @@ export interface components {
             /** Weight Grams */
             weight_grams?: number | null;
         };
+        /** ProductRef */
+        ProductRef: {
+            /**
+             * Product Id
+             * Format: uuid
+             */
+            product_id: string;
+        };
         /** ProfilePatch */
         ProfilePatch: {
             /** Display Name */
@@ -3024,6 +3190,33 @@ export interface components {
             /** Permissions */
             permissions: string[];
         };
+        /** SearchOut */
+        SearchOut: {
+            /** Attributes */
+            attributes: {
+                [key: string]: components["schemas"]["Facet"][];
+            };
+            /** Did You Mean */
+            did_you_mean?: string | null;
+            /** Facets */
+            facets: {
+                [key: string]: components["schemas"]["Facet"][];
+            };
+            /** Items */
+            items: {
+                [key: string]: unknown;
+            }[];
+            /** Page */
+            page: number;
+            /** Price Range */
+            price_range: {
+                [key: string]: string | null;
+            };
+            /** Query */
+            query: string;
+            /** Total */
+            total: number;
+        };
         /** Section */
         Section: {
             /**
@@ -3147,6 +3340,13 @@ export interface components {
              * Format: uuid
              */
             vendor_id: string;
+        };
+        /** SitemapOut */
+        SitemapOut: {
+            /** Entries */
+            entries: components["schemas"]["Entry"][];
+            /** Primary Host */
+            primary_host: string | null;
         };
         /** StaffInviteIn */
         StaffInviteIn: {
@@ -3290,6 +3490,25 @@ export interface components {
             plan_code?: string | null;
             /** Price Override */
             price_override?: number | string | null;
+        };
+        /** SynonymIn */
+        SynonymIn: {
+            /** Synonyms */
+            synonyms: string[];
+            /** Term */
+            term: string;
+        };
+        /** SynonymOut */
+        SynonymOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Synonyms */
+            synonyms: string[];
+            /** Term */
+            term: string;
         };
         /** Templates */
         Templates: {
@@ -4103,6 +4322,88 @@ export interface operations {
             header?: never;
             path: {
                 attribute_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_synonyms_api_v1_admin_catalog_synonyms_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SynonymOut"][];
+                };
+            };
+        };
+    };
+    add_synonym_api_v1_admin_catalog_synonyms_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SynonymIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SynonymOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_synonym_api_v1_admin_catalog_synonyms__synonym_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                synonym_id: string;
             };
             cookie?: never;
         };
@@ -5465,6 +5766,78 @@ export interface operations {
             };
         };
     };
+    search_api_v1_catalog_search_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                category?: string | null;
+                brand?: string[];
+                store?: string[];
+                min_price?: number | string | null;
+                max_price?: number | string | null;
+                in_stock?: boolean;
+                /** @description key:value */
+                attr?: string[];
+                sort?: "relevance" | "newest" | "price_asc" | "price_desc";
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    suggest_api_v1_catalog_suggest_get: {
+        parameters: {
+            query: {
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     me_api_v1_me_get: {
         parameters: {
             query?: never;
@@ -5481,6 +5854,168 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    recently_viewed_api_v1_me_recently_viewed_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    viewed_api_v1_me_recently_viewed_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductRef"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    wishlist_api_v1_me_wishlist_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    add_wishlist_api_v1_me_wishlist_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductRef"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_wishlist_api_v1_me_wishlist__product_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sitemap_api_v1_seo_sitemap_get: {
+        parameters: {
+            query?: {
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SitemapOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
