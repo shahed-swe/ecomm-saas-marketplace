@@ -12,6 +12,8 @@ export async function POST(req: Request) {
     return new Response("forbidden", { status: 403 });
   }
   const { tags } = JSON.parse(body) as { tags: string[] };
-  for (const t of tags.slice(0, 50)) revalidateTag(t);
+  // Next 16 wants the cache profile alongside the tag; "max" matches how storefront reads are
+  // cached (revalidate: 60 with tag-based invalidation doing the real work).
+  for (const t of tags.slice(0, 50)) revalidateTag(t, "max");
   return Response.json({ revalidated: tags.length });
 }

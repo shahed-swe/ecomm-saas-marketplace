@@ -12,7 +12,7 @@ from app.core.db import Database
 from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging
 from app.core.metrics import MetricsMiddleware, metrics_endpoint
-from app.core.middleware import RequestContextMiddleware
+from app.core.middleware import RequestContextMiddleware, SecurityHeadersMiddleware
 from app.core.redis import create_redis
 from app.core.storage import build_private_storage, build_storage
 from app.modules.billing import router as billing
@@ -104,6 +104,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.add_middleware(MetricsMiddleware)
     app.add_middleware(RequestContextMiddleware)
+    # HSTS only where TLS is actually terminated in front of us.
+    app.add_middleware(SecurityHeadersMiddleware, hsts=settings.env == "production")
     if settings.cors_origins:
         app.add_middleware(
             CORSMiddleware,

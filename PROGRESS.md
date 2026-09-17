@@ -1,5 +1,9 @@
 # Build progress
 
+All 21 phases (0–20) are complete. 412 API tests, the 2×2 isolation harness (204 cases) and the
+security audit run on every commit; the web app typechecks and builds; the Flutter apps are written
+and analysed in CI rather than here (this environment has no SDK).
+
 | Phase | Status | Notes |
 |---|---|---|
 | 0 decisions-adrs | ✅ done | 14 ADRs |
@@ -22,3 +26,4 @@
 | 17 analytics-reporting | ✅ done | daily rollups per tenant and vendor with today live, summary + previous-period comparison, top products/sellers, private CSV exports, vendor-scoped dashboards, platform MRR/GMV/tenant-health console, staff dashboard UI; 383 api tests |
 | 18 mobile-core-buyer-app | ✅ done (not compiled here) | app config/theme/home from the API, numeric version gate, maintenance mode, account deletion with anonymisation + nightly job, Flutter `packages/core` and buyer app (client, session, money, cart, theme mapping, server-driven home, checkout, tracking, push); 392 api tests |
 | 19 vendor-app-whitelabel-pipeline | ✅ done (not compiled here) | seller app (pack, book courier, returns QC, money + scorecard), per-tenant build manifests with secret *names* only, readiness checks, SKIP LOCKED build queue, report-back visible to tenants, GitHub Actions build→sign→upload workflow with branding and Play upload scripts; 397 api tests |
+| 20 hardening-launch | ✅ done | security headers, automated RLS/append-only/anonymous-route audit (found and fixed a missing FORCE on payment_accounts), dependency upgrades to zero advisories, multi-tenant k6 profile, restore drill with isolation + ledger assertions, seven runbooks, security review and go/no-go; 412 api tests |
