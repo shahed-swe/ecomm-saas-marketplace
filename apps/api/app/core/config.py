@@ -15,7 +15,9 @@ class Settings(BaseSettings):
     platform_database_url: str = "postgresql+asyncpg://platform:platform@localhost:5432/ecomm"
     redis_url: str = "redis://localhost:6379/0"
     platform_root_domain: str = "localhost"
-    jwt_secret: str = Field(default="change-me-in-env", min_length=16)
+    # Edge (Caddy) public IPs a custom domain may point A/AAAA records at.
+    edge_ips: list[str] = []
+    jwt_secret: str = Field(default="change-me-in-env-change-me-in-env", min_length=32)
     jwt_access_ttl_seconds: int = 900
     cors_origins: list[str] = []
     db_pool_size: int = 10

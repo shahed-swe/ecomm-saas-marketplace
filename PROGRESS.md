@@ -4,3 +4,4 @@
 |---|---|---|
 | 0 decisions-adrs | ✅ done | 14 ADRs |
 | 1 foundation-infra | ✅ done | skeleton, migration, roles, worker guard, metrics, infra, backups, CI, deploy; 9 api tests |
+| 2 saas-tenancy-domains | ✅ done | 2x2 isolation (app+RLS), host resolution, platform tenants, custom domains + TLS gate; 47 api tests |

@@ -1,6 +1,6 @@
 -- ADR 0001 / architecture §3.1: three roles, least privilege.
 -- migrator: owns schema, runs Alembic.   app: runtime, RLS enforced.   platform: platform jobs only.
-CREATE ROLE migrator LOGIN PASSWORD 'migrator';
+CREATE ROLE migrator LOGIN PASSWORD 'migrator' BYPASSRLS;  -- owns tables; SECURITY DEFINER lookups + data migrations
 CREATE ROLE app LOGIN PASSWORD 'app' NOBYPASSRLS;
 CREATE ROLE platform LOGIN PASSWORD 'platform' BYPASSRLS;
 CREATE DATABASE ecomm OWNER migrator;

@@ -17,6 +17,7 @@ dependencies = [
   "pyjwt>=2.9",
   "httpx>=0.27",
   "prometheus-client>=0.26.0",
+  "dnspython>=2.8.0",
 ]
 
 [dependency-groups]
@@ -39,8 +40,11 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "ASYNC", "S"]
-ignore = ["S101", "S105", "S106"]
+ignore = ["S101", "S105", "S106", "UP046", "E501"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "app.core.deps.require_tenant_staff"]
 
 [tool.ruff.lint.per-file-ignores]
 "app/tests/**" = ["S608", "ASYNC221", "E501"]
-"migrations/**" = ["E501"]
+"migrations/**" = ["E501", "S608"]

@@ -4,6 +4,165 @@
  */
 
 export interface paths {
+    "/api/v1/admin/domains": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Domains */
+        get: operations["list_domains_api_v1_admin_domains_get"];
+        put?: never;
+        /** Add Domain */
+        post: operations["add_domain_api_v1_admin_domains_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/domains/{domain_id}/primary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Make Primary */
+        post: operations["make_primary_api_v1_admin_domains__domain_id__primary_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/domains/{domain_id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify Domain */
+        post: operations["verify_domain_api_v1_admin_domains__domain_id__verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/storefronts/{storefront_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Get Storefront */
+        get: operations["admin_get_storefront_api_v1_admin_storefronts__storefront_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/vendors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Vendors */
+        get: operations["list_vendors_api_v1_admin_vendors_get"];
+        put?: never;
+        /** Create Vendor */
+        post: operations["create_vendor_api_v1_admin_vendors_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/vendors/{vendor_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Vendor */
+        get: operations["get_vendor_api_v1_admin_vendors__vendor_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Store Info
+         * @description Public: what the storefront needs to boot. RLS makes other tenants invisible.
+         */
+        get: operations["store_info_api_v1_store_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/storefront": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Storefront */
+        get: operations["my_storefront_api_v1_vendor_storefront_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vendor/storefronts/{storefront_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Storefront */
+        get: operations["get_storefront_api_v1_vendor_storefronts__storefront_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Storefront */
+        patch: operations["update_storefront_api_v1_vendor_storefronts__storefront_id__patch"];
+        trace?: never;
+    };
     "/healthz": {
         parameters: {
             query?: never;
@@ -22,6 +181,41 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/platform/v1/tenants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Tenants */
+        get: operations["list_tenants_platform_v1_tenants_get"];
+        put?: never;
+        /** Create Tenant */
+        post: operations["create_tenant_platform_v1_tenants_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/platform/v1/tenants/{tenant_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Patch Tenant */
+        patch: operations["patch_tenant_platform_v1_tenants__tenant_id__patch"];
         trace?: never;
     };
     "/readyz": {
@@ -47,7 +241,204 @@ export interface paths {
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: never;
+    schemas: {
+        /** DomainIn */
+        DomainIn: {
+            /** Host */
+            host: string;
+        };
+        /** DomainOut */
+        DomainOut: {
+            /** Host */
+            host: string;
+            /** Id */
+            id: string;
+            /** Is Primary */
+            is_primary: boolean;
+            /** Kind */
+            kind: string;
+            /** Status */
+            status: string;
+        };
+        /** DomainWithInstructions */
+        DomainWithInstructions: {
+            /** Dns */
+            dns: {
+                [key: string]: unknown;
+            };
+            /** Host */
+            host: string;
+            /** Id */
+            id: string;
+            /** Is Primary */
+            is_primary: boolean;
+            /** Kind */
+            kind: string;
+            /** Status */
+            status: string;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** StoreOut */
+        StoreOut: {
+            /** Default Locale */
+            default_locale: string;
+            /** Name */
+            name: string;
+            /** Primary Host */
+            primary_host: string | null;
+            /** Status */
+            status: string;
+            /** Store Mode */
+            store_mode: string;
+        };
+        /** StorefrontOut */
+        StorefrontOut: {
+            /** Bio */
+            bio: string | null;
+            /** Holiday Mode */
+            holiday_mode: boolean;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Return Policy */
+            return_policy: string | null;
+            /** Tagline */
+            tagline: string | null;
+            /**
+             * Vendor Id
+             * Format: uuid
+             */
+            vendor_id: string;
+        };
+        /** StorefrontUpdate */
+        StorefrontUpdate: {
+            /** Bio */
+            bio?: string | null;
+            /** Holiday Mode */
+            holiday_mode?: boolean | null;
+            /** Return Policy */
+            return_policy?: string | null;
+            /** Tagline */
+            tagline?: string | null;
+        };
+        /** TenantCreate */
+        TenantCreate: {
+            /**
+             * Default Locale
+             * @default bn
+             * @enum {string}
+             */
+            default_locale: "bn" | "en";
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /**
+             * Store Mode
+             * @default single
+             * @enum {string}
+             */
+            store_mode: "single" | "multi";
+        };
+        /** TenantCreated */
+        TenantCreated: {
+            /** Default Locale */
+            default_locale: string;
+            /**
+             * House Vendor Id
+             * Format: uuid
+             */
+            house_vendor_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Primary Host */
+            primary_host: string;
+            /** Public Id */
+            public_id: string;
+            /** Slug */
+            slug: string;
+            /** Status */
+            status: string;
+            /** Store Mode */
+            store_mode: string;
+        };
+        /** TenantOut */
+        TenantOut: {
+            /** Default Locale */
+            default_locale: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Public Id */
+            public_id: string;
+            /** Slug */
+            slug: string;
+            /** Status */
+            status: string;
+            /** Store Mode */
+            store_mode: string;
+        };
+        /** TenantPatch */
+        TenantPatch: {
+            /** Name */
+            name?: string | null;
+            /** Status */
+            status?: ("trial" | "active" | "past_due" | "suspended" | "cancelled") | null;
+            /** Store Mode */
+            store_mode?: ("single" | "multi") | null;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+        };
+        /** VendorCreate */
+        VendorCreate: {
+            /** Display Name */
+            display_name: string;
+            /** Slug */
+            slug: string;
+        };
+        /** VendorOut */
+        VendorOut: {
+            /** Display Name */
+            display_name: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is House */
+            is_house: boolean;
+            /** Slug */
+            slug: string;
+            /** Status */
+            status: string;
+        };
+    };
     responses: never;
     parameters: never;
     requestBodies: never;
@@ -56,6 +447,342 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    list_domains_api_v1_admin_domains_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DomainOut"][];
+                };
+            };
+        };
+    };
+    add_domain_api_v1_admin_domains_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DomainIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DomainWithInstructions"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    make_primary_api_v1_admin_domains__domain_id__primary_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                domain_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DomainOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_domain_api_v1_admin_domains__domain_id__verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                domain_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DomainOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_get_storefront_api_v1_admin_storefronts__storefront_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                storefront_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StorefrontOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_vendors_api_v1_admin_vendors_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VendorOut"][];
+                };
+            };
+        };
+    };
+    create_vendor_api_v1_admin_vendors_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VendorCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VendorOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_vendor_api_v1_admin_vendors__vendor_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vendor_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VendorOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    store_info_api_v1_store_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoreOut"];
+                };
+            };
+        };
+    };
+    my_storefront_api_v1_vendor_storefront_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StorefrontOut"];
+                };
+            };
+        };
+    };
+    get_storefront_api_v1_vendor_storefronts__storefront_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                storefront_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StorefrontOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_storefront_api_v1_vendor_storefronts__storefront_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                storefront_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StorefrontUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StorefrontOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     healthz_healthz_get: {
         parameters: {
             query?: never;
@@ -74,6 +801,94 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+        };
+    };
+    list_tenants_platform_v1_tenants_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantOut"][];
+                };
+            };
+        };
+    };
+    create_tenant_platform_v1_tenants_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TenantCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantCreated"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_tenant_platform_v1_tenants__tenant_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tenant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TenantPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

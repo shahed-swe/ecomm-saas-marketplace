@@ -10,7 +10,14 @@ from app.core.logging import configure_logging
 from app.core.metrics import MetricsMiddleware, metrics_endpoint
 from app.core.middleware import RequestContextMiddleware
 from app.core.redis import create_redis
+from app.modules.domains.router import internal as internal_router
+from app.modules.domains.router import router as domains_router
+from app.modules.domains.service import real_dns_lookup
 from app.modules.health.router import router as health_router
+from app.modules.platform.router import router as platform_router
+from app.modules.store.router import router as store_router
+from app.modules.vendors.router import admin_router as admin_vendors_router
+from app.modules.vendors.router import vendor_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -21,12 +28,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def lifespan(app: FastAPI):
         app.state.settings = settings
         app.state.db = Database(settings)
+        app.state.platform_db = Database(settings, platform=True)
+        app.state.dns_lookup = getattr(app.state, "dns_lookup", None) or real_dns_lookup
         app.state.redis = create_redis(settings)
         try:
             yield
         finally:
             await app.state.redis.aclose()
             await app.state.db.dispose()
+            await app.state.platform_db.dispose()
 
     app = FastAPI(
         title="ecomm SaaS marketplace API",
@@ -46,6 +56,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
     install_error_handlers(app)
     app.include_router(health_router)
+    for r in (
+        store_router,
+        vendor_router,
+        admin_vendors_router,
+        domains_router,
+        platform_router,
+        internal_router,
+    ):
+        app.include_router(r)
     app.add_route("/metrics", metrics_endpoint, include_in_schema=False)
     return app
 

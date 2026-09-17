@@ -9,6 +9,7 @@ from functools import wraps
 from typing import Any
 
 import structlog
+from arq import cron
 from arq.connections import RedisSettings
 
 from app.core.config import get_settings
@@ -54,18 +55,35 @@ async def heartbeat(ctx: dict) -> str:
     return "ok"
 
 
+@platform_job
+async def recheck_domains(ctx: dict) -> list[str]:
+    from app.modules.domains.service import real_dns_lookup, recheck_active_domains
+
+    settings = get_settings()
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        return await recheck_active_domains(
+            session,
+            real_dns_lookup,
+            root_domain=settings.platform_root_domain,
+            edge_ips=settings.edge_ips,
+        )
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
     ctx["db"] = Database(settings)
+    ctx["platform_db"] = Database(settings, platform=True)
 
 
 async def shutdown(ctx: dict) -> None:
     await ctx["db"].dispose()
+    await ctx["platform_db"].dispose()
 
 
 class WorkerSettings:
-    functions = [heartbeat]
+    functions = [heartbeat, recheck_domains]
+    cron_jobs = [cron(recheck_domains, hour={0, 6, 12, 18}, minute=17)]
     on_startup = startup
     on_shutdown = shutdown
     redis_settings = RedisSettings.from_dsn(get_settings().redis_url)

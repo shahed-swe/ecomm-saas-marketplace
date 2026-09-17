@@ -25,9 +25,9 @@ class Base(DeclarativeBase):
 
 
 class Database:
-    def __init__(self, settings: Settings):
+    def __init__(self, settings: Settings, *, platform: bool = False):
         self.engine: AsyncEngine = create_async_engine(
-            settings.database_url,
+            settings.platform_database_url if platform else settings.database_url,
             pool_size=settings.db_pool_size,
             pool_pre_ping=True,
             connect_args={
