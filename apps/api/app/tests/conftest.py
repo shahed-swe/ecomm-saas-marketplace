@@ -380,6 +380,26 @@ async def build_catalog(c, app, tw, key):
         tw.catalog["sub_order"][name] = rows[0]["id"]
     tw.order_number = placed.json()["number"]
     tw.tracking_token = placed.json()["tracking_token"]
+    # One booked shipment per vendor so fulfilment routes have an isolation target (Phase 12).
+    tw.catalog["shipment"] = {}
+    async with app.state.platform_db.engine.begin() as conn:
+        for n in (1, 2):
+            name = f"{key}{n}"
+            sid = await conn.scalar(
+                sql(
+                    """INSERT INTO shipments (tenant_id, vendor_id, order_id, sub_order_id, courier,
+                           consignment_id, tracking_code, status, cod_amount, weight_grams, last_event_at)
+                       SELECT s.tenant_id, s.vendor_id, s.order_id, s.id, 'steadfast', :cid, :cid,
+                              'booked', 0, s.weight_grams, now()
+                       FROM sub_orders s WHERE s.tenant_id = :t AND s.id = :s RETURNING id"""
+                ),
+                {
+                    "cid": f"CN-{key}{n}-{uuid.uuid4().hex[:8]}",
+                    "t": tw.id,
+                    "s": tw.catalog["sub_order"][name],
+                },
+            )
+            tw.catalog["shipment"][name] = str(sid)
 
 
 @pytest.fixture(scope="session")

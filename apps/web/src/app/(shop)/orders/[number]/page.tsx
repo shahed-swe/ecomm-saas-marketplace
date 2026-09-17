@@ -6,20 +6,34 @@ import { taka } from "@/lib/money";
 export default function OrderPage({ params }: { params: Promise<{ number: string }> }) {
   const { number } = use(params);
   const [order, setOrder] = useState<any>(null);
+  const [tracking, setTracking] = useState<any[]>([]);
   const [error, setError] = useState("");
   useEffect(() => { api<any>(`/me/orders/${number}`).then(setOrder).catch(() => setError("Order not found")); }, [number]);
+  // Parcel status comes from the courier, so it is fetched separately from the order itself.
+  useEffect(() => { api<any[]>(`/me/orders/${number}/tracking`).then(setTracking).catch(() => setTracking([])); }, [number]);
   if (error) return <main className="p-8 text-center text-muted">{error}</main>;
   if (!order) return <main className="p-8 text-center text-muted">Loading…</main>;
   return (
     <main className="mx-auto max-w-2xl space-y-4 p-4">
       <h1 className="font-heading text-2xl">Order {order.number}</h1>
       <p className="text-muted">Status: {String(order.status).replace(/_/g, " ")}</p>
-      {order.shipments.map((s: any) => (
-        <div key={s.id} className="rounded-theme border border-border p-3">
-          <p className="font-medium">{s.vendor_name}</p>
-          <p className="text-sm text-muted">{s.number} · {String(s.status).replace(/_/g, " ")} · {taka(s.total)}</p>
-        </div>
-      ))}
+      {order.shipments.map((s: any) => {
+        const parcel = tracking.find((p) => p.shipment_number === s.number);
+        return (
+          <div key={s.id} className="rounded-theme border border-border p-3">
+            <p className="font-medium">{s.vendor_name}</p>
+            <p className="text-sm text-muted">{s.number} · {String(s.status).replace(/_/g, " ")} · {taka(s.total)}</p>
+            {parcel && (
+              <p className="mt-1 text-sm">
+                {parcel.courier} · {String(parcel.status).replace(/_/g, " ")}
+                {parcel.tracking_url && (
+                  <> · <a className="underline" href={parcel.tracking_url} target="_blank" rel="noreferrer">Track {parcel.tracking_code}</a></>
+                )}
+              </p>
+            )}
+          </div>
+        );
+      })}
       <p className="text-lg font-semibold">Total {taka(order.grand_total)}</p>
       {order.status === "pending_payment" && order.payment_method !== "cod" && (
         <a href={`/orders/${order.number}/payment`} className="block rounded-theme bg-primary py-3 text-center text-primary-fg">

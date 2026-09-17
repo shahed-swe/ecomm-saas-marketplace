@@ -157,6 +157,40 @@ async def reconcile_payments(ctx: dict) -> dict:
     return totals
 
 
+@platform_job
+async def courier_sweep(ctx: dict) -> dict:
+    """Webhooks get lost and parcels get forgotten: poll open shipments, flag the stuck ones."""
+    from sqlalchemy import text
+
+    from app.core.tenancy import scope_session
+    from app.modules.fulfilment.service import flag_stuck_shipments, poll_open_shipments
+
+    settings = get_settings()
+    totals = {"tenants": 0, "polled": 0, "advanced": 0, "errors": 0, "flagged": 0}
+    async with ctx["platform_db"].sessionmaker() as session, session.begin():
+        tenant_ids = [
+            str(r[0])
+            for r in (
+                await session.execute(
+                    text(
+                        """SELECT DISTINCT tenant_id FROM shipments
+                           WHERE status NOT IN ('delivered','returned','cancelled') LIMIT 200"""
+                    )
+                )
+            ).all()
+        ]
+    for tenant_id in tenant_ids:
+        async with ctx["db"].sessionmaker() as session, session.begin():
+            await scope_session(session, tenant_id)
+            result = await poll_open_shipments(session, settings, tenant_id)
+            totals["flagged"] += await flag_stuck_shipments(session, tenant_id)
+        totals["tenants"] += 1
+        for k in ("polled", "advanced", "errors"):
+            totals[k] += result[k]
+    log.info("courier_sweep", **totals)
+    return totals
+
+
 async def startup(ctx: dict) -> None:
     settings = get_settings()
     configure_logging(settings.env)
@@ -178,12 +212,14 @@ class WorkerSettings:
         import_products,
         expire_unpaid_orders,
         reconcile_payments,
+        courier_sweep,
     ]
     cron_jobs = [
         cron(recheck_domains, hour={0, 6, 12, 18}, minute=17),
         cron(billing_cycle, hour={20}, minute=5),  # 02:05 Asia/Dhaka
         cron(expire_unpaid_orders, second={0}),  # every minute
         cron(reconcile_payments, minute={3, 18, 33, 48}),  # four sweeps an hour
+        cron(courier_sweep, minute={8, 23, 38, 53}),
     ]
     on_startup = startup
     on_shutdown = shutdown

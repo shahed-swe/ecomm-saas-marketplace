@@ -14,3 +14,4 @@
 | 9 discovery-search-seo-i18n | ✅ done | FTS + Banglish/Bangla expansion + typo correction, facets, RLS-safe fast search (p95 < 200 ms @ 20k/100), wishlist, recently viewed, sitemap/robots/JSON-LD, en/bn web; 184 api tests |
 | 10 cart-checkout-promotions-tax | ✅ done | grouped cart + quote, order tree with deterministic locks, coupons/campaigns/free shipping, VAT, COD rules, idempotent placement, expiry job, cart+checkout UI; 213 api tests |
 | 11 payments-tenant-gateways | ✅ done | tenant-owned bKash/SSLCommerz accounts (encrypted, health-checked), verify-first settlement, idempotent webhooks by tenant public id, stock consumed on payment, COD receivables, reconciliation sweep, payment return page; 224 api tests |
+| 12 fulfilment-courier | ✅ done | Pathao/Steadfast/RedX adapters, rule-based selection, one live parcel per sub-order, idempotent non-regressing events, ops queue, polling + SLA flagging, COD settlement matching, buyer tracking; 255 api tests |

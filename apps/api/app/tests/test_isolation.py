@@ -96,11 +96,21 @@ SCOPED_ROUTES = [
         },
     ),
     ("POST", "/api/v1/admin/campaigns/{id}/cancel", STAFF, "campaign", None),
+    # payments + fulfilment (Phases 11-12)
+    ("POST", "/api/v1/vendor/orders/{id}/ready", VENDOR, "sub_order", None),
+    ("POST", "/api/v1/vendor/orders/{id}/ship", VENDOR, "sub_order", {}),
+    ("GET", "/api/v1/vendor/shipments/{id}", VENDOR, "shipment", None),
+    ("POST", "/api/v1/vendor/shipments/{id}/cancel", VENDOR, "shipment", None),
+    ("GET", "/api/v1/admin/shipments/{id}", STAFF, "shipment", None),
+    ("POST", "/api/v1/admin/shipments/{id}/resolve", STAFF, "shipment", {"note": "checked"}),
 ]
 
 # Own-resource expectation where 200 is not the right answer (e.g. owners cannot edit themselves).
 OWN_STATUS = {
     ("PATCH", "/api/v1/vendor/staff/{id}"): 409,
+    ("POST", "/api/v1/vendor/orders/{id}/ready"): 409,  # the world order is still unpaid
+    ("POST", "/api/v1/vendor/orders/{id}/ship"): 409,
+    ("POST", "/api/v1/vendor/shipments/{id}/cancel"): 409,  # no courier account configured
     ("POST", "/api/v1/vendor/products/{id}/variants"): 201,
     ("POST", "/api/v1/vendor/products/{id}/media"): 404,  # placeholder asset id does not exist
     (

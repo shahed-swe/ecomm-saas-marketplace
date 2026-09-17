@@ -560,6 +560,60 @@
         "title": "BillingOverview",
         "type": "object"
       },
+      "Body_import_settlement_api_v1_admin_courier_settlements_post": {
+        "properties": {
+          "courier": {
+            "enum": [
+              "pathao",
+              "steadfast",
+              "redx"
+            ],
+            "title": "Courier",
+            "type": "string"
+          },
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "period_start": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "statement_ref": {
+            "maxLength": 80,
+            "title": "Statement Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "courier",
+          "statement_ref",
+          "file"
+        ],
+        "title": "Body_import_settlement_api_v1_admin_courier_settlements_post",
+        "type": "object"
+      },
       "Body_start_import_api_v1_vendor_imports_post": {
         "properties": {
           "file": {
@@ -600,6 +654,40 @@
           "file"
         ],
         "title": "Body_upload_brand_image_api_v1_admin_theme_images_post",
+        "type": "object"
+      },
+      "BookIn": {
+        "properties": {
+          "courier": {
+            "anyOf": [
+              {
+                "enum": [
+                  "pathao",
+                  "steadfast",
+                  "redx"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Courier"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 250,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "BookIn",
         "type": "object"
       },
       "Brand": {
@@ -1389,6 +1477,71 @@
           "value"
         ],
         "title": "CouponIn",
+        "type": "object"
+      },
+      "CourierAccountIn": {
+        "properties": {
+          "courier": {
+            "enum": [
+              "pathao",
+              "steadfast",
+              "redx"
+            ],
+            "title": "Courier",
+            "type": "string"
+          },
+          "credentials": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Credentials",
+            "type": "object"
+          },
+          "mode": {
+            "default": "sandbox",
+            "enum": [
+              "sandbox",
+              "live"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "pickup_ref": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pickup Ref"
+          }
+        },
+        "required": [
+          "courier",
+          "credentials"
+        ],
+        "title": "CourierAccountIn",
+        "type": "object"
+      },
+      "CourierIn": {
+        "properties": {
+          "courier": {
+            "enum": [
+              "pathao",
+              "steadfast",
+              "redx"
+            ],
+            "title": "Courier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "courier"
+        ],
+        "title": "CourierIn",
         "type": "object"
       },
       "CustomPage": {
@@ -3925,6 +4078,24 @@
         "title": "RegisterIn",
         "type": "object"
       },
+      "ResolveIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 250,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "ResolveIn",
+        "type": "object"
+      },
       "ResolvedSection": {
         "properties": {
           "data": {
@@ -4188,6 +4359,90 @@
           "is_system"
         ],
         "title": "RoleOut",
+        "type": "object"
+      },
+      "RuleIn": {
+        "properties": {
+          "courier": {
+            "enum": [
+              "pathao",
+              "steadfast",
+              "redx"
+            ],
+            "title": "Courier",
+            "type": "string"
+          },
+          "districts": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 64,
+            "title": "Districts",
+            "type": "array"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "max_cod_amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Cod Amount"
+          },
+          "max_weight_grams": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Weight Grams"
+          },
+          "zones": {
+            "items": {
+              "enum": [
+                "inside_dhaka",
+                "dhaka_suburb",
+                "outside_dhaka"
+              ],
+              "type": "string"
+            },
+            "title": "Zones",
+            "type": "array"
+          }
+        },
+        "required": [
+          "courier"
+        ],
+        "title": "RuleIn",
+        "type": "object"
+      },
+      "RulesIn": {
+        "properties": {
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleIn"
+            },
+            "maxItems": 50,
+            "title": "Rules",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rules"
+        ],
+        "title": "RulesIn",
         "type": "object"
       },
       "SearchOut": {
@@ -7373,6 +7628,348 @@
         ]
       }
     },
+    "/api/v1/admin/courier-accounts": {
+      "get": {
+        "operationId": "list_courier_accounts_api_v1_admin_courier_accounts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Courier Accounts",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      },
+      "put": {
+        "operationId": "put_courier_account_api_v1_admin_courier_accounts_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourierAccountIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Courier Account",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/admin/courier-accounts/disable": {
+      "post": {
+        "operationId": "disable_courier_api_v1_admin_courier_accounts_disable_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourierIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disable Courier",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/admin/courier-accounts/health": {
+      "post": {
+        "operationId": "courier_health_api_v1_admin_courier_accounts_health_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourierIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Courier Health",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/admin/courier-rules": {
+      "get": {
+        "operationId": "get_rules_api_v1_admin_courier_rules_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Rules",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      },
+      "put": {
+        "description": "The list is the policy: it is replaced as a whole, in the order given.",
+        "operationId": "put_rules_api_v1_admin_courier_rules_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RulesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Rules",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/admin/courier-settlement-lines": {
+      "get": {
+        "operationId": "settlement_lines_api_v1_admin_courier_settlement_lines_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "statement_ref",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Statement Ref"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Settlement Lines",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/admin/courier-settlements": {
+      "get": {
+        "operationId": "list_settlements_api_v1_admin_courier_settlements_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Settlements",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      },
+      "post": {
+        "operationId": "import_settlement_api_v1_admin_courier_settlements_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_settlement_api_v1_admin_courier_settlements_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Settlement",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      }
+    },
     "/api/v1/admin/domains": {
       "get": {
         "operationId": "list_domains_api_v1_admin_domains_get",
@@ -8094,6 +8691,189 @@
         "summary": "Patch Settings",
         "tags": [
           "admin:settings"
+        ]
+      }
+    },
+    "/api/v1/admin/shipments": {
+      "get": {
+        "operationId": "admin_shipments_api_v1_admin_shipments_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "needs_attention",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Needs Attention"
+            }
+          },
+          {
+            "in": "query",
+            "name": "vendor_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Vendor Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Shipments",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/admin/shipments/{shipment_id}": {
+      "get": {
+        "operationId": "admin_shipment_api_v1_admin_shipments__shipment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shipment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Shipment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Shipment",
+        "tags": [
+          "admin:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/admin/shipments/{shipment_id}/resolve": {
+      "post": {
+        "description": "Ops looked at the parcel: the flag clears, the reason stays in the audit log.",
+        "operationId": "resolve_shipment_api_v1_admin_shipments__shipment_id__resolve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shipment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Shipment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resolve Shipment",
+        "tags": [
+          "admin:fulfilment"
         ]
       }
     },
@@ -10248,6 +11028,46 @@
         ]
       }
     },
+    "/api/v1/me/orders/{number}/tracking": {
+      "get": {
+        "operationId": "tracking_api_v1_me_orders__number__tracking_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Tracking",
+        "tags": [
+          "fulfilment"
+        ]
+      }
+    },
     "/api/v1/me/recently-viewed": {
       "get": {
         "operationId": "recently_viewed_api_v1_me_recently_viewed_get",
@@ -11586,6 +12406,98 @@
         ]
       }
     },
+    "/api/v1/vendor/orders/{sub_order_id}/ready": {
+      "post": {
+        "operationId": "ready_api_v1_vendor_orders__sub_order_id__ready_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sub_order_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sub Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ready",
+        "tags": [
+          "vendor:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/vendor/orders/{sub_order_id}/ship": {
+      "post": {
+        "operationId": "ship_api_v1_vendor_orders__sub_order_id__ship_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sub_order_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sub Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ship",
+        "tags": [
+          "vendor:fulfilment"
+        ]
+      }
+    },
     "/api/v1/vendor/payout-method": {
       "get": {
         "operationId": "get_payout_method_api_v1_vendor_payout_method_get",
@@ -12187,6 +13099,145 @@
         "summary": "Reauth Verify",
         "tags": [
           "vendor:onboarding"
+        ]
+      }
+    },
+    "/api/v1/vendor/shipments": {
+      "get": {
+        "operationId": "vendor_shipments_api_v1_vendor_shipments_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Shipments",
+        "tags": [
+          "vendor:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/vendor/shipments/{shipment_id}": {
+      "get": {
+        "operationId": "vendor_shipment_api_v1_vendor_shipments__shipment_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shipment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Shipment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Shipment",
+        "tags": [
+          "vendor:fulfilment"
+        ]
+      }
+    },
+    "/api/v1/vendor/shipments/{shipment_id}/cancel": {
+      "post": {
+        "operationId": "vendor_cancel_api_v1_vendor_shipments__shipment_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "shipment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Shipment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vendor Cancel",
+        "tags": [
+          "vendor:fulfilment"
         ]
       }
     },

@@ -28,6 +28,7 @@ from app.modules.checkout import router as checkout
 from app.modules.domains.router import internal as internal_router
 from app.modules.domains.router import router as domains_router
 from app.modules.domains.service import real_dns_lookup
+from app.modules.fulfilment import router as fulfilment
 from app.modules.health.router import router as health_router
 from app.modules.identity import router as identity
 from app.modules.identity import staff_router
@@ -140,6 +141,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         payments.vendor,
         payments.admin,
         payments.webhooks,
+        fulfilment.vendor,
+        fulfilment.admin,
+        fulfilment.buyer,
+        fulfilment.webhooks,
         vendor_router,
         admin_vendors_router,
         domains_router,
