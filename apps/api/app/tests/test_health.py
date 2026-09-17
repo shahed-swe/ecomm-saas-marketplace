@@ -20,3 +20,10 @@ async def test_unknown_route_is_problem_json(client):
     r = await client.get("/nope")
     assert r.status_code == 404
     assert r.headers["content-type"].startswith("application/problem+json")
+
+
+async def test_metrics_exposed_with_route_template(client):
+    await client.get("/healthz")
+    r = await client.get("/metrics")
+    assert r.status_code == 200
+    assert 'route="/healthz"' in r.text

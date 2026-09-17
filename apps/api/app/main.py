@@ -7,6 +7,7 @@ from app.core.config import Settings, get_settings
 from app.core.db import Database
 from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging
+from app.core.metrics import MetricsMiddleware, metrics_endpoint
 from app.core.middleware import RequestContextMiddleware
 from app.core.redis import create_redis
 from app.modules.health.router import router as health_router
@@ -33,6 +34,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         lifespan=lifespan,
         docs_url="/docs" if settings.env != "production" else None,
     )
+    app.add_middleware(MetricsMiddleware)
     app.add_middleware(RequestContextMiddleware)
     if settings.cors_origins:
         app.add_middleware(
@@ -44,6 +46,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
     install_error_handlers(app)
     app.include_router(health_router)
+    app.add_route("/metrics", metrics_endpoint, include_in_schema=False)
     return app
 
 
